@@ -1,6 +1,10 @@
-ofxSlippy
-=========
+ofxSlippyMap
+============
 
-A slippy map addon. Based heavily on modestmaps-of.
+A slippy map addon. 
+
+A major rework and update to https://github.com/RandomEtc/modestmaps-of.
+
+Inspired by http://unfoldingmaps.org/.
 
 
