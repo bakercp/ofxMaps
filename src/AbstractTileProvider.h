@@ -37,24 +37,24 @@ class AbstractTileProvider
 public:
     typedef std::shared_ptr<AbstractTileProvider> SharedPtr;
 
-    AbstractTileProvider(AbstractProjection* _projection):
-        projection(_projection)
+    AbstractTileProvider(AbstractProjection::SharedPtr projection):
+        _projection(projection)
     {
     }
 	
 	virtual std::vector<std::string> getTileUrls(const Coordinate& coordinate) const = 0;
 
-	virtual int tileWidth() const = 0;
-	virtual int tileHeight() const = 0;
+	virtual int getTileWidth() const = 0;
+	virtual int getTileHeight() const = 0;
 	
 	Coordinate locationCoordinate(const Location& location) const
     {
-		return projection->locationCoordinate(location);
+		return _projection->locationCoordinate(location);
 	}
 	
 	Location coordinateLocation(const Coordinate& coordinate) const
     {
-		return projection->coordinateLocation(coordinate);
+		return _projection->coordinateLocation(coordinate);
 	}
 	
 	Coordinate sourceCoordinate(const Coordinate& coordinate) const
@@ -79,6 +79,6 @@ public:
 	}
 
 protected:
-    AbstractProjection *projection;
+    AbstractProjection::SharedPtr _projection;
 	
 };

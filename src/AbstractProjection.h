@@ -35,15 +35,17 @@
 class AbstractProjection {
 
 public:
-	AbstractProjection(double _zoom):
-        zoom(_zoom),
-        transformation(Transformation())
+    typedef std::shared_ptr<AbstractProjection> SharedPtr;
+
+	AbstractProjection(double zoom):
+        _zoom(zoom),
+        _transformation(Transformation())
     {
     }
 
-    AbstractProjection(double _zoom, Transformation _t):
-        zoom(_zoom),
-        transformation(_t)
+    AbstractProjection(double zoom, Transformation transformation):
+        _zoom(zoom),
+        _transformation(transformation)
     {
     }
 
@@ -52,24 +54,24 @@ public:
 
 	Point2d project(const Point2d& point) const
     {
-		return transformation.transform(rawProject(point));
+		return _transformation.transform(rawProject(point));
 	}
 
 	Point2d unproject(const Point2d& point) const
     {
-		return rawUnproject(transformation.untransform(point));
+		return rawUnproject(_transformation.untransform(point));
 	}
 
 	Coordinate locationCoordinate(const Location& location) const
     {
 		Point2d point = project(Point2d(DEG_TO_RAD * location.lon, DEG_TO_RAD * location.lat));
 
-        return Coordinate(point.y, point.x, zoom);
+        return Coordinate(point.y, point.x, _zoom);
 	}
 
 	Location coordinateLocation(const Coordinate& coordinate) const
     {
-        Coordinate newCoordinate = coordinate.zoomTo(zoom);
+        Coordinate newCoordinate = coordinate.zoomTo(_zoom);
 
 		Point2d point = unproject(Point2d(newCoordinate.column, newCoordinate.row));
 
@@ -77,9 +79,8 @@ public:
 	}
 
 protected:
-	double zoom;
-	Transformation transformation;
-
+	double _zoom;
+	Transformation _transformation;
 
 };
 

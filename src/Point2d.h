@@ -29,7 +29,8 @@
 
 #include "ofMain.h"
 
-
+// TODO: This should really be replaced with ofVec2d ... but that requires
+// a templated ofVec series.
 class Point2d
 {
 public:

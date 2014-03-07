@@ -31,11 +31,11 @@ void ofApp::setup()
 {
 	ofSetVerticalSync(true);
 
-    map.setup(new OpenStreetMapProvider(),
+    map.setup(std::shared_ptr<OpenStreetMapProvider>(new OpenStreetMapProvider()),
               ofGetWidth(),
               ofGetHeight());
 
-//	map.setZoom(3);
+	map.setZoom(3);
 }
 
 

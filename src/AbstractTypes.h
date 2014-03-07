@@ -24,25 +24,5 @@
 // =============================================================================
 
 
-
-#include "AbstractProjection.h"
-#include "Transformation.h"
-
-class LinearProjection: public AbstractProjection
-{
-public:
-	LinearProjection(double _zoom = 0):
-        AbstractProjection(_zoom, Transformation())
-    {
-    }
-
-    LinearProjection(double _zoom, Transformation t):
-        AbstractProjection(_zoom, t)
-    {
-    }
-
-	Point2d rawProject(const Point2d& point);
-	Point2d rawUnproject(const Point2d& point);
-
-};
+#pragma once
 

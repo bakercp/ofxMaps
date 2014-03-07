@@ -31,10 +31,17 @@
 class OpenStreetMapProvider: public AbstractTileProvider
 {
 public:
+    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
+
 	OpenStreetMapProvider():
 		// this is the projection and transform you'll want for any Google-style map tile source:
-		AbstractTileProvider(new MercatorProjection(26,
-                                                   Transformation(1.068070779e7, 0.0, 3.355443185e7, 0.0, -1.068070890e7, 3.355443057e7)))
+		AbstractTileProvider(AbstractProjection::SharedPtr(new MercatorProjection(26,
+                                                                                  Transformation(1.068070779e7,
+                                                                                                 0.0,
+                                                                                                 3.355443185e7,
+                                                                                                 0.0,
+                                                                                                 -1.068070890e7,
+                                                                                                 3.355443057e7))))
 	{
 		_subdomains.push_back("");
 		_subdomains.push_back("a.");
@@ -42,12 +49,12 @@ public:
 		_subdomains.push_back("c.");
 	}
 	
-	int tileWidth() const
+	int getTileWidth() const
     {
 		return 256;
 	}
 	
-	int tileHeight() const
+	int getTileHeight() const
     {
 		return 256;
 	}
@@ -73,6 +80,11 @@ public:
         
 		return urls;
 	}
+
+    static SharedPtr makeShared()
+    {
+        return SharedPtr(new OpenStreetMapProvider());
+    }
 
 protected:
     std::vector<std::string> _subdomains;

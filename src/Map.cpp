@@ -5,7 +5,7 @@
 const double Map::LOG_2 = log(2);
 
 
-void Map::setup(AbstractTileProvider* _provider, int _width, int _height)
+void Map::setup(AbstractTileProvider::SharedPtr _provider, int _width, int _height)
 {
 	provider = _provider;
 	width = _width;
@@ -27,14 +27,10 @@ void Map::setup(AbstractTileProvider* _provider, int _width, int _height)
 void Map::update(ofEventArgs& args) {
     double ep = 0.1;
 
+    // TODO: this is a bit shakey at high zoom.
     tx = fabs(panTargetX - tx) > ep ? ((1 - smoothing) * panTargetX + smoothing * tx) : panTargetX;
     ty = fabs(panTargetY - ty) > ep ? ((1 - smoothing) * panTargetY + smoothing * ty) : panTargetY;
     sc = fabs(scaleTarget - sc) > ep ? ((1 - smoothing) * scaleTarget + smoothing * sc) : scaleTarget;
-
-    tx = panTargetX;
-    ty = panTargetY;
-    sc = scaleTarget;
-
 
 }
 
@@ -161,16 +157,19 @@ void Map::draw()
 			//ofSetColor(0,0,0,50);
 			//ofRect(coord.column*TILE_SIZE,coord.row*TILE_SIZE,TILE_SIZE,TILE_SIZE);
 			
-			if (images.count(coord) > 0) {
-				//cout << "rendering: " << coord;				
-				ofImage* tile = images[coord];
+			if (images.count(coord) > 0)
+            {
+                std::shared_ptr<ofImage> tile = images[coord];
 				// TODO: must be a cleaner C++ way to do this?
 				// we want this image to be at the end of recentImages, if it's already there we'll remove it and then add it again
-				vector<ofImage*>::iterator result = find(recentImages.begin(), recentImages.end(), tile);
-				if (result != recentImages.end()) {
+                std::vector<std::shared_ptr<ofImage> >::iterator result = find(recentImages.begin(), recentImages.end(), tile);
+
+                if (result != recentImages.end())
+                {
 					recentImages.erase(result);
 				}
-				else {
+				else
+                {
 					// if it's not in recent images it must be brand new?
 					tile->setUseTexture(true);
                     tile->update();
@@ -179,6 +178,7 @@ void Map::draw()
 				tile->draw(coord.column * _tileSize, coord.row * _tileSize, _tileSize, _tileSize);
 
 				numDrawnImages++;
+
 				recentImages.push_back(tile);
 			}
 		}
@@ -191,13 +191,12 @@ void Map::draw()
 	// stop fetching things we can't see:
 	// (visibleKeys also has the parents and children, if needed, but that shouldn't matter)
 	//queue.retainAll(visibleKeys);
+
     std::vector<Coordinate>::iterator iter = queue.begin();
 
-	while (iter != queue.end())
+    while (iter != queue.end())
     {
-		Coordinate key = *iter;
-
-        if (0 == visibleKeys.count(key))
+        if (0 == visibleKeys.count(*iter))
         {
 			iter = queue.erase(iter);
 		}
@@ -223,18 +222,17 @@ void Map::draw()
 		//images.values().retainAll(recentImages);
 		// TODO: re-think the stl collections used so that a simpler retainAll equivalent is available
 		// now look in the images map and if the value is no longer in recent images then get rid of it
-        std::map<Coordinate,ofImage*>::iterator iter = images.begin();
+        std::map<Coordinate,std::shared_ptr<ofImage> >::iterator iter = images.begin();
 
 		while (iter != images.end())
         {
-			ofImage* tile = iter->second;
+			std::shared_ptr<ofImage> tile = iter->second;
 
-            std::vector<ofImage*>::iterator result = std::find(recentImages.begin(), recentImages.end(), tile);
+            std::vector<std::shared_ptr<ofImage> >::iterator result = std::find(recentImages.begin(), recentImages.end(), tile);
 
 			if (result == recentImages.end())
             {
 				images.erase(iter++);
-				delete tile;
 			}
 			else
             {
@@ -245,8 +243,8 @@ void Map::draw()
 	
 }
 
-void Map::keyPressed(ofKeyEventArgs& evt) {
-
+void Map::keyPressed(ofKeyEventArgs& evt)
+{
     int key = evt.key;
 
 	if (key == '+' || key == '=')
@@ -357,15 +355,15 @@ Location Map::getCenter() const
 
 Coordinate Map::getCenterCoordinate() const
 {
-	float row = (float)(ty * sc / -_tileSize);
-	float column = (float)(tx * sc / -_tileSize);
+	float row = ty * sc / -_tileSize;
+	float column = tx * sc / -_tileSize;
 	float zoom = zoomForScale(sc);
 
     return Coordinate(row, column, zoom);
 }
 
-void Map::setCenter(const Coordinate& center) {
-	//println("setting center to " + center);
+void Map::setCenter(const Coordinate& center)
+{
 	sc = pow(2.0, center.zoom);
 	tx = -_tileSize*center.column / sc;
 	ty = -_tileSize*center.row / sc;
@@ -389,17 +387,17 @@ void Map::setZoom(int zoom)
 
 void Map::zoom(int dir)
 {
-	scaleTarget = pow(2.0, getZoom()+dir);
+	scaleTarget = pow(2.0, getZoom() + dir);
 }
 
 void Map::zoomIn()
 {
-	scaleTarget = pow(2.0, getZoom()+1);
+	scaleTarget = pow(2.0, getZoom() + 1);
 }  
 
 void Map::zoomOut()
 {
-	scaleTarget = pow(2.0f, getZoom()-1);
+	scaleTarget = pow(2.0f, getZoom() - 1);
 }
 
 // TODO: extent functions
@@ -510,6 +508,9 @@ int Map::bestZoomForScale(float scale) const
 void Map::requestTile(const Coordinate& coord)
 {
 	bool isPending = pending.count(coord) > 0;
+
+
+
 	bool isQueued = std::find(queue.begin(), queue.end(), coord) != queue.end();
 	bool isAlreadyLoaded = images.count(coord) > 0;
 
@@ -519,39 +520,62 @@ void Map::requestTile(const Coordinate& coord)
 	}
 }
 
-
-// TODO: there could be issues when this is called from within a thread
-// probably needs synchronizing on images / pending / queue
-void Map::tileDone(const Coordinate& coord, ofImage* img)
-{
-	// check if we're still waiting for this (new provider clears pending)
-	// also check if we got something
-	if (0 != img && pending.count(coord) > 0)
-    {
-		images[coord] = img;
-		pending.erase(coord);  
-	}
-	else {
-		pending.erase(coord);
-		// try again?
-	}
-}
-
 void Map::processQueue()
 {
-	if (queue.size() > _maxPending - pending.size())
+	if (queue.size() > (_maxPending - pending.size()))
     {
         std::sort(queue.begin(),
                   queue.end(),
                   QueueSorter(getCenterCoordinate().zoomTo(getZoom())));
 	}
 
-    while (pending.size() < _maxPending && queue.size() > 0)
+    // Transfer load queued coordinates.
+    while (pending.size() < _maxPending && !queue.empty())
     {
-		Coordinate key = *(queue.begin());
-		pending[key] = TileLoader();
-		pending[key].start(key, provider, this);
+		Coordinate coord = *(queue.begin());
+
+        std::vector<std::string> urls = provider->getTileUrls(coord);
+
+        if (!urls.empty())
+        {
+            pending[coord] = ofLoadURLAsync(urls[0]);
+        }
+        else
+        {
+
+        }
+
 		queue.erase(queue.begin());
 	}  
 }
+
+void Map::urlResponse(ofHttpResponse& args)
+{
+    std::map<Coordinate, int>::iterator iter = pending.begin();
+
+    // Find our async id.
+    while (iter != pending.end())
+    {
+        if ((*iter).second == args.request.getID())
+        {
+            if (200 == args.status)
+            {
+                Coordinate coord = (*iter).first;
+                images[coord] = std::shared_ptr<ofImage>(new ofImage());
+                images[coord]->setUseTexture(false);
+                images[coord]->loadImage(args);
+            }
+            else
+            {
+                ofLogError("Map::urlResponse") << " : " << args.status << " : " << args.error << " : " << args.request.url;
+            }
+
+            pending.erase(iter);
+            break;
+        }
+
+        ++iter;
+    }
+}
+
 

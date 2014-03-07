@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2bc0f37d26593dbcfab1f962c37099e6 /* TileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 760215551816972e01695908d0124b9d /* TileLoader.cpp */; };
 		5efd2c8334f738bb06eecae9c3cd4256 /* Transformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -29,7 +28,6 @@
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985F515E0DE99003869B5 /* Accelerate.framework */; };
-		a2a17c6c8747abbf054ae872a65a4119 /* LinearProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2864f61773d676b75c2933127077cac0 /* LinearProjection.cpp */; };
 		b61f8fe96425ec186bbaa4a8221936cb /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */; };
 		db2ffacfd5a99fdad931d43ba804882a /* MercatorProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */; };
 /* End PBXBuildFile section */
@@ -65,14 +63,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1aaa81c5b91b209fb5d9c30eebcb5192 /* TileLoader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = TileLoader.h; path = ../../../addons/ofxSlippyMaps/src/TileLoader.h; sourceTree = SOURCE_ROOT; };
 		267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MercatorProjection.cpp; path = ../../../addons/ofxSlippyMaps/src/MercatorProjection.cpp; sourceTree = SOURCE_ROOT; };
-		2864f61773d676b75c2933127077cac0 /* LinearProjection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = LinearProjection.cpp; path = ../../../addons/ofxSlippyMaps/src/LinearProjection.cpp; sourceTree = SOURCE_ROOT; };
 		29498e24c920f691476b32a555a9b1bc /* QueueSorter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = QueueSorter.h; path = ../../../addons/ofxSlippyMaps/src/QueueSorter.h; sourceTree = SOURCE_ROOT; };
 		29da1f6cdeb605a94911e0df555f48b8 /* Point2d.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Point2d.h; path = ../../../addons/ofxSlippyMaps/src/Point2d.h; sourceTree = SOURCE_ROOT; };
 		2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Map.cpp; path = ../../../addons/ofxSlippyMaps/src/Map.cpp; sourceTree = SOURCE_ROOT; };
 		52006cd748c58fd3794135a8d57efa28 /* Transformation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Transformation.h; path = ../../../addons/ofxSlippyMaps/src/Transformation.h; sourceTree = SOURCE_ROOT; };
-		760215551816972e01695908d0124b9d /* TileLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = TileLoader.cpp; path = ../../../addons/ofxSlippyMaps/src/TileLoader.cpp; sourceTree = SOURCE_ROOT; };
 		79a719da07a739ac8493149d7fd09ced /* Location.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Location.h; path = ../../../addons/ofxSlippyMaps/src/Location.h; sourceTree = SOURCE_ROOT; };
 		91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Transformation.cpp; path = ../../../addons/ofxSlippyMaps/src/Transformation.cpp; sourceTree = SOURCE_ROOT; };
 		98014e4de8fe1477e92a42093653fc36 /* Coordinate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Coordinate.h; path = ../../../addons/ofxSlippyMaps/src/Coordinate.h; sourceTree = SOURCE_ROOT; };
@@ -101,11 +96,11 @@
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F985F515E0DE99003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
+		FD17D4EB18C96084006CE746 /* AbstractTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractTypes.h; path = ../src/AbstractTypes.h; sourceTree = "<group>"; };
 		b803f00e45b7cd5844ec97364abb7961 /* AbstractTileProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractTileProvider.h; path = ../../../addons/ofxSlippyMaps/src/AbstractTileProvider.h; sourceTree = SOURCE_ROOT; };
 		be496f1beef700bc7918040629ced3fa /* AbstractProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractProjection.h; path = ../../../addons/ofxSlippyMaps/src/AbstractProjection.h; sourceTree = SOURCE_ROOT; };
 		c0cd43066b704dba0869dda4d3ec9293 /* OpenStreetMapProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OpenStreetMapProvider.h; path = ../../../addons/ofxSlippyMaps/src/OpenStreetMapProvider.h; sourceTree = SOURCE_ROOT; };
 		c9f80be3837ab3ee28dbdab545c6f095 /* MercatorProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MercatorProjection.h; path = ../../../addons/ofxSlippyMaps/src/MercatorProjection.h; sourceTree = SOURCE_ROOT; };
-		d1752b4a37210992c7e74ff2cce58079 /* LinearProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = LinearProjection.h; path = ../../../addons/ofxSlippyMaps/src/LinearProjection.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,8 +137,6 @@
 				b803f00e45b7cd5844ec97364abb7961 /* AbstractTileProvider.h */,
 				be496f1beef700bc7918040629ced3fa /* AbstractProjection.h */,
 				98014e4de8fe1477e92a42093653fc36 /* Coordinate.h */,
-				2864f61773d676b75c2933127077cac0 /* LinearProjection.cpp */,
-				d1752b4a37210992c7e74ff2cce58079 /* LinearProjection.h */,
 				79a719da07a739ac8493149d7fd09ced /* Location.h */,
 				2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */,
 				9f01669f36e4b4e82122b27138b795c1 /* Map.h */,
@@ -152,10 +145,9 @@
 				c0cd43066b704dba0869dda4d3ec9293 /* OpenStreetMapProvider.h */,
 				29da1f6cdeb605a94911e0df555f48b8 /* Point2d.h */,
 				29498e24c920f691476b32a555a9b1bc /* QueueSorter.h */,
-				760215551816972e01695908d0124b9d /* TileLoader.cpp */,
-				1aaa81c5b91b209fb5d9c30eebcb5192 /* TileLoader.h */,
 				91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */,
 				52006cd748c58fd3794135a8d57efa28 /* Transformation.h */,
+				FD17D4EB18C96084006CE746 /* AbstractTypes.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -344,10 +336,8 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
-				a2a17c6c8747abbf054ae872a65a4119 /* LinearProjection.cpp in Sources */,
 				b61f8fe96425ec186bbaa4a8221936cb /* Map.cpp in Sources */,
 				db2ffacfd5a99fdad931d43ba804882a /* MercatorProjection.cpp in Sources */,
-				2bc0f37d26593dbcfab1f962c37099e6 /* TileLoader.cpp in Sources */,
 				5efd2c8334f738bb06eecae9c3cd4256 /* Transformation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

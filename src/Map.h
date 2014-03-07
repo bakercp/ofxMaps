@@ -34,7 +34,6 @@
 #include "Location.h"
 #include "Coordinate.h"
 #include "Point2d.h"
-#include "TileLoader.h"
 
 
 class Map
@@ -51,6 +50,9 @@ public:
         ofRegisterMouseEvents(this);
         ofRegisterKeyEvents(this);
         ofAddListener(ofEvents().update, this, &Map::update);
+
+        ofRegisterURLNotification(this);
+
     }
 
     virtual ~Map()
@@ -58,9 +60,11 @@ public:
         ofUnregisterMouseEvents(this);
         ofUnregisterKeyEvents(this);
         ofRemoveListener(ofEvents().update, this, &Map::update);
+
+        ofUnregisterURLNotification(this);
     }
 
-	void setup(AbstractTileProvider* _provider, int _width, int _height);
+	void setup(AbstractTileProvider::SharedPtr _provider, int _width, int _height);
 	void update(ofEventArgs& args);
 	void draw();
 		
@@ -115,7 +119,7 @@ public:
     enum
     {
         DEFAULT_TILE_SIZE = 256,
-        DEFAULT_MAX_PENDING = 8, ///< \brief Limit simultaneous calls to loadImage.
+        DEFAULT_MAX_PENDING = 16, ///< \brief Limit simultaneous calls to loadImage.
         DEFAULT_MAX_IMAGES_TO_CACHE = 256,
                                 ///< \brief Limit tiles in memory
                                 ///< 256 would be 64 MB, you may want to lower this quite a bit for your app
@@ -123,6 +127,8 @@ public:
         DEFAULT_GRID_PADDING = 1, ///< \brief Upping this can help appearances when zooming out, but also loads many more tiles
         DEFAULT_DOUBLE_CLICK_TIME = 250
     };
+
+    void urlResponse(ofHttpResponse& args);
 
 protected:
     int _tileSize;
@@ -143,15 +149,16 @@ protected:
     double smoothing;
 
     ///< \brief The Map tile Provider.
-	AbstractTileProvider* provider;
+    AbstractTileProvider::SharedPtr provider;
 
     ///< \brief Map Size.
 	int width;
     int height;
 
-    std::map<Coordinate, TileLoader> pending; ///< \brief Tiles waiting to load.
-    std::map<Coordinate, ofImage*> images; ///< \brief Image store.
-	std::vector<ofImage*> recentImages; /// <\brief Map of the most recent images MAX_IMAGES_TO_KEEP
+    std::map<Coordinate, int> pending; ///< \brief Tiles waiting to load.
+
+    std::map<Coordinate, std::shared_ptr<ofImage> > images; ///< \brief Image store.
+	std::vector<std::shared_ptr<ofImage> > recentImages; /// <\brief Map of the most recent images MAX_IMAGES_TO_KEEP
 
 	std::vector<Coordinate> queue; /// \brief Coordinates waiting to load
 	std::set<Coordinate> visibleKeys; /// \brief Coordinates that we can see already.
