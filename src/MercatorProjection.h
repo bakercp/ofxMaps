@@ -31,18 +31,12 @@
 class MercatorProjection: public AbstractProjection
 {
 public:	
-	MercatorProjection(double _zoom = 0):
-        AbstractProjection(_zoom, Transformation())
-    {
-    }
+    MercatorProjection(double zoom, Transformation t = DEFAULT_TRANSFORMATION);
 
-    MercatorProjection(double _zoom,
-                       Transformation t):
-        AbstractProjection(_zoom, t)
-    {
-    }
+    virtual ~MercatorProjection();
 	
 	Point2d rawProject(const Point2d& point) const;
 	Point2d rawUnproject(const Point2d& point) const;
-	
+
+    static const Transformation DEFAULT_TRANSFORMATION;
 };

@@ -27,23 +27,28 @@
 #pragma once
 
 
-#include "Point2d.h"
+class Point2d;
 
 
 class Transformation
 {
 public:
-	
-	double ax, bx, cx, ay, by, cy;
+	Transformation();
+	Transformation(float _ax,
+                   float _bx,
+                   float _cx,
+                   float _ay,
+                   float _by,
+                   float _cy);
 
-	Transformation() : ax(1), bx(0), cx(0), ay(0), by(1), cy(0) {}
-	
-	Transformation(float _ax, float _bx, float _cx, float _ay, float _by, float _cy) : ax(_ax), bx(_bx), cx(_cx), ay(_ay), by(_by), cy(_cy) {}
-	
-	Transformation(const Transformation& t) : ax(t.ax), bx(t.bx), cx(t.cx), ay(t.ay), by(t.by), cy(t.cy) {}
-	
-	Point2d transform(const Point2d& point) const;
-	
+    Point2d transform(const Point2d& point) const;
 	Point2d untransform(const Point2d& point) const;
-	
+
+    double ax;
+    double bx;
+    double cx;
+    double ay;
+    double by;
+    double cy;
+
 };

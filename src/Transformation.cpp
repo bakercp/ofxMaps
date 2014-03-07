@@ -25,6 +25,34 @@
 
 
 #include "Transformation.h"
+#include "Point2d.h"
+
+
+Transformation::Transformation():
+    ax(1),
+    bx(0),
+    cx(0),
+    ay(0),
+    by(1),
+    cy(0)
+{
+}
+
+
+Transformation::Transformation(float _ax,
+                               float _bx,
+                               float _cx,
+                               float _ay,
+                               float _by,
+                               float _cy):
+    ax(_ax),
+    bx(_bx),
+    cx(_cx),
+    ay(_ay),
+    by(_by),
+    cy(_cy)
+{
+}
 
 
 Point2d Transformation::transform(const Point2d& point) const
@@ -32,6 +60,7 @@ Point2d Transformation::transform(const Point2d& point) const
 	return Point2d(ax * point.x + bx * point.y + cx,
                    ay * point.x + by * point.y + cy);
 }
+
 
 Point2d Transformation::untransform(const Point2d& point) const
 {

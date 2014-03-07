@@ -37,12 +37,6 @@ class AbstractProjection {
 public:
     typedef std::shared_ptr<AbstractProjection> SharedPtr;
 
-	AbstractProjection(double zoom):
-        _zoom(zoom),
-        _transformation(Transformation())
-    {
-    }
-
     AbstractProjection(double zoom, Transformation transformation):
         _zoom(zoom),
         _transformation(transformation)
