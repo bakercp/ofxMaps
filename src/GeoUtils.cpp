@@ -29,7 +29,9 @@
 
 GeoPolyline GeoUtils::decodeGeoPolyline(const std::string& encodedGeoPolyline)
 {
-    // Adapted from:
+    // From this spec:
+    // https://developers.google.com/maps/documentation/utilities/polylinealgorithm?csw=1
+    // Algorithm adapted from:
     // http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
 
     GeoPolyline polyline;
@@ -43,7 +45,8 @@ GeoPolyline GeoUtils::decodeGeoPolyline(const std::string& encodedGeoPolyline)
     int lat = 0;
     int lng = 0;
 
-    while (index < len) {
+    while (index < len)
+    {
         int b = 0;
         int shift = 0;
         int result = 0;
@@ -75,7 +78,7 @@ GeoPolyline GeoUtils::decodeGeoPolyline(const std::string& encodedGeoPolyline)
 
         lng += dlng;
 
-        polyline.push_back(GeoLocation(lat / 1E6, lng / 1E6));
+        polyline.push_back(GeoLocation(lat / 1E5, lng / 1E5));
     }
 
     return polyline;

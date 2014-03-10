@@ -36,6 +36,6 @@
 class GeoUtils
 {
 public:
-    GeoPolyline decodeGeoPolyline(const std::string& encodedGeoPolyline);
+    static GeoPolyline decodeGeoPolyline(const std::string& encodedGeoPolyline);
 
 };
