@@ -38,12 +38,12 @@ Transformation::Transformation():
 }
 
 
-Transformation::Transformation(float _ax,
-                               float _bx,
-                               float _cx,
-                               float _ay,
-                               float _by,
-                               float _cy):
+Transformation::Transformation(double _ax,
+                               double _bx,
+                               double _cx,
+                               double _ay,
+                               double _by,
+                               double _cy):
     ax(_ax),
     bx(_bx),
     cx(_cx),
@@ -54,15 +54,15 @@ Transformation::Transformation(float _ax,
 }
 
 
-Point2d Transformation::transform(const Point2d& point) const
+ofVec2d Transformation::transform(const ofVec2d& point) const
 {
-	return Point2d(ax * point.x + bx * point.y + cx,
+	return ofVec2d(ax * point.x + bx * point.y + cx,
                    ay * point.x + by * point.y + cy);
 }
 
 
-Point2d Transformation::untransform(const Point2d& point) const
+ofVec2d Transformation::untransform(const ofVec2d& point) const
 {
-	return Point2d((point.x * by - point.y * bx - cx * by + cy * bx) / (ax * by - ay * bx),
+	return ofVec2d((point.x * by - point.y * bx - cx * by + cy * bx) / (ax * by - ay * bx),
                    (point.x * ay - point.y * ax - cx * ay + cy * ax) / (bx * ay - by * ax));
 }

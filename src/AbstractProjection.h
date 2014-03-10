@@ -35,8 +35,8 @@
 #include "GeoLocation.h"
 
 
-class AbstractProjection {
-
+class AbstractProjection
+{
 public:
     typedef std::shared_ptr<AbstractProjection> SharedPtr;
 
@@ -46,35 +46,36 @@ public:
     {
     }
 
-	virtual Point2d rawProject(const Point2d& point) const = 0;
-	virtual Point2d rawUnproject(const Point2d& point) const = 0;
+	virtual ofVec2d rawProject(const ofVec2d& point) const = 0;
+	virtual ofVec2d rawUnproject(const ofVec2d& point) const = 0;
 
-	Point2d project(const Point2d& point) const
+	ofVec2d project(const ofVec2d& point) const
     {
 		return _transformation.transform(rawProject(point));
 	}
 
-	Point2d unproject(const Point2d& point) const
+	ofVec2d unproject(const ofVec2d& point) const
     {
 		return rawUnproject(_transformation.untransform(point));
 	}
 
-	TileCoordinate locationCoordinate(const GeoLocation& location) const
+	TileCoordinate geoLocationToTileCoordinate(const GeoLocation& location) const
     {
-		Point2d point = project(Point2d(DEG_TO_RAD * location.getLongitude(),
+		ofVec2d point = project(ofVec2d(DEG_TO_RAD * location.getLongitude(),
                                         DEG_TO_RAD * location.getLatitude()));
 
         return TileCoordinate(point.y, point.x, _zoom);
 	}
 
-	GeoLocation coordinateLocation(const TileCoordinate& coordinate) const
+	GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const
     {
         TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
 
-		Point2d point = unproject(Point2d(newCoordinate.column,
-                                          newCoordinate.row));
+		ofVec2d point = unproject(ofVec2d(newCoordinate.getColumn(),
+                                          newCoordinate.getRow()));
 
-		return GeoLocation(RAD_TO_DEG * point.x, RAD_TO_DEG * point.y);
+		return GeoLocation(RAD_TO_DEG * (double)point.x,
+                           RAD_TO_DEG * (double)point.y);
 	}
 
 protected:

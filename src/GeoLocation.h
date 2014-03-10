@@ -47,6 +47,7 @@ public:
 
     GeoLocation& operator = (const GeoLocation& location);
 
+protected:
     // TODO: These should be doubles in the future.
     float& latitude;
     float& longitude;

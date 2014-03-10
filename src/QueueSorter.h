@@ -23,6 +23,7 @@
 //
 // =============================================================================
 
+
 #pragma once
 
 
@@ -36,34 +37,43 @@ public:
     {
     }
 	
-	static double dist(double x1, double y1, double x2, double y2)
+	static double dist(double x0, double y0, double x1, double y1)
     {
-		double dx = x2 - x1;
-		double dy = y2 - y1;
+		double dx = x1 - x0;
+		double dy = y1 - y0;
 
 		return sqrt(dx * dx + dy * dy);
 	}
 
-	bool operator () (const TileCoordinate& c1, const TileCoordinate& c2) const
+    // TODO: simplify these calculations by using internal vec calculations
+	bool operator () (const TileCoordinate& c0, const TileCoordinate& c1) const
     {
-		if (c1.zoom == _center.zoom)
+		if (c0.getZoom() == _center.getZoom())
         {
-			if (c2.zoom == _center.zoom)
+			if (c1.getZoom() == _center.getZoom())
             {
-				double d1 = dist(_center.column, _center.row, c1.column + 0.5, c1.row + 0.5);
-				double d2 = dist(_center.column, _center.row, c2.column + 0.5, c2.row + 0.5);
-				return d1 < d2;
+				double d0 = dist(_center.getColumn(),
+                                 _center.getRow(),
+                                 c0.getColumn() + 0.5,
+                                 c0.getRow() + 0.5);
+
+				double d1 = dist(_center.getColumn(),
+                                 _center.getRow(),
+                                 c1.getColumn() + 0.5,
+                                 c1.getRow() + 0.5);
+
+				return d0 < d1;
 			}
 		}
-		else if (c2.zoom == _center.zoom)
+		else if (c1.getZoom() == _center.getZoom())
         {
 			return false;
 		}
 		else
         {
-			double d1 = fabs(c1.zoom - _center.zoom);
-			double d2 = fabs(c2.zoom - _center.zoom);
-			return d1 < d2;
+			double d0 = fabs(c0.getZoom() - _center.getZoom());
+			double d1 = fabs(c1.getZoom() - _center.getZoom());
+			return d0 < d1;
 		}
 
 		return false;

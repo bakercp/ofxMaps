@@ -35,7 +35,7 @@ GeoLocation::GeoLocation():
 
 
 GeoLocation::GeoLocation(const GeoLocation& location):
-    ofVec2d(location.longitude, location.latitude),
+    ofVec2d(location),
     longitude(x),
     latitude(y)
 {

@@ -56,17 +56,17 @@ public:
     {
 		std::vector<std::string> urls;
 
-        if (rawCoordinate.row >= 0 && rawCoordinate.row < pow(2, rawCoordinate.zoom))
+        if (rawCoordinate.getRow() >= 0 && rawCoordinate.getRow() < pow(2, rawCoordinate.getZoom()))
         {
-			TileCoordinate coordinate = sourceCoordinate(rawCoordinate);
+			TileCoordinate coordinate = normalizeTileCoordinate(rawCoordinate);
 
             std::stringstream url;
 
 			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
 
 			url << "http://"<< subdomain << "tile.openstreetmap.org/";
-            url << (int)coordinate.zoom << "/" << (int)coordinate.column;
-            url << "/" << (int)coordinate.row << ".png";
+            url << (int)coordinate.getZoom() << "/" << (int)coordinate.getColumn();
+            url << "/" << (int)coordinate.getRow() << ".png";
 
             cout << url.str() << endl;
 

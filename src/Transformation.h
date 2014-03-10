@@ -34,15 +34,15 @@ class Transformation
 {
 public:
 	Transformation();
-	Transformation(float _ax,
-                   float _bx,
-                   float _cx,
-                   float _ay,
-                   float _by,
-                   float _cy);
+	Transformation(double _ax,
+                   double _bx,
+                   double _cx,
+                   double _ay,
+                   double _by,
+                   double _cy);
 
-    Point2d transform(const Point2d& point) const;
-	Point2d untransform(const Point2d& point) const;
+    ofVec2d transform(const ofVec2d& point) const;
+	ofVec2d untransform(const ofVec2d& point) const;
 
     double ax;
     double bx;

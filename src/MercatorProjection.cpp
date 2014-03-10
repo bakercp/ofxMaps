@@ -45,16 +45,16 @@ MercatorProjection::~MercatorProjection()
 }
 
 
-Point2d MercatorProjection::rawProject(const Point2d& point) const
+ofVec2d MercatorProjection::rawProject(const ofVec2d& point) const
 {
-	return Point2d(point.x,
+	return ofVec2d(point.x,
                    log(tan(0.25 * PI + 0.5 * point.y))
                    );
 }
 
 
-Point2d MercatorProjection::rawUnproject(const Point2d& point) const
+ofVec2d MercatorProjection::rawUnproject(const ofVec2d& point) const
 {
-	return Point2d(point.x,
+	return ofVec2d(point.x,
                    2.0 * atan(pow(M_E, (double)point.y)) - 0.5 * PI);
 }

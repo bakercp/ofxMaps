@@ -30,6 +30,7 @@
 #include <set>
 #include <map>
 #include "ofMain.h"
+#include "ofxTween.h"
 #include "AbstractMapProvider.h"
 #include "GeoLocation.h"
 #include "TileCoordinate.h"
@@ -42,7 +43,7 @@ public:
 	Map();
     virtual ~Map();
 
-	void setup(AbstractMapProvider::SharedPtr _provider, int _width, int _height);
+	void setup(AbstractMapProvider::SharedPtr provider, int width, int height);
 	void update(ofEventArgs& args);
 	void draw();
 		
@@ -55,41 +56,25 @@ public:
 	void mouseReleased(ofMouseEventArgs& evt);
 	
 	int getZoom() const;
-	GeoLocation getCenter() const ;
-	TileCoordinate getCenterCoordinate() const ;
-	
-	void setCenter(const TileCoordinate& center);
-	void setCenter(const GeoLocation& location);
-	void setCenterZoom(const GeoLocation& location, int zoom);
-	
 	void setZoom(int zoom);
-	void zoom(int dir);
+    void zoom(int zoomStep);
 	void zoomIn();
 	void zoomOut();
+
+	GeoLocation getGeoLocationCenter() const;
+	TileCoordinate getTileCoordinateCenter() const;
 	
-	// TODO: extent functions
-	//	    public function setExtent(extent:MapExtent):void
-	//	    public function getExtent():MapExtent
-	
-	Point2d coordinatePoint(const TileCoordinate& coord) const ;
-	TileCoordinate pointCoordinate(const Point2d& point) const ;
-	Point2d locationPoint(const GeoLocation& location) const ;
-	GeoLocation pointLocation(const Point2d& point) const ;
-	
-	// TODO: pan by proportion of screen size, not by coordinate grid
-	void panUp();
-	void panDown();
-	void panLeft();
-	void panRight();
-	
-	void panAndZoomIn(const GeoLocation& location);
-	void panTo(const GeoLocation& location);
-//	float scaleForZoom(int zoom) const;
-//	float zoomForScale(float scale) const;
-//	int bestZoomForScale(float scale) const;
+	void setPointCenter(const ofVec2d& center);
+	void setGeoLocationCenter(const GeoLocation& location);
+	void setTileCoordinateCenter(const TileCoordinate& center);
+
+	GeoLocation pointToGeolocation(const ofVec2d& point) const;
+	TileCoordinate pointToTileCoordinate(const ofVec2d& point) const;
+
+	ofVec2d geoLocationToPoint(const GeoLocation& location) const;
+    ofVec2d tileCoordinateToPoint(const TileCoordinate& coord) const;
 
 	void requestTile(const TileCoordinate& coord);
-//	void tileDone(const Coordinate& coord, ofImage* img);
 	void processQueue();
 
 
@@ -115,31 +100,25 @@ protected:
 
     unsigned long long _lastClickTime;
 
-    double tx; ///< \brief Pan coordinates x.
-    double ty; ///< \brief Pan coordinates y.
-    double sc; ///< \brief Zoom scale factor.
-
-    double panTargetX;
-    double panTargetY;
-    double scaleTarget;
-
-    double smoothing;
+    ofVec3d _position;
+    ofVec3d _targetPosition;
+    ofxEasingQuad easingQuad;
+    ofxTween positionTween;
 
     ///< \brief The Map tile Provider.
-    AbstractMapProvider::SharedPtr provider;
+    AbstractMapProvider::SharedPtr _provider;
 
     ///< \brief Map Size.
-	int width;
-    int height;
+    ofVec2f _size;
 
-    std::map<TileCoordinate, int> pending; ///< \brief Tiles waiting to load.
+    std::map<TileCoordinate, int> _pending; ///< \brief Tiles waiting to load.
 
-    std::map<TileCoordinate, std::shared_ptr<ofImage> > images; ///< \brief Image store.
-	std::vector<std::shared_ptr<ofImage> > recentImages; /// <\brief Map of the most recent images MAX_IMAGES_TO_KEEP
+    std::map<TileCoordinate, std::shared_ptr<ofImage> > _images; ///< \brief Image store.
+	std::vector<std::shared_ptr<ofImage> > _recentImages; /// <\brief Map of the most recent images MAX_IMAGES_TO_KEEP
 
-	std::vector<TileCoordinate> queue; /// \brief Coordinates waiting to load
+	std::vector<TileCoordinate> _queue; /// \brief Coordinates waiting to load
 
-    std::set<TileCoordinate> visibleCoordinates; /// \brief Coordinates that we can see already.
+    std::set<TileCoordinate> _visibleCoordinates; /// \brief Coordinates that we can see already.
 
 	// for sorting coordinates by zoom
 	//ZoomComparator zoomComparator;
@@ -147,8 +126,9 @@ protected:
 	// for loading tiles from the inside first
 	//QueueSorter queueSorter;
 
-	double px; // previous x
-	double py; // previous y
+    ofVec2f _prevMouse;
 
+//    void updateMapPostion(const ofVec2f& vec, unsigned duration = 1000, unsigned delay = 100, ofxEasingType easing = easeIn);
+//
 
 };

@@ -39,6 +39,10 @@ public:
     TileCoordinate(const TileCoordinate& coordinate);
 	TileCoordinate(double _row, double _column, double _zoom);
 
+    double getColumn() const;
+    double getRow() const;
+    double getZoom() const;
+
 	TileCoordinate container() const;
 	
 	TileCoordinate zoomTo(double destination) const;
@@ -52,6 +56,7 @@ public:
 	bool operator < (const TileCoordinate& c) const;
     TileCoordinate& operator = (const TileCoordinate& rect);
 
+protected:
     // TODO: These should be doubles in the future.
     float& column;
 	float& row;

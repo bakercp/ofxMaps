@@ -35,7 +35,7 @@ void ofApp::setup()
               ofGetWidth(),
               ofGetHeight());
 
-	map.setZoom(3);
+//	map.setZoom(3);
 
 }
 
@@ -50,30 +50,34 @@ void ofApp::draw()
     ofBackground(0);
 
 //    cam.begin();
-//    ofScale(1,-1,1);
-//    ofTranslate(-ofGetWidth()/2, -ofGetHeight()/2);
-    // draw stuff
     map.draw();
 
-//    cam.end();
 
     ofSetColor(255, 127, 255);
 
-    ofDrawBitmapStringHighlight(ofToString(map.getCenter()), 15, 15);
+    ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
+                                ofGetWidth() / 2,
+                                ofGetHeight() / 2);
 
-    Point2d mouse(mouseX, mouseY);
+    ofVec2d mousePosition(mouseX, mouseY);
 
-//    cout << ">>>>" << mouse << endl;
+    ofDrawBitmapStringHighlight(ofToString(map.pointToTileCoordinate(mousePosition)),
+                                mouseX + 16,
+                                mouseY);
 
-    ofDrawBitmapStringHighlight(ofToString(map.pointCoordinate(mouse)), mouseX, mouseY);
-    ofDrawBitmapStringHighlight(ofToString(map.pointLocation(mouse)), mouseX, mouseY + 14);
+    ofDrawBitmapStringHighlight(ofToString(map.pointToGeolocation(mousePosition)),
+                                mouseX + 16,
+                                mouseY + 14);
+
+//    cam.end();
 
 }
 
 
 void ofApp::keyPressed(int key)
 {
-    if (key == 'f' || key == 'F') {
+    if (key == 'f' || key == 'F')
+    {
 		ofToggleFullscreen();
 	}
 }

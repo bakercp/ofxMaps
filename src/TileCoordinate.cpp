@@ -37,7 +37,7 @@ TileCoordinate::TileCoordinate():
 
 
 TileCoordinate::TileCoordinate(const TileCoordinate& coordinate):
-    ofVec3d(coordinate.column, coordinate.row, coordinate.zoom),
+    ofVec3d(coordinate),
     column(x),
     row(y),
     zoom(z)
@@ -51,6 +51,24 @@ TileCoordinate::TileCoordinate(double _row, double _column, double _zoom):
     row(y),
     zoom(z)
 {
+}
+
+
+double TileCoordinate::getColumn() const
+{
+    return column;
+}
+
+
+double TileCoordinate::getRow() const
+{
+    return row;
+}
+
+
+double TileCoordinate::getZoom() const
+{
+    return zoom;
 }
 
 

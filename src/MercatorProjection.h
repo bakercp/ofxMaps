@@ -36,8 +36,8 @@ public:
 
     virtual ~MercatorProjection();
 	
-	Point2d rawProject(const Point2d& point) const;
-	Point2d rawUnproject(const Point2d& point) const;
+	ofVec2d rawProject(const ofVec2d& point) const;
+	ofVec2d rawUnproject(const ofVec2d& point) const;
 
     static const Transformation DEFAULT_TRANSFORMATION;
 };

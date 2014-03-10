@@ -7,7 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		152eaecabd008d84af7f27f83f4389c4 /* ofxEasingLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9a4cfdcea412e8bcdaca9b26fb47846e /* ofxEasingLinear.cpp */; };
+		168c43f69af6a8042ea0b13f08dfe5ff /* easing_terms_of_use.html in Sources */ = {isa = PBXBuildFile; fileRef = 9aaef50558bbdbeb5260fc353bfd02d1 /* easing_terms_of_use.html */; };
+		27765d1bff26bd9a6186915f24dfd27c /* ofxEasingCirc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = a4973cef438c8931b5e03e0a3b5d05b5 /* ofxEasingCirc.cpp */; };
+		2c8501050d6280e792579352af9f1ba3 /* TileCoordinate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45a9388543fe35dd74193401ac7acead /* TileCoordinate.cpp */; };
+		32fc7731c1ef7b87e491c93d78c84b88 /* ofxTween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 497f252390399fcf843297da0271f914 /* ofxTween.cpp */; };
+		4b14cedcc7195a4d1f8e28b4f9635a89 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19c22cd05d10f78b32ff80c6be3a9385 /* ofApp.cpp */; };
+		59eeacb88f062457ff86492c078803bd /* ofxEasingExpo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0f26d4edff0e9ea8cf68b694a2265e4f /* ofxEasingExpo.cpp */; };
+		5e0dbde5736deb3a5886b3f1e3b4578d /* ofxEasingBack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7660dd2be873bad12e3a496d995f14e4 /* ofxEasingBack.cpp */; };
 		5efd2c8334f738bb06eecae9c3cd4256 /* Transformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */; };
+		6d7b53ed56654abbf2ff13b127236c33 /* ofxEasingQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = b9e1db01bd6701283fc879469dcb8bc0 /* ofxEasingQuad.cpp */; };
+		6e062274743f6716a9ad43959541a220 /* ofxEasingElastic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = a26c4a6254126c99f0a65354aa3cbcd0 /* ofxEasingElastic.cpp */; };
+		7e769097de6561633305b24c2ad560e7 /* ofxEasingQuint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = fb8a50f8a34037bcd5dc10d0c3441a16 /* ofxEasingQuint.cpp */; };
+		85a41526fdfa1a8cdaee81f79de999b7 /* ofxEasingQuart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 882494db324414b7b31db11cc14948d9 /* ofxEasingQuart.cpp */; };
+		9266028e1aecbb027abf64d8cfab4b5f /* ofxEasing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26e160699149d8af609734a1b63d80e2 /* ofxEasing.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -20,7 +33,6 @@
 		E45BE9830E8CC7DD009D7055 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9790E8CC7DD009D7055 /* OpenGL.framework */; };
 		E45BE9840E8CC7DD009D7055 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
-		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
 		E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424410CC5A17004149E2 /* AppKit.framework */; };
 		E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424510CC5A17004149E2 /* Cocoa.framework */; };
 		E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424610CC5A17004149E2 /* IOKit.framework */; };
@@ -28,11 +40,13 @@
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985F515E0DE99003869B5 /* Accelerate.framework */; };
-		FD17D4ED18C9908E006CE746 /* TileCoordinate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD17D4EC18C9908E006CE746 /* TileCoordinate.cpp */; };
-		FD17D4EF18C99278006CE746 /* GeoLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD17D4EE18C99278006CE746 /* GeoLocation.cpp */; };
-		FD17D4F518CA4BFF006CE746 /* GeoUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD17D4F318CA4BFF006CE746 /* GeoUtils.cpp */; };
+		b2bb58587e94ba67e8a757bc5a52da77 /* GeoUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = c31eac46a00c2744e56db07049a4b7cc /* GeoUtils.cpp */; };
 		b61f8fe96425ec186bbaa4a8221936cb /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */; };
 		db2ffacfd5a99fdad931d43ba804882a /* MercatorProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */; };
+		e7701281eee865bbe237bbfaa5880990 /* GeoLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ccd92ad7a37c3a7a46d99222e6fea72 /* GeoLocation.cpp */; };
+		e816d7d242d315fb53e23f5443df8700 /* ofxEasingCubic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34aa5dbaf88c8b757b46d40d80b9047b /* ofxEasingCubic.cpp */; };
+		ead3ce0789481f975f351f39ee5137c4 /* ofxEasingBounce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00b7e2794a10f926df6305296b86a351 /* ofxEasingBounce.cpp */; };
+		fe278f5f783581237ae8ecb25ea719bb /* ofxEasingSine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5faba58c3070af2f33e8c257343cea16 /* ofxEasingSine.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,13 +80,34 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00b7e2794a10f926df6305296b86a351 /* ofxEasingBounce.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingBounce.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingBounce.cpp; sourceTree = SOURCE_ROOT; };
+		0885f0a9a73c9a884cbc24d08fa8e747 /* TileCoordinate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = TileCoordinate.h; path = ../../../addons/ofxSlippyMaps/src/TileCoordinate.h; sourceTree = SOURCE_ROOT; };
+		0f26d4edff0e9ea8cf68b694a2265e4f /* ofxEasingExpo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingExpo.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingExpo.cpp; sourceTree = SOURCE_ROOT; };
+		19c22cd05d10f78b32ff80c6be3a9385 /* ofApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofApp.cpp; path = src/ofApp.cpp; sourceTree = SOURCE_ROOT; };
+		1c58a40b5d55d3882ff5fbdac37057b8 /* Types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Types.h; path = ../../../addons/ofxSlippyMaps/src/Types.h; sourceTree = SOURCE_ROOT; };
+		1ccd92ad7a37c3a7a46d99222e6fea72 /* GeoLocation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = GeoLocation.cpp; path = ../../../addons/ofxSlippyMaps/src/GeoLocation.cpp; sourceTree = SOURCE_ROOT; };
 		267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MercatorProjection.cpp; path = ../../../addons/ofxSlippyMaps/src/MercatorProjection.cpp; sourceTree = SOURCE_ROOT; };
+		26e160699149d8af609734a1b63d80e2 /* ofxEasing.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasing.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasing.cpp; sourceTree = SOURCE_ROOT; };
 		29498e24c920f691476b32a555a9b1bc /* QueueSorter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = QueueSorter.h; path = ../../../addons/ofxSlippyMaps/src/QueueSorter.h; sourceTree = SOURCE_ROOT; };
 		2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Map.cpp; path = ../../../addons/ofxSlippyMaps/src/Map.cpp; sourceTree = SOURCE_ROOT; };
+		34aa5dbaf88c8b757b46d40d80b9047b /* ofxEasingCubic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingCubic.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingCubic.cpp; sourceTree = SOURCE_ROOT; };
+		371a28a61019c73a304e097e5318dfd2 /* CloudMadeMapProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = CloudMadeMapProvider.h; path = ../../../addons/ofxSlippyMaps/src/CloudMadeMapProvider.h; sourceTree = SOURCE_ROOT; };
+		3dc6648a0468fbecb5e45b57040e9eb5 /* ofxTween.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxTween.h; path = ../../../addons/ofxTween/src/ofxTween.h; sourceTree = SOURCE_ROOT; };
+		45a9388543fe35dd74193401ac7acead /* TileCoordinate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = TileCoordinate.cpp; path = ../../../addons/ofxSlippyMaps/src/TileCoordinate.cpp; sourceTree = SOURCE_ROOT; };
+		497f252390399fcf843297da0271f914 /* ofxTween.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxTween.cpp; path = ../../../addons/ofxTween/src/ofxTween.cpp; sourceTree = SOURCE_ROOT; };
+		4c0e055e4176057631087aa3938a7c76 /* ofxEasingQuart.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingQuart.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingQuart.h; sourceTree = SOURCE_ROOT; };
 		52006cd748c58fd3794135a8d57efa28 /* Transformation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Transformation.h; path = ../../../addons/ofxSlippyMaps/src/Transformation.h; sourceTree = SOURCE_ROOT; };
-		79a719da07a739ac8493149d7fd09ced /* GeoLocation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = GeoLocation.h; path = ../../../addons/ofxSlippyMaps/src/GeoLocation.h; sourceTree = SOURCE_ROOT; };
+		5e9e6513bec36148928518b774158396 /* ofxEasingQuint.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingQuint.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingQuint.h; sourceTree = SOURCE_ROOT; };
+		5faba58c3070af2f33e8c257343cea16 /* ofxEasingSine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingSine.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingSine.cpp; sourceTree = SOURCE_ROOT; };
+		7599804c6260ec1cd8d3567dc11aa06a /* ofxEasingLinear.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingLinear.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingLinear.h; sourceTree = SOURCE_ROOT; };
+		7660dd2be873bad12e3a496d995f14e4 /* ofxEasingBack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingBack.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingBack.cpp; sourceTree = SOURCE_ROOT; };
+		767479279ebac134d46e74e76dc9f79f /* ofxEasingExpo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingExpo.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingExpo.h; sourceTree = SOURCE_ROOT; };
+		7912619b786f0238d22ed5f3c10786f2 /* ofxEasingBack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingBack.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingBack.h; sourceTree = SOURCE_ROOT; };
+		84f6287fa54b66c746947875f6690182 /* ofApp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofApp.h; path = src/ofApp.h; sourceTree = SOURCE_ROOT; };
+		882494db324414b7b31db11cc14948d9 /* ofxEasingQuart.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingQuart.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingQuart.cpp; sourceTree = SOURCE_ROOT; };
 		91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Transformation.cpp; path = ../../../addons/ofxSlippyMaps/src/Transformation.cpp; sourceTree = SOURCE_ROOT; };
-		98014e4de8fe1477e92a42093653fc36 /* TileCoordinate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = TileCoordinate.h; path = ../../../addons/ofxSlippyMaps/src/TileCoordinate.h; sourceTree = SOURCE_ROOT; };
+		9a4cfdcea412e8bcdaca9b26fb47846e /* ofxEasingLinear.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingLinear.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingLinear.cpp; sourceTree = SOURCE_ROOT; };
+		9aaef50558bbdbeb5260fc353bfd02d1 /* easing_terms_of_use.html */ = {isa = PBXFileReference; explicitFileType = file; fileEncoding = 30; name = easing_terms_of_use.html; path = ../../../addons/ofxTween/src/Easings/easing_terms_of_use.html; sourceTree = SOURCE_ROOT; };
 		9f01669f36e4b4e82122b27138b795c1 /* Map.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Map.h; path = ../../../addons/ofxSlippyMaps/src/Map.h; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -87,8 +122,6 @@
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		E4B69B5B0A3A1756003C02F2 /* exampleDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = exampleDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
-		E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofApp.cpp; path = src/ofApp.cpp; sourceTree = SOURCE_ROOT; };
-		E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ofApp.h; path = src/ofApp.h; sourceTree = SOURCE_ROOT; };
 		E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = "openFrameworks-Info.plist"; sourceTree = "<group>"; };
 		E4C2424410CC5A17004149E2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		E4C2424510CC5A17004149E2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -98,17 +131,24 @@
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F985F515E0DE99003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
-		FD17D4EB18C96084006CE746 /* AbstractTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractTypes.h; path = ../src/AbstractTypes.h; sourceTree = "<group>"; };
-		FD17D4EC18C9908E006CE746 /* TileCoordinate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileCoordinate.cpp; path = ../src/TileCoordinate.cpp; sourceTree = "<group>"; };
-		FD17D4EE18C99278006CE746 /* GeoLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeoLocation.cpp; path = ../src/GeoLocation.cpp; sourceTree = "<group>"; };
-		FD17D4F018C9953F006CE746 /* CloudMadeMapProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CloudMadeMapProvider.h; path = ../src/CloudMadeMapProvider.h; sourceTree = "<group>"; };
-		FD17D4F318CA4BFF006CE746 /* GeoUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeoUtils.cpp; path = ../src/GeoUtils.cpp; sourceTree = "<group>"; };
-		FD17D4F418CA4BFF006CE746 /* GeoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoUtils.h; path = ../src/GeoUtils.h; sourceTree = "<group>"; };
-		FDD98C1F18CE15D200390D4A /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Types.h; path = ../src/Types.h; sourceTree = "<group>"; };
+		a26c4a6254126c99f0a65354aa3cbcd0 /* ofxEasingElastic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingElastic.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingElastic.cpp; sourceTree = SOURCE_ROOT; };
+		a4973cef438c8931b5e03e0a3b5d05b5 /* ofxEasingCirc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingCirc.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingCirc.cpp; sourceTree = SOURCE_ROOT; };
+		a9fe46c20e767b29c5997ad3a88b9f7b /* ofxEasingBounce.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingBounce.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingBounce.h; sourceTree = SOURCE_ROOT; };
+		af17eb492db2858a0ebd94cd64092fb9 /* ofxEasingCirc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingCirc.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingCirc.h; sourceTree = SOURCE_ROOT; };
+		b07c508e7717e6c892502adf5fddc285 /* ofxEasingQuad.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingQuad.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingQuad.h; sourceTree = SOURCE_ROOT; };
+		b788152c3fe538e700d063c7d17da903 /* ofxEasingCubic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingCubic.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingCubic.h; sourceTree = SOURCE_ROOT; };
 		b803f00e45b7cd5844ec97364abb7961 /* AbstractMapProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractMapProvider.h; path = ../../../addons/ofxSlippyMaps/src/AbstractMapProvider.h; sourceTree = SOURCE_ROOT; };
+		b9e1db01bd6701283fc879469dcb8bc0 /* ofxEasingQuad.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingQuad.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingQuad.cpp; sourceTree = SOURCE_ROOT; };
 		be496f1beef700bc7918040629ced3fa /* AbstractProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractProjection.h; path = ../../../addons/ofxSlippyMaps/src/AbstractProjection.h; sourceTree = SOURCE_ROOT; };
 		c0cd43066b704dba0869dda4d3ec9293 /* OpenStreetMapProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OpenStreetMapProvider.h; path = ../../../addons/ofxSlippyMaps/src/OpenStreetMapProvider.h; sourceTree = SOURCE_ROOT; };
+		c31eac46a00c2744e56db07049a4b7cc /* GeoUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = GeoUtils.cpp; path = ../../../addons/ofxSlippyMaps/src/GeoUtils.cpp; sourceTree = SOURCE_ROOT; };
 		c9f80be3837ab3ee28dbdab545c6f095 /* MercatorProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MercatorProjection.h; path = ../../../addons/ofxSlippyMaps/src/MercatorProjection.h; sourceTree = SOURCE_ROOT; };
+		d2a80d495975fc41ac7ec949114fcd92 /* GeoUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = GeoUtils.h; path = ../../../addons/ofxSlippyMaps/src/GeoUtils.h; sourceTree = SOURCE_ROOT; };
+		dd476420fbc881796f865bb5fa4c12c7 /* ofxEasingSine.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingSine.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingSine.h; sourceTree = SOURCE_ROOT; };
+		ddf2a1cbe84f3fca25aaa45e8c8369ba /* GeoLocation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = GeoLocation.h; path = ../../../addons/ofxSlippyMaps/src/GeoLocation.h; sourceTree = SOURCE_ROOT; };
+		fb8a50f8a34037bcd5dc10d0c3441a16 /* ofxEasingQuint.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxEasingQuint.cpp; path = ../../../addons/ofxTween/src/Easings/ofxEasingQuint.cpp; sourceTree = SOURCE_ROOT; };
+		fc9b34c5cb5b0acaff02ed20e6f129e7 /* ofxEasing.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasing.h; path = ../../../addons/ofxTween/src/Easings/ofxEasing.h; sourceTree = SOURCE_ROOT; };
+		fe4db52d544b8c725e615958d18ecbc4 /* ofxEasingElastic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxEasingElastic.h; path = ../../../addons/ofxTween/src/Easings/ofxEasingElastic.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,28 +179,45 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1f293a20d2b096d59c4f24ddc5226665 /* ofxTween */ = {
+			isa = PBXGroup;
+			children = (
+				81b62db6c371dad643503fef78aa1855 /* src */,
+			);
+			name = ofxTween;
+			sourceTree = "<group>";
+		};
+		81b62db6c371dad643503fef78aa1855 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				b59ddd3c0eb9ffc71f28869b15a0ff91 /* Easings */,
+				497f252390399fcf843297da0271f914 /* ofxTween.cpp */,
+				3dc6648a0468fbecb5e45b57040e9eb5 /* ofxTween.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
 		9e4f9619d79fc613abae34933a035878 /* src */ = {
 			isa = PBXGroup;
 			children = (
 				b803f00e45b7cd5844ec97364abb7961 /* AbstractMapProvider.h */,
 				be496f1beef700bc7918040629ced3fa /* AbstractProjection.h */,
-				98014e4de8fe1477e92a42093653fc36 /* TileCoordinate.h */,
-				FD17D4EC18C9908E006CE746 /* TileCoordinate.cpp */,
-				79a719da07a739ac8493149d7fd09ced /* GeoLocation.h */,
-				FD17D4EE18C99278006CE746 /* GeoLocation.cpp */,
-				FD17D4F318CA4BFF006CE746 /* GeoUtils.cpp */,
-				FD17D4F418CA4BFF006CE746 /* GeoUtils.h */,
+				371a28a61019c73a304e097e5318dfd2 /* CloudMadeMapProvider.h */,
+				1ccd92ad7a37c3a7a46d99222e6fea72 /* GeoLocation.cpp */,
+				ddf2a1cbe84f3fca25aaa45e8c8369ba /* GeoLocation.h */,
+				c31eac46a00c2744e56db07049a4b7cc /* GeoUtils.cpp */,
+				d2a80d495975fc41ac7ec949114fcd92 /* GeoUtils.h */,
 				2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */,
 				9f01669f36e4b4e82122b27138b795c1 /* Map.h */,
 				267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */,
 				c9f80be3837ab3ee28dbdab545c6f095 /* MercatorProjection.h */,
-				FD17D4F018C9953F006CE746 /* CloudMadeMapProvider.h */,
 				c0cd43066b704dba0869dda4d3ec9293 /* OpenStreetMapProvider.h */,
 				29498e24c920f691476b32a555a9b1bc /* QueueSorter.h */,
+				45a9388543fe35dd74193401ac7acead /* TileCoordinate.cpp */,
+				0885f0a9a73c9a884cbc24d08fa8e747 /* TileCoordinate.h */,
 				91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */,
 				52006cd748c58fd3794135a8d57efa28 /* Transformation.h */,
-				FD17D4EB18C96084006CE746 /* AbstractTypes.h */,
-				FDD98C1F18CE15D200390D4A /* Types.h */,
+				1c58a40b5d55d3882ff5fbdac37057b8 /* Types.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -169,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				e4dfc6f51b181853beae9fff00f84344 /* ofxSlippyMaps */,
+				1f293a20d2b096d59c4f24ddc5226665 /* ofxTween */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -237,8 +295,8 @@
 			isa = PBXGroup;
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
-				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
-				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
+				19c22cd05d10f78b32ff80c6be3a9385 /* ofApp.cpp */,
+				84f6287fa54b66c746947875f6690182 /* ofApp.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -250,6 +308,38 @@
 				E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */,
 			);
 			name = openFrameworks;
+			sourceTree = "<group>";
+		};
+		b59ddd3c0eb9ffc71f28869b15a0ff91 /* Easings */ = {
+			isa = PBXGroup;
+			children = (
+				9aaef50558bbdbeb5260fc353bfd02d1 /* easing_terms_of_use.html */,
+				26e160699149d8af609734a1b63d80e2 /* ofxEasing.cpp */,
+				fc9b34c5cb5b0acaff02ed20e6f129e7 /* ofxEasing.h */,
+				7660dd2be873bad12e3a496d995f14e4 /* ofxEasingBack.cpp */,
+				7912619b786f0238d22ed5f3c10786f2 /* ofxEasingBack.h */,
+				00b7e2794a10f926df6305296b86a351 /* ofxEasingBounce.cpp */,
+				a9fe46c20e767b29c5997ad3a88b9f7b /* ofxEasingBounce.h */,
+				a4973cef438c8931b5e03e0a3b5d05b5 /* ofxEasingCirc.cpp */,
+				af17eb492db2858a0ebd94cd64092fb9 /* ofxEasingCirc.h */,
+				34aa5dbaf88c8b757b46d40d80b9047b /* ofxEasingCubic.cpp */,
+				b788152c3fe538e700d063c7d17da903 /* ofxEasingCubic.h */,
+				a26c4a6254126c99f0a65354aa3cbcd0 /* ofxEasingElastic.cpp */,
+				fe4db52d544b8c725e615958d18ecbc4 /* ofxEasingElastic.h */,
+				0f26d4edff0e9ea8cf68b694a2265e4f /* ofxEasingExpo.cpp */,
+				767479279ebac134d46e74e76dc9f79f /* ofxEasingExpo.h */,
+				9a4cfdcea412e8bcdaca9b26fb47846e /* ofxEasingLinear.cpp */,
+				7599804c6260ec1cd8d3567dc11aa06a /* ofxEasingLinear.h */,
+				b9e1db01bd6701283fc879469dcb8bc0 /* ofxEasingQuad.cpp */,
+				b07c508e7717e6c892502adf5fddc285 /* ofxEasingQuad.h */,
+				882494db324414b7b31db11cc14948d9 /* ofxEasingQuart.cpp */,
+				4c0e055e4176057631087aa3938a7c76 /* ofxEasingQuart.h */,
+				fb8a50f8a34037bcd5dc10d0c3441a16 /* ofxEasingQuint.cpp */,
+				5e9e6513bec36148928518b774158396 /* ofxEasingQuint.h */,
+				5faba58c3070af2f33e8c257343cea16 /* ofxEasingSine.cpp */,
+				dd476420fbc881796f865bb5fa4c12c7 /* ofxEasingSine.h */,
+			);
+			name = Easings;
 			sourceTree = "<group>";
 		};
 		e4dfc6f51b181853beae9fff00f84344 /* ofxSlippyMaps */ = {
@@ -348,13 +438,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
-				FD17D4F518CA4BFF006CE746 /* GeoUtils.cpp in Sources */,
-				FD17D4ED18C9908E006CE746 /* TileCoordinate.cpp in Sources */,
-				FD17D4EF18C99278006CE746 /* GeoLocation.cpp in Sources */,
-				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
+				4b14cedcc7195a4d1f8e28b4f9635a89 /* ofApp.cpp in Sources */,
+				e7701281eee865bbe237bbfaa5880990 /* GeoLocation.cpp in Sources */,
+				b2bb58587e94ba67e8a757bc5a52da77 /* GeoUtils.cpp in Sources */,
 				b61f8fe96425ec186bbaa4a8221936cb /* Map.cpp in Sources */,
 				db2ffacfd5a99fdad931d43ba804882a /* MercatorProjection.cpp in Sources */,
+				2c8501050d6280e792579352af9f1ba3 /* TileCoordinate.cpp in Sources */,
 				5efd2c8334f738bb06eecae9c3cd4256 /* Transformation.cpp in Sources */,
+				168c43f69af6a8042ea0b13f08dfe5ff /* easing_terms_of_use.html in Sources */,
+				9266028e1aecbb027abf64d8cfab4b5f /* ofxEasing.cpp in Sources */,
+				5e0dbde5736deb3a5886b3f1e3b4578d /* ofxEasingBack.cpp in Sources */,
+				ead3ce0789481f975f351f39ee5137c4 /* ofxEasingBounce.cpp in Sources */,
+				27765d1bff26bd9a6186915f24dfd27c /* ofxEasingCirc.cpp in Sources */,
+				e816d7d242d315fb53e23f5443df8700 /* ofxEasingCubic.cpp in Sources */,
+				6e062274743f6716a9ad43959541a220 /* ofxEasingElastic.cpp in Sources */,
+				59eeacb88f062457ff86492c078803bd /* ofxEasingExpo.cpp in Sources */,
+				152eaecabd008d84af7f27f83f4389c4 /* ofxEasingLinear.cpp in Sources */,
+				6d7b53ed56654abbf2ff13b127236c33 /* ofxEasingQuad.cpp in Sources */,
+				85a41526fdfa1a8cdaee81f79de999b7 /* ofxEasingQuart.cpp in Sources */,
+				7e769097de6561633305b24c2ad560e7 /* ofxEasingQuint.cpp in Sources */,
+				fe278f5f783581237ae8ecb25ea719bb /* ofxEasingSine.cpp in Sources */,
+				32fc7731c1ef7b87e491c93d78c84b88 /* ofxTween.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,6 +499,9 @@
 					src,
 					../../../addons/ofxSlippyMaps/libs,
 					../../../addons/ofxSlippyMaps/src,
+					../../../addons/ofxTween/libs,
+					../../../addons/ofxTween/src,
+					../../../addons/ofxTween/src/Easings,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -433,6 +540,9 @@
 					src,
 					../../../addons/ofxSlippyMaps/libs,
 					../../../addons/ofxSlippyMaps/src,
+					../../../addons/ofxTween/libs,
+					../../../addons/ofxTween/src,
+					../../../addons/ofxTween/src/Easings,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CPLUSPLUSFLAGS = (

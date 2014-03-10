@@ -50,35 +50,37 @@ public:
 //    virtual int getMinZoom() const = 0;
 //    virtual int getMaxZoom() const = 0;
 
-	TileCoordinate locationCoordinate(const GeoLocation& location) const
+	TileCoordinate geoLocationToTileCoordinate(const GeoLocation& location) const
     {
-		return _projection->locationCoordinate(location);
+		return _projection->geoLocationToTileCoordinate(location);
 	}
 	
-	GeoLocation coordinateLocation(const TileCoordinate& coordinate) const
-    {
-		return _projection->coordinateLocation(coordinate);
-	}
-	
-	TileCoordinate sourceCoordinate(const TileCoordinate& coordinate) const
-    {
-		double gridSize = pow(2.0, (double)coordinate.zoom);
 
-		double wrappedColumn = fmod((double)coordinate.column, (double)gridSize);
+    GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const
+    {
+		return _projection->tileCoordinateToGeoLocation(coordinate);
+	}
+
+
+    TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate) const
+    {
+		double gridSize = pow(2.0, coordinate.getZoom());
+
+		double wrappedColumn = fmod(coordinate.getColumn(), gridSize);
 
 		while (wrappedColumn < 0)
         {
 			wrappedColumn += gridSize;
 		}
 
-		double wrappedRow = fmod((double)coordinate.row, (double)gridSize);
+		double wrappedRow = fmod(coordinate.getRow(), gridSize);
 
 		while (wrappedRow < 0)
         {
 			wrappedRow += gridSize;
 		}
 
-		return TileCoordinate(wrappedRow, wrappedColumn, coordinate.zoom);
+		return TileCoordinate(wrappedRow, wrappedColumn, coordinate.getZoom());
 	}
 
     double scaleForZoom(int zoom) const

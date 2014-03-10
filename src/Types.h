@@ -26,9 +26,16 @@
 #pragma once
 
 
+#include <vector>
 #include "ofVec2f.h"
 #include "ofVec3f.h"
 
 
+class GeoLocation;
+
+
 typedef ofVec2f ofVec2d; ///< For now, we pretend to use double precision.
 typedef ofVec3f ofVec3d; ///< For now, we pretend to use double precision.
+
+
+typedef std::vector<GeoLocation> GeoPolyline;
