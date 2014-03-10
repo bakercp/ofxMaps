@@ -24,18 +24,17 @@
 // =============================================================================
 
 
-#include "AbstractTileProvider.h"
+#include "AbstractMapProvider.h"
 #include "MercatorProjection.h"
 
 
-class OpenStreetMapProvider: public AbstractTileProvider
+class OpenStreetMapProvider: public AbstractMapProvider
 {
 public:
     typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
 
 	OpenStreetMapProvider():
-		// this is the projection and transform you'll want for any Google-style map tile source:
-		AbstractTileProvider(AbstractProjection::SharedPtr(new MercatorProjection(26)))
+		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(26)))
 	{
 		_subdomains.push_back("");
 		_subdomains.push_back("a.");
@@ -53,21 +52,23 @@ public:
 		return 256;
 	}
 	
-    std::vector<std::string> getTileUrls(const Coordinate& rawCoordinate) const
+    std::vector<std::string> getTileUrls(const TileCoordinate& rawCoordinate) const
     {
 		std::vector<std::string> urls;
 
         if (rawCoordinate.row >= 0 && rawCoordinate.row < pow(2, rawCoordinate.zoom))
         {
-			Coordinate coordinate = sourceCoordinate(rawCoordinate);
+			TileCoordinate coordinate = sourceCoordinate(rawCoordinate);
 
             std::stringstream url;
 
 			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
 
-			url << "http://" << subdomain << "tile.openstreetmap.org/";
+			url << "http://"<< subdomain << "tile.openstreetmap.org/";
             url << (int)coordinate.zoom << "/" << (int)coordinate.column;
             url << "/" << (int)coordinate.row << ".png";
+
+            cout << url.str() << endl;
 
 			urls.push_back(url.str());
 		}

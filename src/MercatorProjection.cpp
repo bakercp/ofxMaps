@@ -25,7 +25,6 @@
 
 
 #include "MercatorProjection.h"
-#include "Point2d.h"
 
 
 const Transformation MercatorProjection::DEFAULT_TRANSFORMATION = Transformation(1.068070779e7,
@@ -57,5 +56,5 @@ Point2d MercatorProjection::rawProject(const Point2d& point) const
 Point2d MercatorProjection::rawUnproject(const Point2d& point) const
 {
 	return Point2d(point.x,
-                   2.0 * atan(pow(M_E, point.y)) - 0.5 * PI);
+                   2.0 * atan(pow(M_E, (double)point.y)) - 0.5 * PI);
 }

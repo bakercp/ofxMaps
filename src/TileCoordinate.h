@@ -27,43 +27,34 @@
 #pragma once
 
 
-class Location
+#include <math.h>
+#include "Types.h"
+
+
+// the position and zoom
+class TileCoordinate: public ofVec3d
 {
 public:
-	Location():
-        lat(0),
-        lon(0)
-    {
-    }
-	
-	Location(double _lat, double _lon):
-        lat(_lat),
-        lon(_lon)
-    {
-    }
-	
-	Location(const Location &location):
-        lat(location.lat),
-        lon(location.lon)
-    {
-    }
-	
-	friend std::ostream& operator << (std::ostream &stream, const Location& l)
-    {
-		// TODO: number format
-		stream << "(" << l.lat << ", " << l.lon << ")";
-		return stream;
-	}
-	
-    bool operator == (const Location &l) const
-    {
-        return l.lat == lat
-            && l.lon == lon;
-    }
+	TileCoordinate();
+    TileCoordinate(const TileCoordinate& coordinate);
+	TileCoordinate(double _row, double _column, double _zoom);
 
-    double lat;
-    double lon;
+	TileCoordinate container() const;
+	
+	TileCoordinate zoomTo(double destination) const;
+	TileCoordinate zoomBy(double distance) const;
+	
+	TileCoordinate up(double distance = 1) const;
+	TileCoordinate right(double distance = 1) const;
+	TileCoordinate down(double distance = 1) const;
+	TileCoordinate left(double distance = 1) const;
+
+	bool operator < (const TileCoordinate& c) const;
+    TileCoordinate& operator = (const TileCoordinate& rect);
+
+    // TODO: These should be doubles in the future.
+    float& column;
+	float& row;
+	float& zoom;
 
 };
-
-

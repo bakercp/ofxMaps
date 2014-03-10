@@ -24,20 +24,4 @@
 // =============================================================================
 
 
-#include "AbstractProjection.h"
-#include "Types.h"
-#include "Transformation.h"
-
-
-class MercatorProjection: public AbstractProjection
-{
-public:	
-    MercatorProjection(double zoom, Transformation t = DEFAULT_TRANSFORMATION);
-
-    virtual ~MercatorProjection();
-	
-	Point2d rawProject(const Point2d& point) const;
-	Point2d rawUnproject(const Point2d& point) const;
-
-    static const Transformation DEFAULT_TRANSFORMATION;
-};
+#include "GeoUtils.h"

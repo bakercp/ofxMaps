@@ -36,6 +36,7 @@ void ofApp::setup()
               ofGetHeight());
 
 	map.setZoom(3);
+
 }
 
 
@@ -46,7 +47,27 @@ void ofApp::update()
 
 void ofApp::draw()
 {
+    ofBackground(0);
+
+//    cam.begin();
+//    ofScale(1,-1,1);
+//    ofTranslate(-ofGetWidth()/2, -ofGetHeight()/2);
+    // draw stuff
     map.draw();
+
+//    cam.end();
+
+    ofSetColor(255, 127, 255);
+
+    ofDrawBitmapStringHighlight(ofToString(map.getCenter()), 15, 15);
+
+    Point2d mouse(mouseX, mouseY);
+
+//    cout << ">>>>" << mouse << endl;
+
+    ofDrawBitmapStringHighlight(ofToString(map.pointCoordinate(mouse)), mouseX, mouseY);
+    ofDrawBitmapStringHighlight(ofToString(map.pointLocation(mouse)), mouseX, mouseY + 14);
+
 }
 
 

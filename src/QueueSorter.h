@@ -26,13 +26,13 @@
 #pragma once
 
 
-#include "Coordinate.h"
+#include "TileCoordinate.h"
 
 
 class QueueSorter
 {
 public:
-	QueueSorter(const Coordinate& center): _center(center)
+	QueueSorter(const TileCoordinate& center): _center(center)
     {
     }
 	
@@ -44,7 +44,7 @@ public:
 		return sqrt(dx * dx + dy * dy);
 	}
 
-	bool operator () (const Coordinate &c1, const Coordinate &c2) const
+	bool operator () (const TileCoordinate& c1, const TileCoordinate& c2) const
     {
 		if (c1.zoom == _center.zoom)
         {
@@ -70,6 +70,6 @@ public:
 	}
 
 protected:
-    Coordinate _center;
+    TileCoordinate _center;
 
 };

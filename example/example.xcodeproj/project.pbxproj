@@ -28,6 +28,9 @@
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985F515E0DE99003869B5 /* Accelerate.framework */; };
+		FD17D4ED18C9908E006CE746 /* TileCoordinate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD17D4EC18C9908E006CE746 /* TileCoordinate.cpp */; };
+		FD17D4EF18C99278006CE746 /* GeoLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD17D4EE18C99278006CE746 /* GeoLocation.cpp */; };
+		FD17D4F518CA4BFF006CE746 /* GeoUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD17D4F318CA4BFF006CE746 /* GeoUtils.cpp */; };
 		b61f8fe96425ec186bbaa4a8221936cb /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */; };
 		db2ffacfd5a99fdad931d43ba804882a /* MercatorProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */; };
 /* End PBXBuildFile section */
@@ -65,12 +68,11 @@
 /* Begin PBXFileReference section */
 		267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MercatorProjection.cpp; path = ../../../addons/ofxSlippyMaps/src/MercatorProjection.cpp; sourceTree = SOURCE_ROOT; };
 		29498e24c920f691476b32a555a9b1bc /* QueueSorter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = QueueSorter.h; path = ../../../addons/ofxSlippyMaps/src/QueueSorter.h; sourceTree = SOURCE_ROOT; };
-		29da1f6cdeb605a94911e0df555f48b8 /* Point2d.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Point2d.h; path = ../../../addons/ofxSlippyMaps/src/Point2d.h; sourceTree = SOURCE_ROOT; };
 		2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Map.cpp; path = ../../../addons/ofxSlippyMaps/src/Map.cpp; sourceTree = SOURCE_ROOT; };
 		52006cd748c58fd3794135a8d57efa28 /* Transformation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Transformation.h; path = ../../../addons/ofxSlippyMaps/src/Transformation.h; sourceTree = SOURCE_ROOT; };
-		79a719da07a739ac8493149d7fd09ced /* Location.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Location.h; path = ../../../addons/ofxSlippyMaps/src/Location.h; sourceTree = SOURCE_ROOT; };
+		79a719da07a739ac8493149d7fd09ced /* GeoLocation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = GeoLocation.h; path = ../../../addons/ofxSlippyMaps/src/GeoLocation.h; sourceTree = SOURCE_ROOT; };
 		91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Transformation.cpp; path = ../../../addons/ofxSlippyMaps/src/Transformation.cpp; sourceTree = SOURCE_ROOT; };
-		98014e4de8fe1477e92a42093653fc36 /* Coordinate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Coordinate.h; path = ../../../addons/ofxSlippyMaps/src/Coordinate.h; sourceTree = SOURCE_ROOT; };
+		98014e4de8fe1477e92a42093653fc36 /* TileCoordinate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = TileCoordinate.h; path = ../../../addons/ofxSlippyMaps/src/TileCoordinate.h; sourceTree = SOURCE_ROOT; };
 		9f01669f36e4b4e82122b27138b795c1 /* Map.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Map.h; path = ../../../addons/ofxSlippyMaps/src/Map.h; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -97,7 +99,13 @@
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F985F515E0DE99003869B5 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
 		FD17D4EB18C96084006CE746 /* AbstractTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractTypes.h; path = ../src/AbstractTypes.h; sourceTree = "<group>"; };
-		b803f00e45b7cd5844ec97364abb7961 /* AbstractTileProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractTileProvider.h; path = ../../../addons/ofxSlippyMaps/src/AbstractTileProvider.h; sourceTree = SOURCE_ROOT; };
+		FD17D4EC18C9908E006CE746 /* TileCoordinate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileCoordinate.cpp; path = ../src/TileCoordinate.cpp; sourceTree = "<group>"; };
+		FD17D4EE18C99278006CE746 /* GeoLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeoLocation.cpp; path = ../src/GeoLocation.cpp; sourceTree = "<group>"; };
+		FD17D4F018C9953F006CE746 /* CloudMadeMapProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CloudMadeMapProvider.h; path = ../src/CloudMadeMapProvider.h; sourceTree = "<group>"; };
+		FD17D4F318CA4BFF006CE746 /* GeoUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeoUtils.cpp; path = ../src/GeoUtils.cpp; sourceTree = "<group>"; };
+		FD17D4F418CA4BFF006CE746 /* GeoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoUtils.h; path = ../src/GeoUtils.h; sourceTree = "<group>"; };
+		FDD98C1F18CE15D200390D4A /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Types.h; path = ../src/Types.h; sourceTree = "<group>"; };
+		b803f00e45b7cd5844ec97364abb7961 /* AbstractMapProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractMapProvider.h; path = ../../../addons/ofxSlippyMaps/src/AbstractMapProvider.h; sourceTree = SOURCE_ROOT; };
 		be496f1beef700bc7918040629ced3fa /* AbstractProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = AbstractProjection.h; path = ../../../addons/ofxSlippyMaps/src/AbstractProjection.h; sourceTree = SOURCE_ROOT; };
 		c0cd43066b704dba0869dda4d3ec9293 /* OpenStreetMapProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OpenStreetMapProvider.h; path = ../../../addons/ofxSlippyMaps/src/OpenStreetMapProvider.h; sourceTree = SOURCE_ROOT; };
 		c9f80be3837ab3ee28dbdab545c6f095 /* MercatorProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MercatorProjection.h; path = ../../../addons/ofxSlippyMaps/src/MercatorProjection.h; sourceTree = SOURCE_ROOT; };
@@ -134,20 +142,25 @@
 		9e4f9619d79fc613abae34933a035878 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				b803f00e45b7cd5844ec97364abb7961 /* AbstractTileProvider.h */,
+				b803f00e45b7cd5844ec97364abb7961 /* AbstractMapProvider.h */,
 				be496f1beef700bc7918040629ced3fa /* AbstractProjection.h */,
-				98014e4de8fe1477e92a42093653fc36 /* Coordinate.h */,
-				79a719da07a739ac8493149d7fd09ced /* Location.h */,
+				98014e4de8fe1477e92a42093653fc36 /* TileCoordinate.h */,
+				FD17D4EC18C9908E006CE746 /* TileCoordinate.cpp */,
+				79a719da07a739ac8493149d7fd09ced /* GeoLocation.h */,
+				FD17D4EE18C99278006CE746 /* GeoLocation.cpp */,
+				FD17D4F318CA4BFF006CE746 /* GeoUtils.cpp */,
+				FD17D4F418CA4BFF006CE746 /* GeoUtils.h */,
 				2bfbd7a1efaf7c0b5b111b820334ae30 /* Map.cpp */,
 				9f01669f36e4b4e82122b27138b795c1 /* Map.h */,
 				267703e7e09dbf1b2b1afe5aaa365425 /* MercatorProjection.cpp */,
 				c9f80be3837ab3ee28dbdab545c6f095 /* MercatorProjection.h */,
+				FD17D4F018C9953F006CE746 /* CloudMadeMapProvider.h */,
 				c0cd43066b704dba0869dda4d3ec9293 /* OpenStreetMapProvider.h */,
-				29da1f6cdeb605a94911e0df555f48b8 /* Point2d.h */,
 				29498e24c920f691476b32a555a9b1bc /* QueueSorter.h */,
 				91670e38553a41fd42567d920fd4cfc2 /* Transformation.cpp */,
 				52006cd748c58fd3794135a8d57efa28 /* Transformation.h */,
 				FD17D4EB18C96084006CE746 /* AbstractTypes.h */,
+				FDD98C1F18CE15D200390D4A /* Types.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -335,6 +348,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				FD17D4F518CA4BFF006CE746 /* GeoUtils.cpp in Sources */,
+				FD17D4ED18C9908E006CE746 /* TileCoordinate.cpp in Sources */,
+				FD17D4EF18C99278006CE746 /* GeoLocation.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				b61f8fe96425ec186bbaa4a8221936cb /* Map.cpp in Sources */,
 				db2ffacfd5a99fdad931d43ba804882a /* MercatorProjection.cpp in Sources */,

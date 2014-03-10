@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +23,12 @@
 // =============================================================================
 
 
-#include "AbstractProjection.h"
-#include "Types.h"
-#include "Transformation.h"
+#pragma once
 
 
-class MercatorProjection: public AbstractProjection
-{
-public:	
-    MercatorProjection(double zoom, Transformation t = DEFAULT_TRANSFORMATION);
+#include "ofVec2f.h"
+#include "ofVec3f.h"
 
-    virtual ~MercatorProjection();
-	
-	Point2d rawProject(const Point2d& point) const;
-	Point2d rawUnproject(const Point2d& point) const;
 
-    static const Transformation DEFAULT_TRANSFORMATION;
-};
+typedef ofVec2f ofVec2d; ///< For now, we pretend to use double precision.
+typedef ofVec3f ofVec3d; ///< For now, we pretend to use double precision.

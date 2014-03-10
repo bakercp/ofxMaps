@@ -30,41 +30,19 @@
 #include <set>
 #include <map>
 #include "ofMain.h"
-#include "AbstractTileProvider.h"
-#include "Location.h"
-#include "Coordinate.h"
-#include "Point2d.h"
+#include "AbstractMapProvider.h"
+#include "GeoLocation.h"
+#include "TileCoordinate.h"
+#include "Types.h"
 
 
 class Map
 {
 public:
-	Map():
-        _tileSize(DEFAULT_TILE_SIZE),
-        _maxPending(DEFAULT_MAX_PENDING),
-        _maxImagesToCache(DEFAULT_MAX_IMAGES_TO_CACHE),
-        _gridPadding(DEFAULT_GRID_PADDING),
-        _lastClickTime(0)
-    {
+	Map();
+    virtual ~Map();
 
-        ofRegisterMouseEvents(this);
-        ofRegisterKeyEvents(this);
-        ofAddListener(ofEvents().update, this, &Map::update);
-
-        ofRegisterURLNotification(this);
-
-    }
-
-    virtual ~Map()
-    {
-        ofUnregisterMouseEvents(this);
-        ofUnregisterKeyEvents(this);
-        ofRemoveListener(ofEvents().update, this, &Map::update);
-
-        ofUnregisterURLNotification(this);
-    }
-
-	void setup(AbstractTileProvider::SharedPtr _provider, int _width, int _height);
+	void setup(AbstractMapProvider::SharedPtr _provider, int _width, int _height);
 	void update(ofEventArgs& args);
 	void draw();
 		
@@ -77,12 +55,12 @@ public:
 	void mouseReleased(ofMouseEventArgs& evt);
 	
 	int getZoom() const;
-	Location getCenter() const ;
-	Coordinate getCenterCoordinate() const ;
+	GeoLocation getCenter() const ;
+	TileCoordinate getCenterCoordinate() const ;
 	
-	void setCenter(const Coordinate& center);
-	void setCenter(const Location& location);
-	void setCenterZoom(const Location& location, int zoom);
+	void setCenter(const TileCoordinate& center);
+	void setCenter(const GeoLocation& location);
+	void setCenterZoom(const GeoLocation& location, int zoom);
 	
 	void setZoom(int zoom);
 	void zoom(int dir);
@@ -93,10 +71,10 @@ public:
 	//	    public function setExtent(extent:MapExtent):void
 	//	    public function getExtent():MapExtent
 	
-	Point2d coordinatePoint(const Coordinate& coord) const ;
-	Coordinate pointCoordinate(const Point2d& point) const ;
-	Point2d locationPoint(const Location& location) const ;
-	Location pointLocation(const Point2d& point) const ;
+	Point2d coordinatePoint(const TileCoordinate& coord) const ;
+	TileCoordinate pointCoordinate(const Point2d& point) const ;
+	Point2d locationPoint(const GeoLocation& location) const ;
+	GeoLocation pointLocation(const Point2d& point) const ;
 	
 	// TODO: pan by proportion of screen size, not by coordinate grid
 	void panUp();
@@ -104,27 +82,26 @@ public:
 	void panLeft();
 	void panRight();
 	
-	void panAndZoomIn(const Location& location);
-	void panTo(const Location& location);
-	float scaleForZoom(int zoom) const;
-	float zoomForScale(float scale) const;
-	int bestZoomForScale(float scale) const;
+	void panAndZoomIn(const GeoLocation& location);
+	void panTo(const GeoLocation& location);
+//	float scaleForZoom(int zoom) const;
+//	float zoomForScale(float scale) const;
+//	int bestZoomForScale(float scale) const;
 
-	void requestTile(const Coordinate& coord);
-	void tileDone(const Coordinate& coord, ofImage* img);
+	void requestTile(const TileCoordinate& coord);
+//	void tileDone(const Coordinate& coord, ofImage* img);
 	void processQueue();
 
-    static const double LOG_2;
 
     enum
     {
         DEFAULT_TILE_SIZE = 256,
-        DEFAULT_MAX_PENDING = 16, ///< \brief Limit simultaneous calls to loadImage.
+        DEFAULT_MAX_PENDING = 32, ///< \brief Limit simultaneous calls to loadImage.
         DEFAULT_MAX_IMAGES_TO_CACHE = 256,
                                 ///< \brief Limit tiles in memory
                                 ///< 256 would be 64 MB, you may want to lower this quite a bit for your app
                                 ///< (we'll always keep as many images as needed to fill the screen though)
-        DEFAULT_GRID_PADDING = 1, ///< \brief Upping this can help appearances when zooming out, but also loads many more tiles
+        DEFAULT_GRID_PADDING = 3, ///< \brief Upping this can help appearances when zooming out, but also loads many more tiles
         DEFAULT_DOUBLE_CLICK_TIME = 250
     };
 
@@ -149,19 +126,20 @@ protected:
     double smoothing;
 
     ///< \brief The Map tile Provider.
-    AbstractTileProvider::SharedPtr provider;
+    AbstractMapProvider::SharedPtr provider;
 
     ///< \brief Map Size.
 	int width;
     int height;
 
-    std::map<Coordinate, int> pending; ///< \brief Tiles waiting to load.
+    std::map<TileCoordinate, int> pending; ///< \brief Tiles waiting to load.
 
-    std::map<Coordinate, std::shared_ptr<ofImage> > images; ///< \brief Image store.
+    std::map<TileCoordinate, std::shared_ptr<ofImage> > images; ///< \brief Image store.
 	std::vector<std::shared_ptr<ofImage> > recentImages; /// <\brief Map of the most recent images MAX_IMAGES_TO_KEEP
 
-	std::vector<Coordinate> queue; /// \brief Coordinates waiting to load
-	std::set<Coordinate> visibleKeys; /// \brief Coordinates that we can see already.
+	std::vector<TileCoordinate> queue; /// \brief Coordinates waiting to load
+
+    std::set<TileCoordinate> visibleCoordinates; /// \brief Coordinates that we can see already.
 
 	// for sorting coordinates by zoom
 	//ZoomComparator zoomComparator;
@@ -169,8 +147,8 @@ protected:
 	// for loading tiles from the inside first
 	//QueueSorter queueSorter;
 
-	double px;
-	double py;
+	double px; // previous x
+	double py; // previous y
 
 
 };

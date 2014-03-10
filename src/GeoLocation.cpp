@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,48 +23,59 @@
 // =============================================================================
 
 
-#pragma once
+#include "GeoLocation.h"
 
 
-#include "ofMain.h"
-
-// TODO: This should really be replaced with ofVec2d ... but that requires
-// a templated ofVec series.
-class Point2d
+GeoLocation::GeoLocation():
+    ofVec2d(0, 0),
+    longitude(x),
+    latitude(y)
 {
-public:
-	Point2d():
-        x(0),
-        y(0)
-    {
-    }
-
-	Point2d(double _x, double _y):
-        x(_x),
-        y(_y)
-    {
-    }
-
-	Point2d(const Point2d &point):
-        x(point.x),
-        y(point.y)
-    {
-    }
-
-	friend std::ostream& operator << (std::ostream& stream, const Point2d& p) {
-		// TODO: number format
-		stream << "(" << p.x << ", " << p.y << ")";
-		return stream;
-	}
-
-    bool operator == (const Point2d &p) const
-    {
-        return p.x == x && p.y == y;
-    }
-
-    double x;
-	double y;
+}
 
 
+GeoLocation::GeoLocation(const GeoLocation& location):
+    ofVec2d(location.longitude, location.latitude),
+    longitude(x),
+    latitude(y)
+{
+}
 
-};
+
+GeoLocation::GeoLocation(double _latitude, double _longitude):
+    ofVec2d(_longitude, _latitude),
+    longitude(x),
+    latitude(y)
+{
+}
+
+
+double GeoLocation::getLatitude() const
+{
+    return latitude;
+}
+
+
+double GeoLocation::getLongitude() const
+{
+    return longitude;
+}
+
+
+void GeoLocation::setLatitude(double _latitude)
+{
+    latitude = _latitude;
+}
+
+
+void GeoLocation::setLongitude(double _longitude)
+{
+    longitude = _longitude;
+}
+
+
+GeoLocation& GeoLocation::operator = (const GeoLocation& location)
+{
+    set(location);
+    return *this;
+}

@@ -27,7 +27,7 @@
 #pragma once
 
 
-class Point2d;
+#include "Types.h"
 
 
 class Transformation

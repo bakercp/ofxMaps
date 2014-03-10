@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +23,31 @@
 // =============================================================================
 
 
-#include "AbstractProjection.h"
+#pragma once
+
+
 #include "Types.h"
-#include "Transformation.h"
 
 
-class MercatorProjection: public AbstractProjection
+/// \brief A Location defines a latitude / longitude pair.
+/// \note Internally, latitude is represented by the y value and longitude is
+/// represented by the x value.
+class GeoLocation: public ofVec2d
 {
-public:	
-    MercatorProjection(double zoom, Transformation t = DEFAULT_TRANSFORMATION);
+public:
+    GeoLocation();
+    GeoLocation(const GeoLocation& location);
+	GeoLocation(double latitude, double longitude);
 
-    virtual ~MercatorProjection();
-	
-	Point2d rawProject(const Point2d& point) const;
-	Point2d rawUnproject(const Point2d& point) const;
+    double getLatitude() const;
+    double getLongitude() const;
 
-    static const Transformation DEFAULT_TRANSFORMATION;
+    void setLatitude(double latitude);
+    void setLongitude(double longitude);
+
+    GeoLocation& operator = (const GeoLocation& location);
+
+    // TODO: These should be doubles in the future.
+    float& latitude;
+    float& longitude;
 };

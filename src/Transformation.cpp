@@ -25,7 +25,6 @@
 
 
 #include "Transformation.h"
-#include "Point2d.h"
 
 
 Transformation::Transformation():

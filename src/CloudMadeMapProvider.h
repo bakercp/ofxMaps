@@ -24,20 +24,63 @@
 // =============================================================================
 
 
-#include "AbstractProjection.h"
-#include "Types.h"
-#include "Transformation.h"
+#include "AbstractMapProvider.h"
+#include "MercatorProjection.h"
 
 
-class MercatorProjection: public AbstractProjection
+class OpenStreetMapProvider: public AbstractMapProvider
 {
-public:	
-    MercatorProjection(double zoom, Transformation t = DEFAULT_TRANSFORMATION);
+public:
+    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
 
-    virtual ~MercatorProjection();
+	OpenStreetMapProvider():
+		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(26)))
+	{
+		_subdomains.push_back("");
+		_subdomains.push_back("a.");
+		_subdomains.push_back("b.");
+		_subdomains.push_back("c.");
+	}
 	
-	Point2d rawProject(const Point2d& point) const;
-	Point2d rawUnproject(const Point2d& point) const;
+	int getTileWidth() const
+    {
+		return 256;
+	}
+	
+	int getTileHeight() const
+    {
+		return 256;
+	}
+	
+    std::vector<std::string> getTileUrls(const Coordinate& rawCoordinate) const
+    {
+		std::vector<std::string> urls;
 
-    static const Transformation DEFAULT_TRANSFORMATION;
+        if (rawCoordinate.row >= 0 && rawCoordinate.row < pow(2, rawCoordinate.zoom))
+        {
+			Coordinate coordinate = sourceCoordinate(rawCoordinate);
+
+            std::stringstream url;
+
+			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
+
+			url << "http://" << subdomain << "tile.openstreetmap.org/";
+            url << (int)coordinate.zoom << "/" << (int)coordinate.column;
+            url << "/" << (int)coordinate.row << ".png";
+
+			urls.push_back(url.str());
+		}
+        
+		return urls;
+	}
+
+    static SharedPtr makeShared()
+    {
+        return SharedPtr(new OpenStreetMapProvider());
+    }
+
+protected:
+    std::vector<std::string> _subdomains;
+
+	
 };

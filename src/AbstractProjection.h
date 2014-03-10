@@ -27,17 +27,20 @@
 #pragma once
 
 
+#include "ofTypes.h"
+#include "ofConstants.h"
+#include "Types.h"
 #include "Transformation.h"
-#include "Point2d.h"
-#include "Coordinate.h"
-#include "Location.h"
+#include "TileCoordinate.h"
+#include "GeoLocation.h"
+
 
 class AbstractProjection {
 
 public:
     typedef std::shared_ptr<AbstractProjection> SharedPtr;
 
-    AbstractProjection(double zoom, Transformation transformation):
+    AbstractProjection(double zoom, const Transformation& transformation):
         _zoom(zoom),
         _transformation(transformation)
     {
@@ -56,20 +59,22 @@ public:
 		return rawUnproject(_transformation.untransform(point));
 	}
 
-	Coordinate locationCoordinate(const Location& location) const
+	TileCoordinate locationCoordinate(const GeoLocation& location) const
     {
-		Point2d point = project(Point2d(DEG_TO_RAD * location.lon, DEG_TO_RAD * location.lat));
+		Point2d point = project(Point2d(DEG_TO_RAD * location.getLongitude(),
+                                        DEG_TO_RAD * location.getLatitude()));
 
-        return Coordinate(point.y, point.x, _zoom);
+        return TileCoordinate(point.y, point.x, _zoom);
 	}
 
-	Location coordinateLocation(const Coordinate& coordinate) const
+	GeoLocation coordinateLocation(const TileCoordinate& coordinate) const
     {
-        Coordinate newCoordinate = coordinate.zoomTo(_zoom);
+        TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
 
-		Point2d point = unproject(Point2d(newCoordinate.column, newCoordinate.row));
+		Point2d point = unproject(Point2d(newCoordinate.column,
+                                          newCoordinate.row));
 
-		return Location(RAD_TO_DEG * point.x, RAD_TO_DEG * point.x);
+		return GeoLocation(RAD_TO_DEG * point.x, RAD_TO_DEG * point.y);
 	}
 
 protected:

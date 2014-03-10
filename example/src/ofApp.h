@@ -39,4 +39,6 @@ public:
     void keyPressed(int key);
 
     Map map;
+
+    ofEasyCam cam;
 };
