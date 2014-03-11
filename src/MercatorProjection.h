@@ -41,6 +41,11 @@ public:
 
     static const Transformation DEFAULT_MERCATOR_TRANSFORMATION;
 
+    static const double MINIMUM_LATITUDE;
+	static const double MAXIMUM_LATITUDE;
+	static const double MINIMUM_LONGITUDE;
+	static const double MAXIMUM_LONGITUDE;
+
 protected:
 	ofVec2d rawProject(const ofVec2d& point) const;
 	ofVec2d rawUnproject(const ofVec2d& point) const;

@@ -33,6 +33,12 @@ const Transformation MercatorProjection::DEFAULT_MERCATOR_TRANSFORMATION
                                            -M_PI, -M_PI, 0, 1);
 
 
+const double MercatorProjection::MINIMUM_LATITUDE = -RAD_TO_DEG * atan(sinh(M_PI));
+const double MercatorProjection::MAXIMUM_LATITUDE =  RAD_TO_DEG * atan(sinh(M_PI));
+const double MercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
+const double MercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
+
+
 MercatorProjection::MercatorProjection(double zoom, Transformation t):
     BaseProjection(zoom, t)
 {

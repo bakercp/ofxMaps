@@ -27,6 +27,9 @@
 #include "GeoUtils.h"
 
 
+const double GeoUtils::EARTH_RADIUS_KM = 6371.01;
+
+
 GeoPolyline GeoUtils::decodeGeoPolyline(const std::string& encodedGeoPolyline)
 {
     // From this spec:
@@ -83,3 +86,65 @@ GeoPolyline GeoUtils::decodeGeoPolyline(const std::string& encodedGeoPolyline)
 
     return polyline;
 }
+
+
+double GeoUtils::getSphericalDistance(const GeoLocation& location0,
+                                      const GeoLocation& location1)
+{
+    // reference: http://www.movable-type.co.uk/scripts/latlong.html
+    double lat0 = DEG_TO_RAD * location0.getLatitude();
+    double lon0 = DEG_TO_RAD * location0.getLongitude();
+    double lat1 = DEG_TO_RAD * location1.getLatitude();
+    double lon1 = DEG_TO_RAD * location1.getLongitude();
+
+    double sum = sin(lat0) * sin(lat1)
+               + cos(lat0) * cos(lat1) * cos(lon1 - lon0);
+
+    return EARTH_RADIUS_KM * acos(sum);
+
+}
+
+
+double GeoUtils::getHaversineDistance(const GeoLocation& location0,
+                                      const GeoLocation& location1)
+{
+    // reference: http://www.movable-type.co.uk/scripts/latlong.html
+
+    double deltaLatRad = DEG_TO_RAD * (location1.getLatitude() - location0.getLatitude());
+    double deltaLonRad = DEG_TO_RAD * (location1.getLongitude() - location0.getLongitude());
+
+    double lat0 = DEG_TO_RAD * location0.getLatitude();
+    double lat1 = DEG_TO_RAD * location1.getLatitude();
+
+    double s0 = sin(deltaLatRad / 2.0);
+    double s1 = sin(deltaLonRad / 2.0);
+
+    double a = s0 * s0 + s1 * s1 * cos(lat0) * cos(lat1);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return EARTH_RADIUS_KM * c;
+}
+
+
+double GeoUtils::getBearingBetween(const GeoLocation& location0,
+                                   const GeoLocation& location1)
+{
+    // reference: http://www.movable-type.co.uk/scripts/latlong.html
+
+    double deltaLatRad = DEG_TO_RAD * (location0.getLatitude() - location1.getLatitude());
+    double deltaLonRad = DEG_TO_RAD * (location0.getLongitude() - location1.getLongitude());
+
+    double lat0 = DEG_TO_RAD * location0.getLatitude();
+    double lat1 = DEG_TO_RAD * location1.getLatitude();
+
+    double s0 = sin(deltaLatRad / 2.0);
+    double s1 = sin(deltaLonRad / 2.0);
+
+    double y = sin(deltaLonRad) * cos(lat1);
+    double x = cos(lat0) * cos(lat1) -
+               sin(lat0) * cos(lat1) * cos(deltaLonRad);
+
+    return RAD_TO_DEG * atan2(y, x);
+}
+
