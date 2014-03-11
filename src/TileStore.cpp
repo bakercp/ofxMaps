@@ -23,62 +23,48 @@
 // =============================================================================
 
 
-#include "ofApp.h"
+#include "TileStore.h"
 
-#include "OpenStreetMapProvider.h"
-#include "GeoUtils.h"
 
-void ofApp::setup()
+
+void TileStore::queueTile(const TileCoordinate& coord)
 {
-	ofSetVerticalSync(true);
-
-    map.setup(std::shared_ptr<OpenStreetMapProvider>(new OpenStreetMapProvider()),
-              ofGetWidth(),
-              ofGetHeight());
-
-    map.setGeoLocationCenter(GeoLocation(41.878247, -87.629767));
-	map.setZoom(12);
-
+//    bool isPending = _pending.count(coord) > 0;
+//    bool isQueued = std::find(_queue.begin(), _queue.end(), coord) != _queue.end();
+//    bool isAlreadyLoaded = _images.count(coord) > 0;
+//
+//    if (!isPending && !isQueued && !isAlreadyLoaded)
+//    {
+//        _queue.push_back(coord);
+//    }
 }
 
 
-void ofApp::update()
+void TileStore::urlResponse(ofHttpResponse& args)
 {
-}
+    std::map<TileCoordinate, int>::iterator iter = _pending.begin();
 
-
-void ofApp::draw()
-{
-    ofBackground(0);
-
-    map.draw();
-
-    ofSetColor(255, 127, 255);
-
-    cout << map.getGeoLocationCenter() << endl;
-
-    ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
-                                ofGetWidth() / 2,
-                                ofGetHeight() / 2);
-
-    ofVec2d mousePosition(mouseX, mouseY);
-
-    ofDrawBitmapStringHighlight(ofToString(map.pointToTileCoordinate(mousePosition)),
-                                mouseX + 16,
-                                mouseY);
-
-    ofDrawBitmapStringHighlight(ofToString(map.pointToGeolocation(mousePosition)),
-                                mouseX + 16,
-                                mouseY + 14);
-
-
-}
-
-
-void ofApp::keyPressed(int key)
-{
-    if (key == 'f' || key == 'F')
+    // Find our async id.
+    while (iter != _pending.end())
     {
-		ofToggleFullscreen();
-	}
+        if ((*iter).second == args.request.getID())
+        {
+            if (200 == args.status)
+            {
+                const TileCoordinate& coord = (*iter).first;
+                _images[coord] = std::shared_ptr<ofImage>(new ofImage());
+                _images[coord]->setUseTexture(false);
+                _images[coord]->loadImage(args);
+            }
+            else
+            {
+                ofLogError("Map::urlResponse") << " : " << args.status << " : " << args.error << " : " << args.request.url;
+            }
+
+            _pending.erase(iter);
+            break;
+        }
+
+        ++iter;
+    }
 }

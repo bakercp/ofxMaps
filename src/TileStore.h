@@ -23,62 +23,41 @@
 // =============================================================================
 
 
-#include "ofApp.h"
+#pragma once
 
-#include "OpenStreetMapProvider.h"
-#include "GeoUtils.h"
 
-void ofApp::setup()
+#include <map>
+#include "ofImage.h"
+#include "ofURLFileLoader.h"
+#include "TileCoordinate.h"
+#include "LRUCache.h"
+
+class TileStore
 {
-	ofSetVerticalSync(true);
-
-    map.setup(std::shared_ptr<OpenStreetMapProvider>(new OpenStreetMapProvider()),
-              ofGetWidth(),
-              ofGetHeight());
-
-    map.setGeoLocationCenter(GeoLocation(41.878247, -87.629767));
-	map.setZoom(12);
-
-}
+public:
+    typedef std::shared_ptr<ofImage> SharedImagePtr;
 
 
-void ofApp::update()
-{
-}
 
 
-void ofApp::draw()
-{
-    ofBackground(0);
 
-    map.draw();
+    SharedImagePtr getTile(const TileCoordinate& coordinate);
 
-    ofSetColor(255, 127, 255);
+    void urlResponse(ofHttpResponse& args);
 
-    cout << map.getGeoLocationCenter() << endl;
+    void queueTile(const TileCoordinate& coord);
 
-    ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
-                                ofGetWidth() / 2,
-                                ofGetHeight() / 2);
+private:
+    lru_cache_using_std<int, SharedImagePtr, std::map> images;
 
-    ofVec2d mousePosition(mouseX, mouseY);
+    typedef std::shared_ptr<ofURLFileLoader> SharedLoaderPtr;
 
-    ofDrawBitmapStringHighlight(ofToString(map.pointToTileCoordinate(mousePosition)),
-                                mouseX + 16,
-                                mouseY);
+    std::map<int, std::shared_ptr<ofURLFileLoader> > _loaders;
 
-    ofDrawBitmapStringHighlight(ofToString(map.pointToGeolocation(mousePosition)),
-                                mouseX + 16,
-                                mouseY + 14);
+    std::map<TileCoordinate, int> _pending; ///< \brief Tiles waiting to load.
 
+    std::map<TileCoordinate, SharedImagePtr> _images; ///< \brief Image store.
 
-}
+    ofMutex _mutex;
 
-
-void ofApp::keyPressed(int key)
-{
-    if (key == 'f' || key == 'F')
-    {
-		ofToggleFullscreen();
-	}
-}
+};

@@ -74,7 +74,6 @@ public:
 	ofVec2d geoLocationToPoint(const GeoLocation& location) const;
     ofVec2d tileCoordinateToPoint(const TileCoordinate& coord) const;
 
-
     static std::set<TileCoordinate> getVisibleTileCoordinates(const ofVec3d& position);
 
 	void requestTile(const TileCoordinate& coord);
@@ -101,18 +100,19 @@ protected:
     int _maxImagesToCache;
     int _gridPadding;
 
+    int _numDrawnImages;
+
     unsigned long long _lastClickTime;
 
-    ofVec3d _position;
-    ofVec3d _targetPosition;
-    ofxEasingQuad easingQuad;
-    ofxTween positionTween;
-
+    
     ///< \brief The Map tile Provider.
     BaseMapProvider::SharedPtr _provider;
 
-    ///< \brief Map Size.
-    ofVec2f _size;
+    ofVec2f _size; ///< \brief Map Size.
+
+    TileCoordinate _centerTileCoordinate; ///< \brief Pan and anchor coordinate.
+
+    double _rotation;
 
     std::map<TileCoordinate, int> _pending; ///< \brief Tiles waiting to load.
 

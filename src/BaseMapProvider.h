@@ -47,6 +47,11 @@ public:
 	virtual int getTileWidth() const = 0;
 	virtual int getTileHeight() const = 0;
 
+    virtual ofVec2d getTileSize() const
+    {
+        return ofVec2f(getTileWidth(), getTileHeight());
+    }
+
     virtual int getMinZoom() const = 0;
     virtual int getMaxZoom() const = 0;
 

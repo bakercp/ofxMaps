@@ -40,5 +40,4 @@ public:
 
     Map map;
 
-    ofEasyCam cam;
 };

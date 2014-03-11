@@ -7,7 +7,8 @@ Map::Map():
     _maxPending(DEFAULT_MAX_PENDING),
     _maxImagesToCache(DEFAULT_MAX_IMAGES_TO_CACHE),
     _gridPadding(DEFAULT_GRID_PADDING),
-    _lastClickTime(0)
+    _lastClickTime(0),
+    _numDrawnImages(0)
 {
     ofRegisterMouseEvents(this);
     ofRegisterKeyEvents(this);
@@ -29,53 +30,76 @@ Map::~Map()
 void Map::setup(BaseMapProvider::SharedPtr provider, int width, int height)
 {
 	_provider = provider;
+
+    // The width / height of the map.
     _size = ofVec2f(width, height);
 
-	_position.x = - _tileSize / 2; // half the world width, at zoom 0
-	_position.y = - _tileSize / 2; // half the world height, at zoom 0
+    // Half the world width, height at zoom 0
+    _centerTileCoordinate = TileCoordinate(0.5, 0.5, 0);
 
-	_position.z = std::ceil(std::min(_size.y / _tileSize,
-                                     _size.x / _tileSize));
+    double z = log2(std::min(_size.x, _size.y) / _provider->getTileWidth());
 
-}
+    _centerTileCoordinate = _centerTileCoordinate.zoomTo(z);
 
-std::set<TileCoordinate> Map::getVisibleTileCoordinates(const ofVec3d& position)
-{
-    std::set<TileCoordinate> visible;
+    // Start with north up.
+    _rotation = 0;
 
 }
 
 
 void Map::update(ofEventArgs& args)
 {
-    // if we're in between zoom levels, we need to choose the nearest:
-	int baseZoom = _provider->bestZoomForScale(_position.z);
+    // If we're in between zoom levels, we need to choose the nearest.
+	int baseZoom = CLAMP(static_cast<int>(round(_centerTileCoordinate.getZoom())),
+                         _provider->getMinZoom(),
+                         _provider->getMaxZoom());
 
-	// these are the top left and bottom right tile coordinates
-	// we'll be loading everything in between:
-	TileCoordinate startCoord = pointToTileCoordinate(ofVec2d(0, 0)).zoomTo(baseZoom).getFloored();
-	TileCoordinate endCoord =   pointToTileCoordinate(_size).zoomTo(baseZoom).getFloored().right().down();
+	// These are the top left and bottom right tile coordinates.
+	// We'll be loading everything in between:
+	TileCoordinate tl = pointToTileCoordinate(ofVec2d::zero()).zoomTo(baseZoom);
+	TileCoordinate tr = pointToTileCoordinate(ofVec2d(_size.x, 0)).zoomTo(baseZoom);
+	TileCoordinate bl = pointToTileCoordinate(ofVec2d(0, _size.y)).zoomTo(baseZoom);
+	TileCoordinate br = pointToTileCoordinate(_size).zoomTo(baseZoom);
 
 	// find start and end columns
-    // We pad our min / max coulms
-	int minCol = startCoord.getColumn() - _gridPadding;
-	int maxCol = endCoord.getColumn() + _gridPadding;
-	int minRow = startCoord.getRow() - _gridPadding;
-	int maxRow = endCoord.getRow() + _gridPadding;
+	int minCol = floor(std::min(std::min(tl.getColumn(),
+                                         tr.getColumn()),
+                                std::min(bl.getColumn(),
+                                         br.getColumn())));
+
+	int maxCol = floor(std::max(std::max(tl.getColumn(),
+                                         tr.getColumn()),
+                                std::max(bl.getColumn(),
+                                         br.getColumn())));
+
+	int minRow = floor(std::min(std::min(tl.getRow(),
+                                         tr.getRow()),
+                                std::min(bl.getRow(),
+                                         br.getRow())));
+
+	int maxRow = floor(std::max(std::max(tl.getRow(),
+                                         tr.getRow()),
+                                std::max(bl.getRow(),
+                                         br.getRow())));
+
+	minCol -= _gridPadding;
+	minRow -= _gridPadding;
+	maxCol += _gridPadding;
+	maxRow += _gridPadding;
 
 	_visibleCoordinates.clear();
 
     // grab coords for visible tiles
-	for (int col = minCol; col <= maxCol; col++)
+	for (int col = minCol; col <= maxCol; ++col)
     {
-		for (int row = minRow; row <= maxRow; row++)
+		for (int row = minRow; row <= maxRow; ++row)
         {
 			TileCoordinate coord(row, col, baseZoom);
 
 			// keep this for later:
 			_visibleCoordinates.insert(coord);
 
-			if (_images.count(coord) == 0)
+			if (0 == _images.count(coord))
             {
 				// fetch it if we don't have it
 				requestTile(coord);
@@ -83,42 +107,96 @@ void Map::update(ofEventArgs& args)
 				// see if we have  a parent coord for this tile?
 				bool gotParent = false;
 
-				for (int i = static_cast<int>(coord.getZoom()); i > 0; i--)
+				for (int i = static_cast<int>(coord.getZoom()); i > 0; --i)
                 {
 					TileCoordinate zoomed = coord.zoomTo(i).getFloored();
 
-                    if (_images.count(zoomed) > 0)
+                    // mark all parent tiles valid
+                    _visibleCoordinates.insert(zoomed);
+
+                    gotParent = true;
+
+					if (0 == _images.count(zoomed))
                     {
-						_visibleCoordinates.insert(zoomed);
-						gotParent = true;
-						break;
+						// force load of parent tiles we don't already have
+                        requestTile(coord);
 					}
 				}
 
 				// or if we have any of the children
-				if (!gotParent)
-                {
-					TileCoordinate zoomed = coord.zoomBy(1).getFloored();
-
-                    std::vector<TileCoordinate> kids;
-
-                    kids.push_back(zoomed);
-					kids.push_back(zoomed.right());
-					kids.push_back(zoomed.down());
-					kids.push_back(zoomed.right().down());
-
-                    for (std::size_t i = 0; i < kids.size(); ++i)
-                    {
-						if (_images.count(kids[i]) > 0)
-                        {
-							_visibleCoordinates.insert(kids[i]);
-						}
-					}
-				}
+                //				if (!gotParent) {
+                //					Coordinate zoomed = coord.zoomBy(1).container();
+                //					std::vector<Coordinate> kids;
+                //					kids.push_back(zoomed);
+                //					kids.push_back(zoomed.right());
+                //					kids.push_back(zoomed.down());
+                //					kids.push_back(zoomed.right().down());
+                //					for (int i = 0; i < kids.size(); i++) {
+                //						if (images.count(kids[i]) > 0) {
+                //							visibleKeys.insert(kids[i]);
+                //						}
+                //					}            
+                //				}
+				
 			}
+			
 		} // rows
 	} // columns
-	
+
+//    // grab coords for visible tiles
+//	for (int col = minCol; col <= maxCol; col++)
+//    {
+//		for (int row = minRow; row <= maxRow; row++)
+//        {
+//			TileCoordinate coord(row, col, baseZoom);
+//
+//			// keep this for later:
+//			_visibleCoordinates.insert(coord);
+//
+//			if (_images.count(coord) == 0)
+//            {
+//				// fetch it if we don't have it
+//				requestTile(coord);
+//
+//				// see if we have  a parent coord for this tile?
+//				bool gotParent = false;
+//
+//				for (int i = static_cast<int>(coord.getZoom()); i > 0; i--)
+//                {
+//					TileCoordinate zoomed = coord.zoomTo(i).getFloored();
+//
+//                    if (_images.count(zoomed) > 0)
+//                    {
+//						_visibleCoordinates.insert(zoomed);
+//						gotParent = true;
+//						break;
+//					}
+//				}
+//
+//				// or if we have any of the children
+//				if (!gotParent)
+//                {
+//					TileCoordinate zoomed = coord.zoomBy(1).getFloored();
+//
+//                    std::vector<TileCoordinate> kids;
+//
+//                    kids.push_back(zoomed);
+//					kids.push_back(zoomed.right());
+//					kids.push_back(zoomed.down());
+//					kids.push_back(zoomed.right().down());
+//
+//                    for (std::size_t i = 0; i < kids.size(); ++i)
+//                    {
+//						if (_images.count(kids[i]) > 0)
+//                        {
+//							_visibleCoordinates.insert(kids[i]);
+//						}
+//					}
+//				}
+//			}
+//		} // rows
+//	} // columns
+
 
     // stop fetching things we can't see:
 	// (visibleKeys also has the parents and children, if needed, but that shouldn't matter)
@@ -145,7 +223,7 @@ void Map::update(ofEventArgs& args)
 	processQueue();
 
 	// clear some images away if we have too many...
-	int numToKeep = _maxImagesToCache;//std::max(numDrawnImages, _maxImagesToCache);
+	int numToKeep = std::max(_numDrawnImages, _maxImagesToCache);
 
 	if (_recentImages.size() > numToKeep) {
 		// first clear the pointers from recentImages
@@ -177,103 +255,87 @@ void Map::update(ofEventArgs& args)
 
 void Map::draw()
 {
-    // if we're in between zoom levels, we need to choose the nearest:
-	int baseZoom = _provider->bestZoomForScale(_position.z);
+    // If we're in between zoom levels, we need to choose the nearest.
+	int baseZoom = CLAMP(static_cast<int>(round(_centerTileCoordinate.getZoom())),
+                         _provider->getMinZoom(),
+                         _provider->getMaxZoom());
 
 	// TODO: sort by zoom so we draw small zoom levels (big tiles) first:
 	// can this be done with a different comparison function on the visibleKeys set?
 
 	// Collections.sort(visibleKeys, zoomComparator);
-	
-	// translate and scale, from the middle
-	ofPushMatrix();
-	ofTranslate(_size / 2);
-	ofScale(_position.z, _position.z, 1);
-	ofTranslate(_position.x, _position.y);
-	
-	int numDrawnImages = 0;
-	
-	if (_visibleCoordinates.size() > 0)
+
+    ofPushMatrix();
+    ofRotateZ(_rotation * RAD_TO_DEG);
+
+	_numDrawnImages = 0;
+
+	std::set<TileCoordinate>::iterator coordinateIter = _visibleCoordinates.begin();
+
+	while (coordinateIter != _visibleCoordinates.end())
     {
-		double prevZoom = baseZoom;
+		TileCoordinate coord = *coordinateIter;
 
-		ofPushMatrix();
-		// correct the scale for this zoom level:
+		double scale = pow(2.0, _centerTileCoordinate.getZoom() - coord.getZoom());
 
-        double correction = 1.0 / pow(2.0, prevZoom);
+        ofVec2d tileSize = _provider->getTileSize() * scale;
+		ofVec2d center = _size * 0.5;
 
-        ofScale(correction, correction, 1);
+		TileCoordinate theCoord = _centerTileCoordinate.zoomTo(coord.getZoom());
 
-        std::set<TileCoordinate>::iterator iter;
+		double tx = center.x + (coord.getColumn() - theCoord.getColumn()) * tileSize.x;
+		double ty = center.y + (coord.getRow() - theCoord.getRow()) * tileSize.y;
 
-        for (iter = _visibleCoordinates.begin(); iter != _visibleCoordinates.end(); ++iter)
+        if (_images.count(coord) > 0)
         {
-			TileCoordinate coord = *iter;
+            std::shared_ptr<ofImage> tile = _images[coord];
 
-			if (coord.getZoom() != prevZoom)
+            // TODO: must be a cleaner C++ way to do this?
+            // we want this image to be at the end of recentImages, if it's already there we'll remove it and then add it again
+            std::vector<std::shared_ptr<ofImage> >::iterator result = find(_recentImages.begin(),
+                                                                           _recentImages.end(),
+                                                                           tile);
+
+            if (result != _recentImages.end())
             {
-				ofPopMatrix();
-				ofPushMatrix();
-				// correct the scale for this zoom level:
-				correction = 1.0 / pow(2.0, coord.getZoom());
+                _recentImages.erase(result);
+            }
+            else
+            {
+                // if it's not in recent images it must be brand new?
+                tile->setUseTexture(true);
+                tile->update();
+            }
 
-                ofScale(correction, correction, 1);
-
-				prevZoom = coord.getZoom();
-			}
 
             ofPushStyle();
+            ofSetColor(255);
+            
+            tile->draw(tx,
+                       ty,
+                       tileSize.x,
+                       tileSize.y);
+
             ofEnableAlphaBlending();
             ofNoFill();
             ofSetColor(255,0,0,50);
-            ofRect(coord.getColumn() * _tileSize,
-                   coord.getRow() * _tileSize,
-                   _tileSize,
-                   _tileSize);
+            ofRect(tx,
+                   ty,
+                   tileSize.x,
+                   tileSize.y);
 
-            ofPushStyle();
+            ofPopStyle();
 
-            ofSetColor(255);
+            _numDrawnImages++;
 
-			if (_images.count(coord) > 0)
-            {
-                std::shared_ptr<ofImage> tile = _images[coord];
-				// TODO: must be a cleaner C++ way to do this?
-				// we want this image to be at the end of recentImages, if it's already there we'll remove it and then add it again
-                std::vector<std::shared_ptr<ofImage> >::iterator result = find(_recentImages.begin(),
-                                                                               _recentImages.end(),
-                                                                               tile);
+            _recentImages.push_back(tile);
+        }
 
-                if (result != _recentImages.end())
-                {
-					_recentImages.erase(result);
-				}
-				else
-                {
-					// if it's not in recent images it must be brand new?
-					tile->setUseTexture(true);
-                    tile->update();
-				}
+        ++coordinateIter;
+    }
 
-                tile->draw(coord.getColumn() * _tileSize,
-                           coord.getRow() * _tileSize,
-                           _tileSize,
-                           _tileSize);
-
-				numDrawnImages++;
-
-				_recentImages.push_back(tile);
-			}
-		}
-
-		ofPopMatrix();
-	}    
+    ofPopMatrix();
 	
-	ofPopMatrix();
-
-    ofSetColor(255, 0, 0);
-    ofNoFill();
-    ofRect(0, 0, _size.x, _size.y);
 }
 
 void Map::keyPressed(ofKeyEventArgs& evt)
@@ -304,18 +366,18 @@ void Map::keyReleased(ofKeyEventArgs& evt)
 
 void Map::mouseDragged(ofMouseEventArgs& evt)
 {
-    ofVec2f mouse(evt.x, evt.y);
-
-    int button = evt.button;
-
-    ofVec2f dMouse = (mouse - _prevMouse) / _position.z;
-
-	if (button == 0)
-    {
-        _position += dMouse;
-	}
-
-    _prevMouse = mouse;
+//    ofVec2f mouse(evt.x, evt.y);
+//
+//    int button = evt.button;
+//
+//    ofVec2f dMouse = (mouse - _prevMouse) / _position.z;
+//
+//	if (button == 0)
+//    {
+//        _position += dMouse;
+//	}
+//
+//    _prevMouse = mouse;
 }
 
 
@@ -351,14 +413,14 @@ void Map::mouseReleased(ofMouseEventArgs& evt)
 
 int Map::getZoom() const
 {
-	return _provider->bestZoomForScale(_position.z);
+    return _centerTileCoordinate.getZoom();
 }
 
 
 // sets scale according to given zoom level, should leave you with pixel perfect tiles
 void Map::setZoom(int zoom)
 {
-    _position.z = pow(2.0, zoom);
+    _centerTileCoordinate = _centerTileCoordinate.zoomTo(zoom);
 }
 
 
@@ -381,17 +443,13 @@ void Map::zoomOut()
 
 GeoLocation Map::getGeoLocationCenter() const
 {
-	return _provider->tileCoordinateToGeoLocation(getTileCoordinateCenter());
+	return _provider->tileCoordinateToGeoLocation(_centerTileCoordinate);
 }
 
 
 TileCoordinate Map::getTileCoordinateCenter() const
 {
-	double row = _position.y * _position.z / -_tileSize;
-	double column = _position.x * _position.z / -_tileSize;
-	double zoom = _provider->zoomForScale(_position.z);
-
-    return TileCoordinate(row, column, zoom);
+    return _centerTileCoordinate;
 }
 
 
@@ -403,49 +461,56 @@ void Map::setPointCenter(const ofVec2d& center)
 
 void Map::setGeoLocationCenter(const GeoLocation& location)
 {
-    setTileCoordinateCenter(pointToTileCoordinate(location).zoomTo(getZoom()));
+    setTileCoordinateCenter(_provider->geoLocationToTileCoordinate(location).zoomTo(getZoom()));
 }
 
 
 void Map::setTileCoordinateCenter(const TileCoordinate& center)
 {
-    _position.z = pow(2.0, center.getZoom()); // First, calculate the zoom level.
-
-	_position.x = -_tileSize * center.getColumn() / _position.z;
-	_position.y = -_tileSize * center.getRow() / _position.z;
+	_centerTileCoordinate = center;
 }
 
 
 TileCoordinate Map::pointToTileCoordinate(const ofVec2d& point) const
 {
-	TileCoordinate center = getTileCoordinateCenter();
-    center += (point - (_size / 2.0)) / _tileSize;
-	return center;
+    /* Return a coordinate on the map image for a given x, y point. */
+	// new point coordinate reflecting distance from map center, in tile widths
+	ofVec2d rotated(point);
+
+    const ofVec2d tileSize = _provider->getTileSize();
+
+    rotated.rotate(-_rotation);
+
+	TileCoordinate coord(_centerTileCoordinate);
+
+    coord += (rotated - (_size / 2.0)) / _tileSize;
+
+	return coord;
 }
 
 
-ofVec2d Map::tileCoordinateToPoint(const TileCoordinate& coord) const
+ofVec2d Map::tileCoordinateToPoint(const TileCoordinate& target) const
 {
-	TileCoordinate center = getTileCoordinateCenter();
+	TileCoordinate coord = target;
 
-    TileCoordinate newCoord;
-
-	if(coord.getZoom() != center.getZoom())
+	if(coord.getZoom() != _centerTileCoordinate.getZoom())
     {
-		newCoord = newCoord.zoomTo(center.getZoom());
+		coord = coord.zoomTo(_centerTileCoordinate.getZoom());
 	}
-    else
-    {
-        newCoord = coord;
-    }
-	
-	// distance from the center of the map
-	ofVec2d point = _size / 2;
 
-	point.x += _tileSize * (newCoord.getColumn() - center.getColumn());
-	point.y += _tileSize * (newCoord.getRow() - center.getRow());
-	
-	return point;
+	// distance from the center of the map
+    const ofVec2d tileSize = _provider->getTileSize();
+
+    ofVec2d point = _size * 0.5;
+
+	point.x += tileSize.x * (coord.getColumn() - _centerTileCoordinate.getColumn());
+	point.y += tileSize.y * (coord.getRow() - _centerTileCoordinate.getRow());
+
+	ofVec2d rotated(point);
+
+    rotated.rotate(_rotation);
+
+	return rotated;
 }
 
 
