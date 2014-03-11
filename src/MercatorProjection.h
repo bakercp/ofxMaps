@@ -24,20 +24,25 @@
 // =============================================================================
 
 
-#include "AbstractProjection.h"
+#include "BaseProjection.h"
 #include "Types.h"
-#include "Transformation.h"
 
 
-class MercatorProjection: public AbstractProjection
+class Transformation;
+
+
+class MercatorProjection: public BaseProjection
 {
 public:	
-    MercatorProjection(double zoom, Transformation t = DEFAULT_TRANSFORMATION);
+    MercatorProjection(double zoom = 0,
+                       Transformation t = DEFAULT_MERCATOR_TRANSFORMATION);
 
     virtual ~MercatorProjection();
-	
+
+    static const Transformation DEFAULT_MERCATOR_TRANSFORMATION;
+
+protected:
 	ofVec2d rawProject(const ofVec2d& point) const;
 	ofVec2d rawUnproject(const ofVec2d& point) const;
 
-    static const Transformation DEFAULT_TRANSFORMATION;
 };

@@ -24,45 +24,46 @@
 // =============================================================================
 
 
-#pragma once
+#include "BaseProjection.h"
 
 
-#include <math.h>
-#include "Types.h"
-
-
-// the position and zoom
-class TileCoordinate: public ofVec3d
+BaseProjection::BaseProjection(double zoom,
+                               const Transformation& transformation):
+    _zoom(zoom),
+    _transformation(transformation)
 {
-public:
-	TileCoordinate();
-    TileCoordinate(const TileCoordinate& coordinate);
-	TileCoordinate(double _row, double _column, double _zoom);
+}
 
-    double getColumn() const;
-    double getRow() const;
-    double getZoom() const;
+BaseProjection::~BaseProjection()
+{
+}
 
-	TileCoordinate getFloored() const;
-	
-	TileCoordinate zoomTo(double destination) const;
-	TileCoordinate zoomBy(double distance) const;
-	
-	TileCoordinate up(double distance = 1) const;
-	TileCoordinate right(double distance = 1) const;
-	TileCoordinate down(double distance = 1) const;
-	TileCoordinate left(double distance = 1) const;
 
-	bool operator < (const TileCoordinate& c) const;
-    TileCoordinate& operator = (const TileCoordinate& rect);
+ofVec2d BaseProjection::project(const ofVec2d& point) const
+{
+    return _transformation.transform(rawProject(point));
+}
 
-    static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
-    static double scaleForZoom(int zoom);
+ofVec2d BaseProjection::unproject(const ofVec2d& point) const
+{
+    return rawUnproject(_transformation.untransform(point));
+}
 
-protected:
-    // TODO: These should be doubles in the future.
-    float& column;
-	float& row;
-	float& zoom;
+TileCoordinate BaseProjection::geoLocationToTileCoordinate(const GeoLocation& location) const
+{
+    ofVec2d point = project(ofVec2d(DEG_TO_RAD * location.getLongitude(),
+                                    DEG_TO_RAD * location.getLatitude()));
 
-};
+    return TileCoordinate(point.y, point.x, _zoom);
+}
+
+GeoLocation BaseProjection::tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const
+{
+    TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
+
+    ofVec2d point = unproject(ofVec2d(newCoordinate.getColumn(),
+                                      newCoordinate.getRow()));
+
+    return GeoLocation(RAD_TO_DEG * (double)point.x,
+                       RAD_TO_DEG * (double)point.y);
+}

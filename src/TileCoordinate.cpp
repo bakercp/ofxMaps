@@ -72,7 +72,7 @@ double TileCoordinate::getZoom() const
 }
 
 
-TileCoordinate TileCoordinate::container() const
+TileCoordinate TileCoordinate::getFloored() const
 {
     return TileCoordinate(floor(row), floor(column), zoom);
 }
@@ -131,4 +131,31 @@ TileCoordinate& TileCoordinate::operator = (const TileCoordinate& c)
     return *this;
 }
 
+
+TileCoordinate TileCoordinate::normalizeTileCoordinate(const TileCoordinate& coordinate)
+{
+    double gridSize = pow(2.0, coordinate.getZoom());
+
+    double wrappedColumn = fmod(coordinate.getColumn(), gridSize);
+
+    while (wrappedColumn < 0)
+    {
+        wrappedColumn += gridSize;
+    }
+
+    double wrappedRow = fmod(coordinate.getRow(), gridSize);
+
+    while (wrappedRow < 0)
+    {
+        wrappedRow += gridSize;
+    }
+
+    return TileCoordinate(wrappedRow, wrappedColumn, coordinate.getZoom());
+}
+
+
+double TileCoordinate::scaleForZoom(int zoom)
+{
+    return pow(2.0, zoom);
+}
 

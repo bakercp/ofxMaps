@@ -54,15 +54,66 @@ Transformation::Transformation(double _ax,
 }
 
 
+Transformation::Transformation(const Transformation &t):
+    ax(t.ax),
+    bx(t.bx),
+    cx(t.cx),
+    ay(t.ay),
+    by(t.by),
+    cy(t.cy)
+{
+}
+
+
 ofVec2d Transformation::transform(const ofVec2d& point) const
 {
-	return ofVec2d(ax * point.x + bx * point.y + cx,
-                   ay * point.x + by * point.y + cy);
+    double x = ax * point.x + bx * point.y + cx;
+    double y = ay * point.x + by * point.y + cy;
+
+    return ofVec2d(x, y);
 }
 
 
 ofVec2d Transformation::untransform(const ofVec2d& point) const
 {
-	return ofVec2d((point.x * by - point.y * bx - cx * by + cy * bx) / (ax * by - ay * bx),
-                   (point.x * ay - point.y * ax - cx * ay + cy * ax) / (bx * ay - by * ax));
+    double x = (point.x * by - point.y * bx - cx * by + cy * bx) / (ax * by - ay * bx);
+    double y = (point.x * ay - point.y * ax - cx * ay + cy * ax) / (bx * ay - by * ax);
+
+    return ofVec2d(x, y);
 }
+
+
+Transformation Transformation::deriveTransformation(double a1x, double a1y,
+                                                    double a2x, double a2y,
+                                                    double b1x, double b1y,
+                                                    double b2x, double b2y,
+                                                    double c1x, double c1y,
+                                                    double c2x, double c2y)
+{
+    ofVec3d d = linearSolution(a1x, a1y, a2x,
+                               b1x, b1y, b2x,
+                               c1x, c1y, c2x);
+
+    ofVec3d e = linearSolution(a1x, a1y, a2y,
+                               b1x, b1y, b2y,
+                               c1x, c1y, c2y);
+
+    return Transformation(d.x, d.y, d.z,
+                          e.x, e.y, e.z);
+};
+
+ofVec3d Transformation::linearSolution(double r1, double s1, double t1,
+                                       double r2, double s2, double t2,
+                                       double r3, double s3, double t3)
+{
+    const double a = (((t2 - t3) * (s1 - s2)) - ((t1 - t2) * (s2 - s3)))
+                   / (((r2 - r3) * (s1 - s2)) - ((r1 - r2) * (s2 - s3)));
+
+    const double b = (((t2 - t3) * (r1 - r2)) - ((t1 - t2) * (r2 - r3)))
+                   / (((s2 - s3) * (r1 - r2)) - ((s1 - s2) * (r2 - r3)));
+
+    const double c = t1 - (r1 * a) - (s1 * b);
+
+    return ofVec3d(a, b, c);
+};
+

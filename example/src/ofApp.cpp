@@ -26,6 +26,7 @@
 #include "ofApp.h"
 
 #include "OpenStreetMapProvider.h"
+#include "GeoUtils.h"
 
 void ofApp::setup()
 {
@@ -37,6 +38,12 @@ void ofApp::setup()
 
 //	map.setZoom(3);
 
+    GeoPolyline pl = GeoUtils::decodeGeoPolyline("_p~iF~ps|U_ulLnnqC_mqNvxq`@");
+
+    for (int i = 0; i < pl.size(); ++i)
+    {
+        cout << pl[i] << endl;
+    }
 }
 
 

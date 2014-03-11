@@ -27,42 +27,34 @@
 #pragma once
 
 
-#include <math.h>
+#include "ofTypes.h"
+#include "ofConstants.h"
 #include "Types.h"
+#include "Transformation.h"
+#include "TileCoordinate.h"
+#include "GeoLocation.h"
 
 
-// the position and zoom
-class TileCoordinate: public ofVec3d
+class BaseProjection
 {
 public:
-	TileCoordinate();
-    TileCoordinate(const TileCoordinate& coordinate);
-	TileCoordinate(double _row, double _column, double _zoom);
+    typedef std::shared_ptr<BaseProjection> SharedPtr;
 
-    double getColumn() const;
-    double getRow() const;
-    double getZoom() const;
+    BaseProjection(double zoom, const Transformation& transformation);
+    virtual ~BaseProjection();
 
-	TileCoordinate getFloored() const;
-	
-	TileCoordinate zoomTo(double destination) const;
-	TileCoordinate zoomBy(double distance) const;
-	
-	TileCoordinate up(double distance = 1) const;
-	TileCoordinate right(double distance = 1) const;
-	TileCoordinate down(double distance = 1) const;
-	TileCoordinate left(double distance = 1) const;
-
-	bool operator < (const TileCoordinate& c) const;
-    TileCoordinate& operator = (const TileCoordinate& rect);
-
-    static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
-    static double scaleForZoom(int zoom);
+    TileCoordinate geoLocationToTileCoordinate(const GeoLocation& location) const;
+	GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const;
 
 protected:
-    // TODO: These should be doubles in the future.
-    float& column;
-	float& row;
-	float& zoom;
+	virtual ofVec2d rawProject(const ofVec2d& point) const = 0;
+	virtual ofVec2d rawUnproject(const ofVec2d& point) const = 0;
+
+	ofVec2d project(const ofVec2d& point) const;
+	ofVec2d unproject(const ofVec2d& point) const;
+    
+	double _zoom;
+	Transformation _transformation;
 
 };
+

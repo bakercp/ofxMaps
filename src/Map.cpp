@@ -26,7 +26,7 @@ Map::~Map()
 }
 
 
-void Map::setup(AbstractMapProvider::SharedPtr provider, int width, int height)
+void Map::setup(BaseMapProvider::SharedPtr provider, int width, int height)
 {
 	_provider = provider;
     _size = ofVec2f(width, height);
@@ -39,17 +39,22 @@ void Map::setup(AbstractMapProvider::SharedPtr provider, int width, int height)
 
 }
 
+std::set<TileCoordinate> Map::getVisibleTileCoordinates(const ofVec3d& position)
+{
+    std::set<TileCoordinate> visible;
+
+}
+
 
 void Map::update(ofEventArgs& args)
 {
     // if we're in between zoom levels, we need to choose the nearest:
 	int baseZoom = _provider->bestZoomForScale(_position.z);
 
-
 	// these are the top left and bottom right tile coordinates
 	// we'll be loading everything in between:
-	TileCoordinate startCoord = pointToTileCoordinate(ofVec2d(0, 0)).zoomTo(baseZoom).container();
-	TileCoordinate endCoord = pointToTileCoordinate(_size).zoomTo(baseZoom).container().right().down();
+	TileCoordinate startCoord = pointToTileCoordinate(ofVec2d(0, 0)).zoomTo(baseZoom).getFloored();
+	TileCoordinate endCoord =   pointToTileCoordinate(_size).zoomTo(baseZoom).getFloored().right().down();
 
 	// find start and end columns
     // We pad our min / max coulms
@@ -80,7 +85,7 @@ void Map::update(ofEventArgs& args)
 
 				for (int i = static_cast<int>(coord.getZoom()); i > 0; i--)
                 {
-					TileCoordinate zoomed = coord.zoomTo(i).container();
+					TileCoordinate zoomed = coord.zoomTo(i).getFloored();
 
                     if (_images.count(zoomed) > 0)
                     {
@@ -93,7 +98,7 @@ void Map::update(ofEventArgs& args)
 				// or if we have any of the children
 				if (!gotParent)
                 {
-					TileCoordinate zoomed = coord.zoomBy(1).container();
+					TileCoordinate zoomed = coord.zoomBy(1).getFloored();
 
                     std::vector<TileCoordinate> kids;
 
@@ -226,12 +231,6 @@ void Map::draw()
                    _tileSize,
                    _tileSize);
 
-            std::stringstream ss;
-
-            ofSetColor(0,255,0);
-            ofDrawBitmapString(ss.str(),
-                               coord.getColumn() * _tileSize,
-                               coord.getRow() * _tileSize);
             ofPushStyle();
 
             ofSetColor(255);
@@ -336,7 +335,6 @@ void Map::mousePressed(ofMouseEventArgs& evt)
 
     if (dt < DEFAULT_DOUBLE_CLICK_TIME)
     {
-        cout << "in here" << endl;
         // Should center.
         setPointCenter(mouse);
         zoomIn();
@@ -389,9 +387,9 @@ GeoLocation Map::getGeoLocationCenter() const
 
 TileCoordinate Map::getTileCoordinateCenter() const
 {
-	double row =    _position.y * _position.z / -_tileSize;
+	double row = _position.y * _position.z / -_tileSize;
 	double column = _position.x * _position.z / -_tileSize;
-	double zoom =   _provider->zoomForScale(_position.z);
+	double zoom = _provider->zoomForScale(_position.z);
 
     return TileCoordinate(row, column, zoom);
 }

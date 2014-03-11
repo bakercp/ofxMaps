@@ -34,7 +34,7 @@ public:
     typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
 
 	OpenStreetMapProvider():
-		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(26)))
+		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(0)))
 	{
 		_subdomains.push_back("");
 		_subdomains.push_back("a.");

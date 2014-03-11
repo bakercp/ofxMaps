@@ -27,60 +27,61 @@
 #pragma once
 
 
-#include "ofTypes.h"
-#include "ofConstants.h"
-#include "Types.h"
-#include "Transformation.h"
+#include "BaseProjection.h"
 #include "TileCoordinate.h"
 #include "GeoLocation.h"
 
 
-class AbstractProjection
+class BaseMapProvider
 {
 public:
-    typedef std::shared_ptr<AbstractProjection> SharedPtr;
+    typedef std::shared_ptr<BaseMapProvider> SharedPtr;
 
-    AbstractProjection(double zoom, const Transformation& transformation):
-        _zoom(zoom),
-        _transformation(transformation)
+    BaseMapProvider(BaseProjection::SharedPtr projection):
+        _projection(projection)
     {
     }
+	
+	virtual std::vector<std::string> getTileUrls(const TileCoordinate& coordinate) const = 0;
 
-	virtual ofVec2d rawProject(const ofVec2d& point) const = 0;
-	virtual ofVec2d rawUnproject(const ofVec2d& point) const = 0;
+	virtual int getTileWidth() const = 0;
+	virtual int getTileHeight() const = 0;
 
-	ofVec2d project(const ofVec2d& point) const
-    {
-		return _transformation.transform(rawProject(point));
-	}
+    virtual int getMinZoom() const = 0;
+    virtual int getMaxZoom() const = 0;
 
-	ofVec2d unproject(const ofVec2d& point) const
-    {
-		return rawUnproject(_transformation.untransform(point));
-	}
-
+    
 	TileCoordinate geoLocationToTileCoordinate(const GeoLocation& location) const
     {
-		ofVec2d point = project(ofVec2d(DEG_TO_RAD * location.getLongitude(),
-                                        DEG_TO_RAD * location.getLatitude()));
-
-        return TileCoordinate(point.y, point.x, _zoom);
+		return _projection->geoLocationToTileCoordinate(location);
 	}
+	
 
-	GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const
+    GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const
     {
-        TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
-
-		ofVec2d point = unproject(ofVec2d(newCoordinate.getColumn(),
-                                          newCoordinate.getRow()));
-
-		return GeoLocation(RAD_TO_DEG * (double)point.x,
-                           RAD_TO_DEG * (double)point.y);
+		return _projection->tileCoordinateToGeoLocation(coordinate);
 	}
+
+
+
+    double zoomForScale(double scale) const
+    {
+        return log(scale) / log(2);
+    }
+
+
+    int bestZoomForScale(double scale) const
+    {
+        int zoom = round(zoomForScale(scale));
+
+        int maxMinZoom = std::max(getMinZoom(), zoom);
+        int minMaxZoom = std::min(getMaxZoom(), maxMinZoom);
+
+        return minMaxZoom;
+    }
+
 
 protected:
-	double _zoom;
-	Transformation _transformation;
-
+    BaseProjection::SharedPtr _projection;
+	
 };
-

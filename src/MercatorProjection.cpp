@@ -27,15 +27,14 @@
 #include "MercatorProjection.h"
 
 
-const Transformation MercatorProjection::DEFAULT_TRANSFORMATION = Transformation(1.068070779e7,
-                                                                                 0.0,
-                                                                                 3.355443185e7,
-                                                                                 0.0,
-                                                                                 -1.068070890e7,
-                                                                                 3.355443057e7);
-MercatorProjection::MercatorProjection(double zoom,
-                                       Transformation t):
-    AbstractProjection(zoom, t)
+const Transformation MercatorProjection::DEFAULT_MERCATOR_TRANSFORMATION
+    = Transformation::deriveTransformation(-M_PI,  M_PI, 0, 0,
+                                            M_PI,  M_PI, 1, 0,
+                                           -M_PI, -M_PI, 0, 1);
+
+
+MercatorProjection::MercatorProjection(double zoom, Transformation t):
+    BaseProjection(zoom, t)
 {
 }
 
@@ -47,14 +46,12 @@ MercatorProjection::~MercatorProjection()
 
 ofVec2d MercatorProjection::rawProject(const ofVec2d& point) const
 {
-	return ofVec2d(point.x,
-                   log(tan(0.25 * PI + 0.5 * point.y))
-                   );
+	return ofVec2d(point.x, log(tan(0.25 * PI + 0.5 * point.y)));
 }
 
 
 ofVec2d MercatorProjection::rawUnproject(const ofVec2d& point) const
 {
 	return ofVec2d(point.x,
-                   2.0 * atan(pow(M_E, (double)point.y)) - 0.5 * PI);
+                   2.0 * atan(pow(M_E, 1.0 * point.y)) - 0.5 * PI);
 }

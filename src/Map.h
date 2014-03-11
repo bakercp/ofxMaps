@@ -31,7 +31,7 @@
 #include <map>
 #include "ofMain.h"
 #include "ofxTween.h"
-#include "AbstractMapProvider.h"
+#include "BaseMapProvider.h"
 #include "GeoLocation.h"
 #include "TileCoordinate.h"
 #include "Types.h"
@@ -43,7 +43,7 @@ public:
 	Map();
     virtual ~Map();
 
-	void setup(AbstractMapProvider::SharedPtr provider, int width, int height);
+	void setup(BaseMapProvider::SharedPtr provider, int width, int height);
 	void update(ofEventArgs& args);
 	void draw();
 		
@@ -73,6 +73,9 @@ public:
 
 	ofVec2d geoLocationToPoint(const GeoLocation& location) const;
     ofVec2d tileCoordinateToPoint(const TileCoordinate& coord) const;
+
+
+    static std::set<TileCoordinate> getVisibleTileCoordinates(const ofVec3d& position);
 
 	void requestTile(const TileCoordinate& coord);
 	void processQueue();
@@ -106,7 +109,7 @@ protected:
     ofxTween positionTween;
 
     ///< \brief The Map tile Provider.
-    AbstractMapProvider::SharedPtr _provider;
+    BaseMapProvider::SharedPtr _provider;
 
     ///< \brief Map Size.
     ofVec2f _size;
