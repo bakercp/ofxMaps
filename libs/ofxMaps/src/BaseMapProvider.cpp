@@ -24,63 +24,78 @@
 // =============================================================================
 
 
-#include "AbstractMapProvider.h"
-#include "MercatorProjection.h"
+#include "ofx/Maps/BaseMapProvider.h"
 
 
-class OpenStreetMapProvider: public AbstractMapProvider
-{
-public:
-    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
-
-	OpenStreetMapProvider():
-		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(0)))
-	{
-		_subdomains.push_back("");
-		_subdomains.push_back("a.");
-		_subdomains.push_back("b.");
-		_subdomains.push_back("c.");
-	}
-	
-	int getTileWidth() const
-    {
-		return 256;
-	}
-	
-	int getTileHeight() const
-    {
-		return 256;
-	}
-	
-    std::vector<std::string> getTileUrls(const Coordinate& rawCoordinate) const
-    {
-		std::vector<std::string> urls;
-
-        if (rawCoordinate.row >= 0 && rawCoordinate.row < pow(2, rawCoordinate.zoom))
-        {
-			Coordinate coordinate = sourceCoordinate(rawCoordinate);
-
-            std::stringstream url;
-
-			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
-
-			url << "http://" << subdomain << "tile.openstreetmap.org/";
-            url << (int)coordinate.zoom << "/" << (int)coordinate.column;
-            url << "/" << (int)coordinate.row << ".png";
-
-			urls.push_back(url.str());
-		}
+namespace ofx {
+namespace Maps {
         
-		return urls;
-	}
+        
+BaseMapProvider::BaseMapProvider(BaseProjection::SharedPtr projection,
+                                 int tileWidth,
+                                 int tileHeight,
+                                 int minZoom,
+                                 int maxZoom):
+    _projection(projection),
+    _tileWidth(tileWidth),
+    _tileHeight(tileHeight),
+    _minZoom(minZoom),
+    _maxZoom(maxZoom)
+{
+}
 
-    static SharedPtr makeShared()
-    {
-        return SharedPtr(new OpenStreetMapProvider());
-    }
 
-protected:
-    std::vector<std::string> _subdomains;
+BaseMapProvider::~BaseMapProvider()
+{
+}
 
-	
-};
+
+int BaseMapProvider::getTileWidth() const
+{
+    return _tileWidth;
+}
+
+
+int BaseMapProvider::getTileHeight() const
+{
+    return _tileHeight;
+}
+
+
+ofVec2d BaseMapProvider::getTileSize() const
+{
+    return ofVec2d(_tileWidth, _tileHeight);
+}
+
+
+int BaseMapProvider::getMinZoom() const
+{
+    return _minZoom;
+}
+
+
+int BaseMapProvider::getMaxZoom() const
+{
+    return _maxZoom;
+}
+
+
+TileCoordinate BaseMapProvider::geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const
+{
+    return _projection->geoCoordinateToTileCoordinate(location);
+}
+
+
+Geo::Coordinate BaseMapProvider::tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const
+{
+    return _projection->tileCoordinateToGeoCoordinate(coordinate);
+}
+
+
+double BaseMapProvider::zoomForScale(double scale) const
+{
+    return log(scale) / log(2);
+}
+
+
+} } // namespace ofx::Maps

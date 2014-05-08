@@ -27,66 +27,38 @@
 #pragma once
 
 
-#include "BaseProjection.h"
-#include "TileCoordinate.h"
-#include "GeoLocation.h"
+#include "ofTypes.h"
+#include "ofx/Geo/Coordinate.h"
+#include "ofx/Maps/Transformation.h"
+#include "ofx/Maps/TileCoordinate.h"
 
 
-class BaseMapProvider
+namespace ofx {
+namespace Maps {
+
+
+class BaseProjection
 {
 public:
-    typedef std::shared_ptr<BaseMapProvider> SharedPtr;
+    typedef std::shared_ptr<BaseProjection> SharedPtr;
 
-    BaseMapProvider(BaseProjection::SharedPtr projection):
-        _projection(projection)
-    {
-    }
-	
-	virtual std::vector<std::string> getTileUrls(const TileCoordinate& coordinate) const = 0;
+    BaseProjection(double zoom, const Transformation& transformation);
+    virtual ~BaseProjection();
 
-	virtual int getTileWidth() const = 0;
-	virtual int getTileHeight() const = 0;
-
-    virtual ofVec2d getTileSize() const
-    {
-        return ofVec2f(getTileWidth(), getTileHeight());
-    }
-
-    virtual int getMinZoom() const = 0;
-    virtual int getMaxZoom() const = 0;
-
-    
-	TileCoordinate geoLocationToTileCoordinate(const GeoLocation& location) const
-    {
-		return _projection->geoLocationToTileCoordinate(location);
-	}
-	
-
-    GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const
-    {
-		return _projection->tileCoordinateToGeoLocation(coordinate);
-	}
-
-
-
-    double zoomForScale(double scale) const
-    {
-        return log(scale) / log(2);
-    }
-
-
-    int bestZoomForScale(double scale) const
-    {
-        int zoom = round(zoomForScale(scale));
-
-        int maxMinZoom = std::max(getMinZoom(), zoom);
-        int minMaxZoom = std::min(getMaxZoom(), maxMinZoom);
-
-        return minMaxZoom;
-    }
-
+    TileCoordinate geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const;
+    Geo::Coordinate tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const;
 
 protected:
-    BaseProjection::SharedPtr _projection;
-	
+	virtual ofVec2d rawProject(const ofVec2d& point) const = 0;
+	virtual ofVec2d rawUnproject(const ofVec2d& point) const = 0;
+
+	ofVec2d project(const ofVec2d& point) const;
+	ofVec2d unproject(const ofVec2d& point) const;
+    
+	double _zoom;
+	Transformation _transformation;
+
 };
+
+
+} } // namespace ofx::Maps

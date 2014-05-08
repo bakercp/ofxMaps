@@ -24,45 +24,70 @@
 // =============================================================================
 
 
-#pragma once
+#include "ofx/Maps/AbstractMapProvider.h"
+#include "ofx/Maps/MercatorProjection.h"
 
 
-#include <math.h>
-#include "Types.h"
+namespace ofx {
+namespace Maps {
 
 
-// the position and zoom
-class TileCoordinate: public ofVec3d
+class OpenStreetMapProvider: public AbstractMapProvider
 {
 public:
-	TileCoordinate();
-    TileCoordinate(const TileCoordinate& coordinate);
-	TileCoordinate(double _row, double _column, double _zoom);
+    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
 
-    double getColumn() const;
-    double getRow() const;
-    double getZoom() const;
-
-	TileCoordinate getFloored() const;
+	OpenStreetMapProvider():
+		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(0)))
+	{
+		_subdomains.push_back("");
+		_subdomains.push_back("a.");
+		_subdomains.push_back("b.");
+		_subdomains.push_back("c.");
+	}
 	
-	TileCoordinate zoomTo(double destination) const;
-	TileCoordinate zoomBy(double distance) const;
+	int getTileWidth() const
+    {
+		return 256;
+	}
 	
-	TileCoordinate up(double distance = 1) const;
-	TileCoordinate right(double distance = 1) const;
-	TileCoordinate down(double distance = 1) const;
-	TileCoordinate left(double distance = 1) const;
+	int getTileHeight() const
+    {
+		return 256;
+	}
+	
+    std::vector<std::string> getTileUrls(const Coordinate& rawCoordinate) const
+    {
+		std::vector<std::string> urls;
 
-	bool operator < (const TileCoordinate& c) const;
-    TileCoordinate& operator = (const TileCoordinate& rect);
+        if (rawCoordinate.row >= 0 && rawCoordinate.row < pow(2, rawCoordinate.zoom))
+        {
+			Coordinate coordinate = sourceCoordinate(rawCoordinate);
 
-    static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
-    static double scaleForZoom(int zoom);
+            std::stringstream url;
+
+			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
+
+			url << "http://" << subdomain << "tile.openstreetmap.org/";
+            url << (int)coordinate.zoom << "/" << (int)coordinate.column;
+            url << "/" << (int)coordinate.row << ".png";
+
+			urls.push_back(url.str());
+		}
+        
+		return urls;
+	}
+
+    static SharedPtr makeShared()
+    {
+        return SharedPtr(new OpenStreetMapProvider());
+    }
 
 protected:
-    // TODO: These should be doubles in the future.
-    float& column;
-	float& row;
-	float& zoom;
+    std::vector<std::string> _subdomains;
 
+	
 };
+
+
+} } // namespace ofx::Maps

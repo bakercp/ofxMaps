@@ -24,7 +24,11 @@
 // =============================================================================
 
 
-#include "TileCoordinate.h"
+#include "ofx/Maps/TileCoordinate.h"
+
+
+namespace ofx {
+namespace Maps {
 
 
 TileCoordinate::TileCoordinate():
@@ -159,3 +163,5 @@ double TileCoordinate::scaleForZoom(int zoom)
     return pow(2.0, zoom);
 }
 
+
+} } // namespace ofx::Maps

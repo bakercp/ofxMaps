@@ -24,62 +24,46 @@
 // =============================================================================
 
 
-#pragma once
+#include "ofx/Maps/MercatorProjection.h"
 
 
-#include "TileCoordinate.h"
+namespace ofx {
+namespace Maps {
 
 
-class QueueSorter
+const Transformation MercatorProjection::DEFAULT_MERCATOR_TRANSFORMATION
+    = Transformation::deriveTransformation(-M_PI,  M_PI, 0, 0,
+                                            M_PI,  M_PI, 1, 0,
+                                           -M_PI, -M_PI, 0, 1);
+
+
+const double MercatorProjection::MINIMUM_LATITUDE = -RAD_TO_DEG * atan(sinh(M_PI));
+const double MercatorProjection::MAXIMUM_LATITUDE =  RAD_TO_DEG * atan(sinh(M_PI));
+const double MercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
+const double MercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
+
+
+MercatorProjection::MercatorProjection(double zoom, Transformation t):
+    BaseProjection(zoom, t)
 {
-public:
-	QueueSorter(const TileCoordinate& center): _center(center)
-    {
-    }
-	
-	static double dist(double x0, double y0, double x1, double y1)
-    {
-		double dx = x1 - x0;
-		double dy = y1 - y0;
+}
 
-		return sqrt(dx * dx + dy * dy);
-	}
 
-    // TODO: simplify these calculations by using internal vec calculations
-	bool operator () (const TileCoordinate& c0, const TileCoordinate& c1) const
-    {
-		if (c0.getZoom() == _center.getZoom())
-        {
-			if (c1.getZoom() == _center.getZoom())
-            {
-				double d0 = dist(_center.getColumn(),
-                                 _center.getRow(),
-                                 c0.getColumn() + 0.5,
-                                 c0.getRow() + 0.5);
+MercatorProjection::~MercatorProjection()
+{
+}
 
-				double d1 = dist(_center.getColumn(),
-                                 _center.getRow(),
-                                 c1.getColumn() + 0.5,
-                                 c1.getRow() + 0.5);
 
-				return d0 < d1;
-			}
-		}
-		else if (c1.getZoom() == _center.getZoom())
-        {
-			return false;
-		}
-		else
-        {
-			double d0 = fabs(c0.getZoom() - _center.getZoom());
-			double d1 = fabs(c1.getZoom() - _center.getZoom());
-			return d0 < d1;
-		}
+ofVec2d MercatorProjection::rawProject(const ofVec2d& point) const
+{
+	return ofVec2d(point.x, log(tan(0.25 * M_PI + 0.5 * point.y)));
+}
 
-		return false;
-	}
 
-protected:
-    TileCoordinate _center;
+ofVec2d MercatorProjection::rawUnproject(const ofVec2d& point) const
+{
+	return ofVec2d(point.x, 2.0 * atan(pow(M_E, 1.0 * point.y)) - 0.5 * M_PI);
+}
 
-};
+
+} } // namespace ofx::Maps

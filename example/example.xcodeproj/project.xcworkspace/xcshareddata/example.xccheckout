@@ -5,58 +5,130 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>4CB2118A-BFA0-45CF-9D05-27E2CBFB2DBF</string>
+	<string>2E9EA345-B761-4318-B73D-B40D47F7EB49</string>
 	<key>IDESourceControlProjectName</key>
 	<string>example</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3B34514A-1075-456B-8AF0-DAEFD698200B</key>
+		<key>3353CBB6-9292-4E79-82B0-57E9E16BEF0C</key>
+		<string>ssh://github.com/bakercp/ofxJSON.git</string>
+		<key>34B7A220-75EF-4E16-B719-1C9FBCF841FF</key>
+		<string>ssh://github.com/bakercp/ofxSQLiteCpp.git</string>
+		<key>45B414AD-06FD-4497-9C7A-E1A33FADFECF</key>
 		<string>ssh://github.com/bakercp/openFrameworks.git</string>
-		<key>47EC5AE9-3578-453F-AB9D-0EF40E0497F3</key>
-		<string>ssh://github.com/bakercp/ofxTween.git</string>
-		<key>FFD4CA5B-BC0D-48E5-AD60-F5D66550BE18</key>
-		<string>ssh://github.com/bakercp/ofxSlippy.git</string>
+		<key>6EC49754-55C8-403C-BCBC-C88EAE9A105C</key>
+		<string>ssh://github.com/bakercp/ofxMaps.git</string>
+		<key>9CB5300D-73DF-480E-A611-FA6A20490F58</key>
+		<string>ssh://github.com/bakercp/ofxGeo.git</string>
+		<key>CA6501B0-A496-4BC4-9145-E747AA078180</key>
+		<string>ssh://github.com/bakercp/ofxIO.git</string>
+		<key>DE243269-358B-42A2-9228-94C7F863DD4B</key>
+		<string>ssh://github.com/bakercp/ofxSSLManager.git</string>
+		<key>E8FA5BE4-8C77-437F-9055-F1E945BC0BC6</key>
+		<string>ssh://github.com/bakercp/ofxMediaType.git</string>
+		<key>F2194FF9-6EA6-42A9-977A-62B6CA7A268D</key>
+		<string>ssh://github.com/bakercp/ofxHTTP.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>addons/ofxSlippyMaps/example/example.xcodeproj/project.xcworkspace</string>
+	<string>addons/ofxMaps/example/example.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3B34514A-1075-456B-8AF0-DAEFD698200B</key>
+		<key>3353CBB6-9292-4E79-82B0-57E9E16BEF0C</key>
+		<string>../../../../ofxJSON</string>
+		<key>34B7A220-75EF-4E16-B719-1C9FBCF841FF</key>
+		<string>../../../../ofxSQLiteCpp</string>
+		<key>45B414AD-06FD-4497-9C7A-E1A33FADFECF</key>
 		<string>../../../../..</string>
-		<key>47EC5AE9-3578-453F-AB9D-0EF40E0497F3</key>
-		<string>../../../../ofxTween</string>
-		<key>FFD4CA5B-BC0D-48E5-AD60-F5D66550BE18</key>
+		<key>6EC49754-55C8-403C-BCBC-C88EAE9A105C</key>
 		<string>../../..</string>
+		<key>9CB5300D-73DF-480E-A611-FA6A20490F58</key>
+		<string>../../../../ofxGeo</string>
+		<key>CA6501B0-A496-4BC4-9145-E747AA078180</key>
+		<string>../../../../ofxIO</string>
+		<key>DE243269-358B-42A2-9228-94C7F863DD4B</key>
+		<string>../../../../ofxSSLManager</string>
+		<key>E8FA5BE4-8C77-437F-9055-F1E945BC0BC6</key>
+		<string>../../../../ofxMediaType</string>
+		<key>F2194FF9-6EA6-42A9-977A-62B6CA7A268D</key>
+		<string>../../../../ofxHTTP</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/bakercp/ofxSlippy.git</string>
+	<string>ssh://github.com/bakercp/ofxMaps.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3B34514A-1075-456B-8AF0-DAEFD698200B</string>
+	<string>45B414AD-06FD-4497-9C7A-E1A33FADFECF</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>FFD4CA5B-BC0D-48E5-AD60-F5D66550BE18</string>
+			<string>9CB5300D-73DF-480E-A611-FA6A20490F58</string>
 			<key>IDESourceControlWCCName</key>
-			<string>ofxSlippyMaps</string>
+			<string>ofxGeo</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>47EC5AE9-3578-453F-AB9D-0EF40E0497F3</string>
+			<string>F2194FF9-6EA6-42A9-977A-62B6CA7A268D</string>
 			<key>IDESourceControlWCCName</key>
-			<string>ofxTween</string>
+			<string>ofxHTTP</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3B34514A-1075-456B-8AF0-DAEFD698200B</string>
+			<string>CA6501B0-A496-4BC4-9145-E747AA078180</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxIO</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3353CBB6-9292-4E79-82B0-57E9E16BEF0C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxJSON</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6EC49754-55C8-403C-BCBC-C88EAE9A105C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxMaps</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E8FA5BE4-8C77-437F-9055-F1E945BC0BC6</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxMediaType</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>34B7A220-75EF-4E16-B719-1C9FBCF841FF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxSQLiteCpp</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DE243269-358B-42A2-9228-94C7F863DD4B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxSSLManager</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>45B414AD-06FD-4497-9C7A-E1A33FADFECF</string>
 			<key>IDESourceControlWCCName</key>
 			<string>openFrameworks</string>
 		</dict>

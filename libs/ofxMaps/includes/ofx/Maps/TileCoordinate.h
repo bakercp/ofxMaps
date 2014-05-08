@@ -1,6 +1,7 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
+// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,59 +24,51 @@
 // =============================================================================
 
 
-#include "GeoLocation.h"
+#pragma once
 
 
-GeoLocation::GeoLocation():
-    ofVec2d(0, 0),
-    longitude(x),
-    latitude(y)
+#include <math.h>
+#include "ofx/Geo/Utils.h"
+
+
+namespace ofx {
+namespace Maps {
+
+
+/// \brief A tile coordinate in a tiled mapping system.
+class TileCoordinate: public ofVec3d
 {
-}
+public:
+	TileCoordinate();
+    TileCoordinate(const TileCoordinate& coordinate);
+	TileCoordinate(double _row, double _column, double _zoom);
+
+    double getColumn() const;
+    double getRow() const;
+    double getZoom() const;
+
+	TileCoordinate getFloored() const;
+	
+	TileCoordinate zoomTo(double destination) const;
+	TileCoordinate zoomBy(double distance) const;
+	
+	TileCoordinate up(double distance = 1) const;
+	TileCoordinate right(double distance = 1) const;
+	TileCoordinate down(double distance = 1) const;
+	TileCoordinate left(double distance = 1) const;
+
+	bool operator < (const TileCoordinate& c) const;
+    TileCoordinate& operator = (const TileCoordinate& rect);
+
+    static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
+    static double scaleForZoom(int zoom);
+
+    // TODO: These should be doubles in the future.
+    double& column;
+	double& row;
+	double& zoom;
+
+};
 
 
-GeoLocation::GeoLocation(const GeoLocation& location):
-    ofVec2d(location),
-    longitude(x),
-    latitude(y)
-{
-}
-
-
-GeoLocation::GeoLocation(double _latitude, double _longitude):
-    ofVec2d(_longitude, _latitude),
-    longitude(x),
-    latitude(y)
-{
-}
-
-
-double GeoLocation::getLatitude() const
-{
-    return latitude;
-}
-
-
-double GeoLocation::getLongitude() const
-{
-    return longitude;
-}
-
-
-void GeoLocation::setLatitude(double _latitude)
-{
-    latitude = _latitude;
-}
-
-
-void GeoLocation::setLongitude(double _longitude)
-{
-    longitude = _longitude;
-}
-
-
-GeoLocation& GeoLocation::operator = (const GeoLocation& location)
-{
-    set(location);
-    return *this;
-}
+} } // namespace ofx::Maps

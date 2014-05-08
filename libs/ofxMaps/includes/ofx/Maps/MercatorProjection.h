@@ -24,8 +24,12 @@
 // =============================================================================
 
 
-#include "BaseProjection.h"
-#include "Types.h"
+#include "ofx/Geo/Utils.h"
+#include "ofx/Maps/BaseProjection.h"
+
+
+namespace ofx {
+namespace Maps {
 
 
 class Transformation;
@@ -51,3 +55,6 @@ protected:
 	ofVec2d rawUnproject(const ofVec2d& point) const;
 
 };
+
+    
+} } // namespace ofx::Maps

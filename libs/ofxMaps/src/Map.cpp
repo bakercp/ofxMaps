@@ -1,9 +1,12 @@
-#include "Map.h"
-#include "QueueSorter.h"
+#include "ofx/Maps/Map.h"
+#include "ofx/Maps/QueueSorter.h"
+
+
+namespace ofx {
+namespace Maps {
 
 
 Map::Map():
-    _tileSize(DEFAULT_TILE_SIZE),
     _maxPending(DEFAULT_MAX_PENDING),
     _maxImagesToCache(DEFAULT_MAX_IMAGES_TO_CACHE),
     _gridPadding(DEFAULT_GRID_PADDING),
@@ -32,7 +35,7 @@ void Map::setup(BaseMapProvider::SharedPtr provider, int width, int height)
 	_provider = provider;
 
     // The width / height of the map.
-    _size = ofVec2f(width, height);
+    _size = ofVec2d(width, height);
 
     // Half the world width, height at zoom 0
     _centerTileCoordinate = TileCoordinate(0.5, 0.5, 0);
@@ -61,7 +64,7 @@ void Map::update(ofEventArgs& args)
 	TileCoordinate bl = pointToTileCoordinate(ofVec2d(0, _size.y)).zoomTo(baseZoom);
 	TileCoordinate br = pointToTileCoordinate(_size).zoomTo(baseZoom);
 
-	// find start and end columns
+	// Find start and end columns
 	int minCol = floor(std::min(std::min(tl.getColumn(),
                                          tr.getColumn()),
                                 std::min(bl.getColumn(),
@@ -96,17 +99,21 @@ void Map::update(ofEventArgs& args)
         {
 			TileCoordinate coord(row, col, baseZoom);
 
-			// keep this for later:
+			// Keep this for later.
 			_visibleCoordinates.insert(coord);
 
+            // Do we have an image for this coordinate?
 			if (0 == _images.count(coord))
             {
-				// fetch it if we don't have it
+				// Fetch it if we don't have it
 				requestTile(coord);
 
-				// see if we have  a parent coord for this tile?
+				// See if we have  a parent coord for this tile?
 				bool gotParent = false;
 
+                // Work backward from the current zoom level to check for
+                // parents to display while we wait for children to be
+                // downloaded.
 				for (int i = static_cast<int>(coord.getZoom()); i > 0; --i)
                 {
 					TileCoordinate zoomed = coord.zoomTo(i).getFloored();
@@ -142,61 +149,6 @@ void Map::update(ofEventArgs& args)
 			
 		} // rows
 	} // columns
-
-//    // grab coords for visible tiles
-//	for (int col = minCol; col <= maxCol; col++)
-//    {
-//		for (int row = minRow; row <= maxRow; row++)
-//        {
-//			TileCoordinate coord(row, col, baseZoom);
-//
-//			// keep this for later:
-//			_visibleCoordinates.insert(coord);
-//
-//			if (_images.count(coord) == 0)
-//            {
-//				// fetch it if we don't have it
-//				requestTile(coord);
-//
-//				// see if we have  a parent coord for this tile?
-//				bool gotParent = false;
-//
-//				for (int i = static_cast<int>(coord.getZoom()); i > 0; i--)
-//                {
-//					TileCoordinate zoomed = coord.zoomTo(i).getFloored();
-//
-//                    if (_images.count(zoomed) > 0)
-//                    {
-//						_visibleCoordinates.insert(zoomed);
-//						gotParent = true;
-//						break;
-//					}
-//				}
-//
-//				// or if we have any of the children
-//				if (!gotParent)
-//                {
-//					TileCoordinate zoomed = coord.zoomBy(1).getFloored();
-//
-//                    std::vector<TileCoordinate> kids;
-//
-//                    kids.push_back(zoomed);
-//					kids.push_back(zoomed.right());
-//					kids.push_back(zoomed.down());
-//					kids.push_back(zoomed.right().down());
-//
-//                    for (std::size_t i = 0; i < kids.size(); ++i)
-//                    {
-//						if (_images.count(kids[i]) > 0)
-//                        {
-//							_visibleCoordinates.insert(kids[i]);
-//						}
-//					}
-//				}
-//			}
-//		} // rows
-//	} // columns
-
 
     // stop fetching things we can't see:
 	// (visibleKeys also has the parents and children, if needed, but that shouldn't matter)
@@ -366,11 +318,11 @@ void Map::keyReleased(ofKeyEventArgs& evt)
 
 void Map::mouseDragged(ofMouseEventArgs& evt)
 {
-//    ofVec2f mouse(evt.x, evt.y);
+//    ofVec2d mouse(evt.x, evt.y);
 //
 //    int button = evt.button;
 //
-//    ofVec2f dMouse = (mouse - _prevMouse) / _position.z;
+//    ofVec2d dMouse = (mouse - _prevMouse) / _position.z;
 //
 //	if (button == 0)
 //    {
@@ -411,20 +363,20 @@ void Map::mouseReleased(ofMouseEventArgs& evt)
 }
 
 
-int Map::getZoom() const
+double Map::getZoom() const
 {
     return _centerTileCoordinate.getZoom();
 }
 
 
 // sets scale according to given zoom level, should leave you with pixel perfect tiles
-void Map::setZoom(int zoom)
+void Map::setZoom(double zoom)
 {
     _centerTileCoordinate = _centerTileCoordinate.zoomTo(zoom);
 }
 
 
-void Map::zoom(int zoomStep)
+void Map::zoom(double zoomStep)
 {
     setZoom(getZoom() + zoomStep);
 }
@@ -441,9 +393,60 @@ void Map::zoomOut()
 }
 
 
-GeoLocation Map::getGeoLocationCenter() const
+void Map::panBy(const ofVec2d& delta)
 {
-	return _provider->tileCoordinateToGeoLocation(_centerTileCoordinate);
+    panBy(delta.x, delta.y);
+}
+
+
+void Map::panBy(double dx, double dy)
+{
+    double sinr = sin(_rotation);
+    double cosr = cos(_rotation);
+	double dxr = dx * cosr + dy * sinr;
+	double dyr = dy * cosr - dx * sinr;
+    ofVec2d tileSize = _provider->getTileSize();
+
+	_centerTileCoordinate.column -= dxr / tileSize.x;
+	_centerTileCoordinate.row    -= dyr / tileSize.y;
+}
+
+
+void Map::scaleBy(double s)
+{
+	scaleBy(s, _size * 0.5);
+}
+
+
+void Map::scaleBy(double s, const ofVec2d& c)
+{
+	scaleBy(s, c.x, c.y);
+}
+
+
+void Map::scaleBy(double s, double cx, double cy)
+{
+    const double prevRotation = _rotation;
+	rotateBy(-prevRotation, cx, cy);
+    ofVec2d center = _size * 0.5;
+	panBy(-cx + center.x, -cy + center.y);
+	_centerTileCoordinate = _centerTileCoordinate.zoomBy(log2(s));
+	panBy(cx - center.x, cy - center.y);
+	rotateBy(prevRotation, cx, cy);
+}
+
+
+void Map::rotateBy(double r, double cx, double cy)
+{
+	panBy(-cx, -cy);
+	_rotation += r;
+	panBy(cx, cy);
+}
+
+
+Geo::Coordinate Map::getGeoLocationCenter() const
+{
+	return _provider->tileCoordinateToGeoCoordinate(_centerTileCoordinate);
 }
 
 
@@ -459,9 +462,9 @@ void Map::setPointCenter(const ofVec2d& center)
 }
 
 
-void Map::setGeoLocationCenter(const GeoLocation& location)
+void Map::setGeoLocationCenter(const Geo::Coordinate& location)
 {
-    setTileCoordinateCenter(_provider->geoLocationToTileCoordinate(location).zoomTo(getZoom()));
+    setTileCoordinateCenter(_provider->geoCoordinateToTileCoordinate(location).zoomTo(getZoom()));
 }
 
 
@@ -479,11 +482,11 @@ TileCoordinate Map::pointToTileCoordinate(const ofVec2d& point) const
 
     const ofVec2d tileSize = _provider->getTileSize();
 
-    rotated.rotate(-_rotation);
+    rotated.rotate(-_rotation * RAD_TO_DEG);
 
 	TileCoordinate coord(_centerTileCoordinate);
 
-    coord += (rotated - (_size / 2.0)) / _tileSize;
+    coord += (rotated - (_size / 2.0)) / tileSize;
 
 	return coord;
 }
@@ -508,21 +511,21 @@ ofVec2d Map::tileCoordinateToPoint(const TileCoordinate& target) const
 
 	ofVec2d rotated(point);
 
-    rotated.rotate(_rotation);
+    rotated.rotate(_rotation * RAD_TO_DEG);
 
 	return rotated;
 }
 
 
-ofVec2d Map::geoLocationToPoint(const GeoLocation& location) const
+ofVec2d Map::geoLocationToPoint(const Geo::Coordinate& location) const
 {
-	return tileCoordinateToPoint(_provider->geoLocationToTileCoordinate(location));
+	return tileCoordinateToPoint(_provider->geoCoordinateToTileCoordinate(location));
 }
 
 
-GeoLocation Map::pointToGeolocation(const ofVec2d& point) const
+Geo::Coordinate Map::pointToGeolocation(const ofVec2d& point) const
 {
-	return _provider->tileCoordinateToGeoLocation(pointToTileCoordinate(point));
+	return _provider->tileCoordinateToGeoCoordinate(pointToTileCoordinate(point));
 }
 
 
@@ -597,3 +600,6 @@ void Map::urlResponse(ofHttpResponse& args)
         ++iter;
     }
 }
+
+
+} } // namespace ofx::Maps

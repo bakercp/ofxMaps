@@ -24,37 +24,56 @@
 // =============================================================================
 
 
-#pragma once
+#include "ofx/Maps/BaseProjection.h"
 
 
-#include "ofTypes.h"
-#include "ofConstants.h"
-#include "Types.h"
-#include "Transformation.h"
-#include "TileCoordinate.h"
-#include "GeoLocation.h"
+namespace ofx {
+namespace Maps {
 
 
-class BaseProjection
+BaseProjection::BaseProjection(double zoom,
+                               const Transformation& transformation):
+    _zoom(zoom),
+    _transformation(transformation)
 {
-public:
-    typedef std::shared_ptr<BaseProjection> SharedPtr;
+}
 
-    BaseProjection(double zoom, const Transformation& transformation);
-    virtual ~BaseProjection();
 
-    TileCoordinate geoLocationToTileCoordinate(const GeoLocation& location) const;
-	GeoLocation tileCoordinateToGeoLocation(const TileCoordinate& coordinate) const;
+BaseProjection::~BaseProjection()
+{
+}
 
-protected:
-	virtual ofVec2d rawProject(const ofVec2d& point) const = 0;
-	virtual ofVec2d rawUnproject(const ofVec2d& point) const = 0;
 
-	ofVec2d project(const ofVec2d& point) const;
-	ofVec2d unproject(const ofVec2d& point) const;
-    
-	double _zoom;
-	Transformation _transformation;
+ofVec2d BaseProjection::project(const ofVec2d& point) const
+{
+    return _transformation.transform(rawProject(point));
+}
 
-};
 
+ofVec2d BaseProjection::unproject(const ofVec2d& point) const
+{
+    return rawUnproject(_transformation.untransform(point));
+}
+
+
+TileCoordinate BaseProjection::geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const
+{
+    ofVec2d point = project(ofVec2d(DEG_TO_RAD * location.getLongitude(),
+                                    DEG_TO_RAD * location.getLatitude()));
+
+    return TileCoordinate(point.y, point.x, _zoom);
+}
+
+
+Geo::Coordinate BaseProjection::tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const
+{
+    TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
+
+    ofVec2d point = unproject(ofVec2d(newCoordinate.getColumn(),
+                                      newCoordinate.getRow()));
+
+    return Geo::Coordinate(RAD_TO_DEG * point.x, RAD_TO_DEG * point.y);
+}
+
+
+} } // namespace ofx::Maps

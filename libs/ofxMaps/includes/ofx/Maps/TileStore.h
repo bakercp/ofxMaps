@@ -26,16 +26,51 @@
 #pragma once
 
 
-#include <vector>
-#include "ofVec2f.h"
-#include "ofVec3f.h"
+#include <map>
+#include "ofImage.h"
+#include "ofURLFileLoader.h"
+#include "ofx/Maps/TileCoordinate.h"
+#include "ofx/Maps/lrucache.h"
 
 
-class GeoLocation;
+namespace ofx {
+namespace Maps {
 
 
-typedef ofVec2f ofVec2d; ///< For now, we pretend to use double precision.
-typedef ofVec3f ofVec3d; ///< For now, we pretend to use double precision.
+class BaseTileStore
+{
+public:
+    typedef std::shared_ptr<ofImage> SharedImagePtr;
+
+    BaseTileStore(std::size_t cacheSize = DEFAULT_CACHE_SIZE);
+
+    virtual ~BaseTileStore();
+
+    SharedImagePtr getTile(const TileCoordinate& coordinate);
+
+    void urlResponse(ofHttpResponse& args);
+
+    void queueTile(const TileCoordinate& coord);
+
+    enum
+    {
+        DEFAULT_CACHE_SIZE = 64
+    };
+
+private:
+    typedef std::shared_ptr<ofURLFileLoader> SharedLoaderPtr;
+
+    /// \brief Image store.
+    cache::lru_cache<TileCoordinate, SharedImagePtr> _images;
+
+    std::map<int, std::shared_ptr<ofURLFileLoader> > _loaders;
+
+    /// \brief Tiles waiting to load.
+    std::map<TileCoordinate, int> _pending;
+
+    mutable Poco::FastMutex _mutex;
+
+};
 
 
-typedef std::vector<GeoLocation> GeoPolyline;
+} } // namespace ofx::Maps

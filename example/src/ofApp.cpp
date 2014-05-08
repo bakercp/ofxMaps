@@ -25,18 +25,16 @@
 
 #include "ofApp.h"
 
-#include "OpenStreetMapProvider.h"
-#include "GeoUtils.h"
 
 void ofApp::setup()
 {
 	ofSetVerticalSync(true);
 
-    map.setup(std::shared_ptr<OpenStreetMapProvider>(new OpenStreetMapProvider()),
+    map.setup(std::shared_ptr<Maps::OpenStreetMapProvider>(new Maps::OpenStreetMapProvider()),
               ofGetWidth(),
               ofGetHeight());
 
-    map.setGeoLocationCenter(GeoLocation(41.878247, -87.629767));
+    map.setGeoLocationCenter(Geo::Coordinate(41.878247, -87.629767));
 	map.setZoom(12);
 
 }
@@ -55,7 +53,7 @@ void ofApp::draw()
 
     ofSetColor(255, 127, 255);
 
-    cout << map.getGeoLocationCenter() << endl;
+//    cout << map.getGeoLocationCenter() << endl;
 
     ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
                                 ofGetWidth() / 2,
@@ -81,4 +79,12 @@ void ofApp::keyPressed(int key)
     {
 		ofToggleFullscreen();
 	}
+    else if (key == 'r')
+    {
+        map.rotateBy(TWO_PI / 180, 40, 40);
+    }
+    else if (key == 'R')
+    {
+        map.rotateBy(-TWO_PI / 180, 40, 40);
+    }
 }

@@ -27,38 +27,8 @@
 #pragma once
 
 
-#include <string>
-#include <vector>
-#include "Types.h"
-#include "GeoLocation.h"
+namespace ofx {
+namespace Maps {
 
 
-class GeoUtils
-{
-public:
-    static GeoPolyline decodeGeoPolyline(const std::string& encodedGeoPolyline);
-
-    /// \brief Get the distance in kilometers between two GeoLocations on earth.
-    ///     Calculation uses the great-circle distance uses the approximated
-    ///     radius of a sphereical earth in kilometers.
-    /// \returns the spherical distance in kilometers.
-	static double getSphericalDistance(const GeoLocation& location0,
-                                       const GeoLocation& location1);
-
-
-    /// \brief Get the distance in kilometers between two GeoLocations on earth.
-    ///     Calculation uses the haversine formula. Uses the approximated
-    ///     radius of a sphereical earth in kilometers.
-    /// \returns the spherical distance in kilometers.
-    static double getHaversineDistance(const GeoLocation& location0,
-                                       const GeoLocation& location1);
-
-
-    // \returns the bearing in degrees between two GeoLocations.
-    static double getBearingBetween(const GeoLocation& location0,
-                                    const GeoLocation& location1);
-
-    static const double EARTH_RADIUS_KM;
-        ///< The approximate radius of a spherical earth in kilometers.
-
-};
+} } // namespace ofx::Maps

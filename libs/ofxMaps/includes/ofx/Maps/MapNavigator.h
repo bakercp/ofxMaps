@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +23,11 @@
 // =============================================================================
 
 
-#include "MercatorProjection.h"
+#pragma once
 
 
-const Transformation MercatorProjection::DEFAULT_MERCATOR_TRANSFORMATION
-    = Transformation::deriveTransformation(-M_PI,  M_PI, 0, 0,
-                                            M_PI,  M_PI, 1, 0,
-                                           -M_PI, -M_PI, 0, 1);
-
-
-const double MercatorProjection::MINIMUM_LATITUDE = -RAD_TO_DEG * atan(sinh(M_PI));
-const double MercatorProjection::MAXIMUM_LATITUDE =  RAD_TO_DEG * atan(sinh(M_PI));
-const double MercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
-const double MercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
-
-
-MercatorProjection::MercatorProjection(double zoom, Transformation t):
-    BaseProjection(zoom, t)
-{
-}
-
-
-MercatorProjection::~MercatorProjection()
-{
-}
-
-
-ofVec2d MercatorProjection::rawProject(const ofVec2d& point) const
-{
-	return ofVec2d(point.x, log(tan(0.25 * PI + 0.5 * point.y)));
-}
-
-
-ofVec2d MercatorProjection::rawUnproject(const ofVec2d& point) const
-{
-	return ofVec2d(point.x,
-                   2.0 * atan(pow(M_E, 1.0 * point.y)) - 0.5 * PI);
-}
+namespace ofx {
+namespace Maps {
+        
+        
+} } // namespace ofx::Maps

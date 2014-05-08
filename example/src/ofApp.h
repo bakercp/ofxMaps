@@ -26,7 +26,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Map.h"
+#include "ofxMaps.h"
+
+
+using namespace ofx;
 
 
 class ofApp: public ofBaseApp
@@ -38,6 +41,6 @@ public:
 
     void keyPressed(int key);
 
-    Map map;
+    Maps::Map map;
 
 };

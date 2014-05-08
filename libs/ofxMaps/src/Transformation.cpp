@@ -24,7 +24,11 @@
 // =============================================================================
 
 
-#include "Transformation.h"
+#include "ofx/Maps/Transformation.h"
+
+
+namespace ofx {
+namespace Maps {
 
 
 Transformation::Transformation():
@@ -117,3 +121,5 @@ ofVec3d Transformation::linearSolution(double r1, double s1, double t1,
     return ofVec3d(a, b, c);
 };
 
+
+} } // namespace ofx::Maps

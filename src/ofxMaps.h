@@ -23,32 +23,6 @@
 // =============================================================================
 
 
-#pragma once
-
-
-#include "Types.h"
-
-
-/// \brief A Location defines a latitude / longitude pair.
-/// \note Internally, latitude is represented by the y value and longitude is
-/// represented by the x value.
-class GeoLocation: public ofVec2d
-{
-public:
-    GeoLocation();
-    GeoLocation(const GeoLocation& location);
-	GeoLocation(double latitude, double longitude);
-
-    double getLatitude() const;
-    double getLongitude() const;
-
-    void setLatitude(double latitude);
-    void setLongitude(double longitude);
-
-    GeoLocation& operator = (const GeoLocation& location);
-
-protected:
-    // TODO: These should be doubles in the future.
-    float& latitude;
-    float& longitude;
-};
+#include "ofxGeo.h"
+#include "ofx/Maps/Map.h"
+#include "ofx/Maps/OpenStreetMapProvider.h"

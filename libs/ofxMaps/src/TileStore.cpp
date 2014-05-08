@@ -23,11 +23,26 @@
 // =============================================================================
 
 
-#include "TileStore.h"
+#include "ofx/Maps/TileStore.h"
+
+
+namespace ofx {
+namespace Maps {
+
+
+BaseTileStore::BaseTileStore(std::size_t cacheSize)//:
+//    _images(cache::lru_cache<int, SharedImagePtr>(cacheSize))
+{
+}
+
+
+BaseTileStore::~BaseTileStore()
+{
+}
 
 
 
-void TileStore::queueTile(const TileCoordinate& coord)
+void BaseTileStore::queueTile(const TileCoordinate& coord)
 {
 //    bool isPending = _pending.count(coord) > 0;
 //    bool isQueued = std::find(_queue.begin(), _queue.end(), coord) != _queue.end();
@@ -40,7 +55,7 @@ void TileStore::queueTile(const TileCoordinate& coord)
 }
 
 
-void TileStore::urlResponse(ofHttpResponse& args)
+void BaseTileStore::urlResponse(ofHttpResponse& args)
 {
     std::map<TileCoordinate, int>::iterator iter = _pending.begin();
 
@@ -52,9 +67,10 @@ void TileStore::urlResponse(ofHttpResponse& args)
             if (200 == args.status)
             {
                 const TileCoordinate& coord = (*iter).first;
-                _images[coord] = std::shared_ptr<ofImage>(new ofImage());
-                _images[coord]->setUseTexture(false);
-                _images[coord]->loadImage(args);
+                SharedImagePtr img = SharedImagePtr(new ofImage());
+                img->setUseTexture(false);
+                img->loadImage(args);
+                _images.put(coord, img);
             }
             else
             {
@@ -68,3 +84,6 @@ void TileStore::urlResponse(ofHttpResponse& args)
         ++iter;
     }
 }
+
+
+} } // namespace ofx::Maps

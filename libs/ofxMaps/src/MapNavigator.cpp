@@ -23,41 +23,11 @@
 // =============================================================================
 
 
-#pragma once
+#include "ofx/Maps/MapNavigator.h"
 
 
-#include <map>
-#include "ofImage.h"
-#include "ofURLFileLoader.h"
-#include "TileCoordinate.h"
-#include "LRUCache.h"
-
-class TileStore
-{
-public:
-    typedef std::shared_ptr<ofImage> SharedImagePtr;
+namespace ofx {
+namespace Maps {
 
 
-
-
-
-    SharedImagePtr getTile(const TileCoordinate& coordinate);
-
-    void urlResponse(ofHttpResponse& args);
-
-    void queueTile(const TileCoordinate& coord);
-
-private:
-    lru_cache_using_std<int, SharedImagePtr, std::map> images;
-
-    typedef std::shared_ptr<ofURLFileLoader> SharedLoaderPtr;
-
-    std::map<int, std::shared_ptr<ofURLFileLoader> > _loaders;
-
-    std::map<TileCoordinate, int> _pending; ///< \brief Tiles waiting to load.
-
-    std::map<TileCoordinate, SharedImagePtr> _images; ///< \brief Image store.
-
-    ofMutex _mutex;
-
-};
+} } // namespace ofx::Maps

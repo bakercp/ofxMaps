@@ -24,73 +24,69 @@
 // =============================================================================
 
 
-#include "BaseMapProvider.h"
-#include "MercatorProjection.h"
+#pragma once
 
 
-class OpenStreetMapProvider: public BaseMapProvider
+#include "ofx/Maps/TileCoordinate.h"
+
+
+namespace ofx {
+namespace Maps {
+        
+
+class QueueSorter
 {
 public:
-    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
-
-	OpenStreetMapProvider():
-		BaseMapProvider(BaseProjection::SharedPtr(new MercatorProjection()))
-	{
-		_subdomains.push_back("");
-		_subdomains.push_back("a.");
-		_subdomains.push_back("b.");
-		_subdomains.push_back("c.");
-	}
-	
-	int getTileWidth() const
+	QueueSorter(const TileCoordinate& center): _center(center)
     {
-		return 256;
-	}
-	
-	int getTileHeight() const
-    {
-		return 256;
-	}
-
-    int getMinZoom() const
-    {
-        return 0;
     }
-
-    int getMaxZoom() const
+	
+	static double dist(double x0, double y0, double x1, double y1)
     {
-        return 19;
-    }
+		double dx = x1 - x0;
+		double dy = y1 - y0;
 
-    std::vector<std::string> getTileUrls(const TileCoordinate& rawCoordinate) const
+		return sqrt(dx * dx + dy * dy);
+	}
+
+    // TODO: simplify these calculations by using internal vec calculations
+	bool operator () (const TileCoordinate& c0, const TileCoordinate& c1) const
     {
-		std::vector<std::string> urls;
-
-        if (rawCoordinate.getRow() >= 0 && rawCoordinate.getRow() < pow(2, rawCoordinate.getZoom()))
+		if (c0.getZoom() == _center.getZoom())
         {
-			TileCoordinate coordinate = TileCoordinate::normalizeTileCoordinate(rawCoordinate);
+			if (c1.getZoom() == _center.getZoom())
+            {
+				double d0 = dist(_center.getColumn(),
+                                 _center.getRow(),
+                                 c0.getColumn() + 0.5,
+                                 c0.getRow() + 0.5);
 
-            std::stringstream url;
+				double d1 = dist(_center.getColumn(),
+                                 _center.getRow(),
+                                 c1.getColumn() + 0.5,
+                                 c1.getRow() + 0.5);
 
-			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
-
-			url << "http://"<< subdomain << "tile.openstreetmap.org/";
-            url << (int)coordinate.getZoom() << "/" << (int)coordinate.getColumn();
-            url << "/" << (int)coordinate.getRow() << ".png";
-
-			urls.push_back(url.str());
+				return d0 < d1;
+			}
 		}
-        
-		return urls;
-	}
+		else if (c1.getZoom() == _center.getZoom())
+        {
+			return false;
+		}
+		else
+        {
+			double d0 = fabs(c0.getZoom() - _center.getZoom());
+			double d1 = fabs(c1.getZoom() - _center.getZoom());
+			return d0 < d1;
+		}
 
-    static SharedPtr makeShared()
-    {
-        return SharedPtr(new OpenStreetMapProvider());
-    }
+		return false;
+	}
 
 protected:
-    std::vector<std::string> _subdomains;
+    TileCoordinate _center;
 
-	
 };
+
+
+} } // namespace ofx::Maps

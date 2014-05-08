@@ -27,7 +27,11 @@
 #pragma once
 
 
-#include "Types.h"
+#include "ofx/Geo/Utils.h"
+
+
+namespace ofx {
+namespace Maps {
 
 
 class Transformation
@@ -42,8 +46,10 @@ public:
     ofVec2d transform(const ofVec2d& point) const;
     ofVec2d untransform(const ofVec2d& point) const;
 
-    /// Generates a transform based on three pairs of points,
+    /// \brief Generates a transform based on three pairs of points.
+    ///
     /// a1 -> a2, b1 -> b2, c1 -> c2.
+    ///
     /// \returns the derived Transformation.
     static Transformation deriveTransformation(double a1x, double a1y,
                                                double a2x, double a2y,
@@ -52,7 +58,7 @@ public:
                                                double c1x, double c1y,
                                                double c2x, double c2y);
 
-    /// Solves a system of linear equations.
+    /// \brief Solves a system of linear equations.
     ///
     ///     t1 = (a * r1) + (b + s1) + c
     ///     t2 = (a * r2) + (b + s2) + c
@@ -73,3 +79,6 @@ public:
     double cy;
 
 };
+
+
+} } // namespace ofx::Maps
