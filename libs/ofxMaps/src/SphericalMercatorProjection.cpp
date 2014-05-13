@@ -24,37 +24,47 @@
 // =============================================================================
 
 
-#include "ofx/Geo/Utils.h"
-#include "ofx/Maps/BaseProjection.h"
+#include "ofx/Maps/SphericalMercatorProjection.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class Transformation;
+const Transformation SperhicalMercatorProjection::DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION
+    = Transformation::deriveTransformation(-M_PI,  M_PI, 0, 0,
+                                            M_PI,  M_PI, 1, 0,
+                                           -M_PI, -M_PI, 0, 1);
 
 
-class MercatorProjection: public BaseProjection
+const double SperhicalMercatorProjection::MINIMUM_LATITUDE = -RAD_TO_DEG * atan(sinh(M_PI));
+const double SperhicalMercatorProjection::MAXIMUM_LATITUDE =  RAD_TO_DEG * atan(sinh(M_PI));
+const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
+const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
+
+
+SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom,
+                                                         Transformation t):
+    BaseProjection(zoom, t)
 {
-public:	
-    MercatorProjection(double zoom = 0,
-                       Transformation t = DEFAULT_MERCATOR_TRANSFORMATION);
+}
 
-    virtual ~MercatorProjection();
 
-    static const Transformation DEFAULT_MERCATOR_TRANSFORMATION;
+SperhicalMercatorProjection::~SperhicalMercatorProjection()
+{
+}
 
-    static const double MINIMUM_LATITUDE;
-	static const double MAXIMUM_LATITUDE;
-	static const double MINIMUM_LONGITUDE;
-	static const double MAXIMUM_LONGITUDE;
 
-protected:
-	ofVec2d rawProject(const ofVec2d& point) const;
-	ofVec2d rawUnproject(const ofVec2d& point) const;
+ofVec2d SperhicalMercatorProjection::rawProject(const ofVec2d& point) const
+{
+	return ofVec2d(point.x, log(tan(0.25 * M_PI + 0.5 * point.y)));
+}
 
-};
 
-    
+ofVec2d SperhicalMercatorProjection::rawUnproject(const ofVec2d& point) const
+{
+	return ofVec2d(point.x, 2.0 * atan(pow(M_E, 1.0 * point.y)) - 0.5 * M_PI);
+}
+
+
 } } // namespace ofx::Maps

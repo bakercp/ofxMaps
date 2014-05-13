@@ -24,46 +24,39 @@
 // =============================================================================
 
 
-#include "ofx/Maps/MercatorProjection.h"
+#include "ofx/Geo/Utils.h"
+#include "ofx/Maps/BaseProjection.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-const Transformation MercatorProjection::DEFAULT_MERCATOR_TRANSFORMATION
-    = Transformation::deriveTransformation(-M_PI,  M_PI, 0, 0,
-                                            M_PI,  M_PI, 1, 0,
-                                           -M_PI, -M_PI, 0, 1);
+//EPSG:3857
+
+class Transformation;
 
 
-const double MercatorProjection::MINIMUM_LATITUDE = -RAD_TO_DEG * atan(sinh(M_PI));
-const double MercatorProjection::MAXIMUM_LATITUDE =  RAD_TO_DEG * atan(sinh(M_PI));
-const double MercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
-const double MercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
-
-
-MercatorProjection::MercatorProjection(double zoom, Transformation t):
-    BaseProjection(zoom, t)
+class SperhicalMercatorProjection: public BaseProjection
 {
-}
+public:	
+    SperhicalMercatorProjection(double zoom = 0,
+                                Transformation t = DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION);
 
+    virtual ~SperhicalMercatorProjection();
 
-MercatorProjection::~MercatorProjection()
-{
-}
+    static const Transformation DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION;
 
+    static const double MINIMUM_LATITUDE;
+	static const double MAXIMUM_LATITUDE;
+	static const double MINIMUM_LONGITUDE;
+	static const double MAXIMUM_LONGITUDE;
 
-ofVec2d MercatorProjection::rawProject(const ofVec2d& point) const
-{
-	return ofVec2d(point.x, log(tan(0.25 * M_PI + 0.5 * point.y)));
-}
+protected:
+	ofVec2d rawProject(const ofVec2d& point) const;
+	ofVec2d rawUnproject(const ofVec2d& point) const;
 
+};
 
-ofVec2d MercatorProjection::rawUnproject(const ofVec2d& point) const
-{
-	return ofVec2d(point.x, 2.0 * atan(pow(M_E, 1.0 * point.y)) - 0.5 * M_PI);
-}
-
-
+    
 } } // namespace ofx::Maps

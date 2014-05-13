@@ -25,7 +25,7 @@
 
 
 #include "ofx/Maps/BaseMapProvider.h"
-#include "ofx/Maps/MercatorProjection.h"
+#include "ofx/Maps/SphericalMercatorProjection.h"
 
 
 namespace ofx {
@@ -39,7 +39,7 @@ public:
     typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
 
 	OpenStreetMapProvider():
-		BaseMapProvider(BaseProjection::SharedPtr(new MercatorProjection()),
+		BaseMapProvider(BaseProjection::SharedPtr(new SperhicalMercatorProjection()),
                         OSM_TILE_WIDTH,
                         OSM_TILE_HEIGHT,
                         OSM_MIN_ZOOM,

@@ -29,7 +29,7 @@
 		3c9a355a55d68a8e882fef85fa1ef587 /* RegexPathFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13d68f0c2cae7809d621924cd66c570b /* RegexPathFilter.cpp */; };
 		3f0af80a73efa1bb436a0bb86ddfd7c8 /* WebSocketFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64752fc622fc0292444668b8636246e9 /* WebSocketFrame.cpp */; };
 		3fae2291635e077cf948f8b8b5232758 /* Transformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9c062d3cd683482d3ebd17b392bee7ee /* Transformation.cpp */; };
-		4255313ac288231057279e3aa5631e43 /* MercatorProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4d67a79112183b947d887b261b01b448 /* MercatorProjection.cpp */; };
+		4255313ac288231057279e3aa5631e43 /* SphericalMercatorProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4d67a79112183b947d887b261b01b448 /* SphericalMercatorProjection.cpp */; };
 		4b14cedcc7195a4d1f8e28b4f9635a89 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19c22cd05d10f78b32ff80c6be3a9385 /* ofApp.cpp */; };
 		4dfc16696d70d2e63b933cb53fb4e1b8 /* SessionSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8030d05c94b7faa854d03b612f01460f /* SessionSettings.cpp */; };
 		508d5ecda7faff379f58128a8a24d1e4 /* ofVec2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ff63913175ed4525ae4d309e584b0546 /* ofVec2d.cpp */; };
@@ -187,7 +187,7 @@
 		14a64ab09b83ff0105bb79f5454caef0 /* BaseResponse.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = BaseResponse.cpp; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Client/src/BaseResponse.cpp; sourceTree = SOURCE_ROOT; };
 		16d2c2310805718db935df8364d6b0d9 /* IPVideoFrame.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = IPVideoFrame.cpp; path = ../../../addons/ofxHTTP/libs/ofxHTTP/IPVideo/src/IPVideoFrame.cpp; sourceTree = SOURCE_ROOT; };
 		1785485e1b5725bf984f42fb609a0002 /* DefaultAsycClientTask.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = DefaultAsycClientTask.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Client/include/ofx/HTTP/Client/DefaultAsycClientTask.h; sourceTree = SOURCE_ROOT; };
-		17888e49ba94a333ed52e949b965610e /* MercatorProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MercatorProjection.h; path = ../../../addons/ofxMaps/libs/ofxMaps/includes/ofx/Maps/MercatorProjection.h; sourceTree = SOURCE_ROOT; };
+		17888e49ba94a333ed52e949b965610e /* SphericalMercatorProjection.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = SphericalMercatorProjection.h; path = ../../../addons/ofxMaps/libs/ofxMaps/includes/ofx/Maps/SphericalMercatorProjection.h; sourceTree = SOURCE_ROOT; };
 		179a16bb55ab7f81fdebb47c9d2963f4 /* DefaultSessionProvider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = DefaultSessionProvider.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Client/include/ofx/HTTP/Client/DefaultSessionProvider.h; sourceTree = SOURCE_ROOT; };
 		19c22cd05d10f78b32ff80c6be3a9385 /* ofApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofApp.cpp; path = src/ofApp.cpp; sourceTree = SOURCE_ROOT; };
 		1c011da756ff131fc46a2907c62f2414 /* FileExtensionFilter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = FileExtensionFilter.h; path = ../../../addons/ofxIO/libs/ofxIO/include/ofx/IO/FileExtensionFilter.h; sourceTree = SOURCE_ROOT; };
@@ -243,7 +243,7 @@
 		4b1a89dbcbac668dfc606e92ed9b2e93 /* FileSystemRouteHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = FileSystemRouteHandler.cpp; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Server/src/FileSystemRouteHandler.cpp; sourceTree = SOURCE_ROOT; };
 		4b2e373dadeca95e5f079738d63644d6 /* FileSystemRoute.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = FileSystemRoute.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Server/include/ofx/HTTP/Server/FileSystemRoute.h; sourceTree = SOURCE_ROOT; };
 		4d38898647bbfeebb89c1569bf8791b4 /* alphanum.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = alphanum.hpp; path = ../../../addons/ofxIO/libs/alphanum/include/alphanum.hpp; sourceTree = SOURCE_ROOT; };
-		4d67a79112183b947d887b261b01b448 /* MercatorProjection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MercatorProjection.cpp; path = ../../../addons/ofxMaps/libs/ofxMaps/src/MercatorProjection.cpp; sourceTree = SOURCE_ROOT; };
+		4d67a79112183b947d887b261b01b448 /* SphericalMercatorProjection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = SphericalMercatorProjection.cpp; path = ../../../addons/ofxMaps/libs/ofxMaps/src/SphericalMercatorProjection.cpp; sourceTree = SOURCE_ROOT; };
 		4eb60eaaf463ae0853da1648c4d65c9e /* DefaultResponseStreamFilter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = DefaultResponseStreamFilter.h; path = ../../../addons/ofxHTTP/libs/ofxHTTP/Client/include/ofx/HTTP/Client/DefaultResponseStreamFilter.h; sourceTree = SOURCE_ROOT; };
 		5114d2af276e4e6e9a67b34240f124de /* PathFilterCollection.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = PathFilterCollection.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/PathFilterCollection.cpp; sourceTree = SOURCE_ROOT; };
 		53c43bdc3eeb1657eaddbcdba88b06a9 /* Transaction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Transaction.cpp; path = ../../../addons/ofxSQLiteCpp/libs/SQLiteCpp/src/Transaction.cpp; sourceTree = SOURCE_ROOT; };
@@ -681,7 +681,7 @@
 				60ff77249646557101b2b44069cf806c /* BaseProjection.cpp */,
 				d38098c5c0a6989355d5f69b7eae4435 /* Map.cpp */,
 				0f7bd3cc174bbbcd52bbf12db32be449 /* MapNavigator.cpp */,
-				4d67a79112183b947d887b261b01b448 /* MercatorProjection.cpp */,
+				4d67a79112183b947d887b261b01b448 /* SphericalMercatorProjection.cpp */,
 				6524c5904c130cd54f76e87b1abcdd9f /* TileCoordinate.cpp */,
 				dda882b04bb3fd04d18c623c7003d51f /* TileStore.cpp */,
 				9c062d3cd683482d3ebd17b392bee7ee /* Transformation.cpp */,
@@ -1547,7 +1547,7 @@
 				3558653c9b56bf17166529050edabedd /* lrucache.h */,
 				bc55aba509364c724356098fcc5e03c6 /* Map.h */,
 				e01aa607013183c7199cd226afacd98b /* MapNavigator.h */,
-				17888e49ba94a333ed52e949b965610e /* MercatorProjection.h */,
+				17888e49ba94a333ed52e949b965610e /* SphericalMercatorProjection.h */,
 				87279b281d01267b9739aa4fd2b30a5e /* OpenStreetMapProvider.h */,
 				0e286e4c068bf14b6d59930bac20fd93 /* QueueSorter.h */,
 				03fbdc013c6f3a573db30fd5e84799a7 /* TileCoordinate.h */,
@@ -1784,7 +1784,7 @@
 				d314e8ca4d0c1b980b218f4f48b4b75f /* BaseProjection.cpp in Sources */,
 				94b1572171b5cce41998bdda3184e5d6 /* Map.cpp in Sources */,
 				29c443f97cdeb8ca02b89055fdb57888 /* MapNavigator.cpp in Sources */,
-				4255313ac288231057279e3aa5631e43 /* MercatorProjection.cpp in Sources */,
+				4255313ac288231057279e3aa5631e43 /* SphericalMercatorProjection.cpp in Sources */,
 				bce5e30e5481736fbd31e7fbb9fdef89 /* TileCoordinate.cpp in Sources */,
 				fdd2670a49dfc5cf94dbcd5a6b24a112 /* TileStore.cpp in Sources */,
 				3fae2291635e077cf948f8b8b5232758 /* Transformation.cpp in Sources */,

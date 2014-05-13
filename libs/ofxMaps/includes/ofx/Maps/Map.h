@@ -62,7 +62,6 @@ public:
 
     void windowEntered(ofEntryEventArgs& evt)
     {
-        cout << "entered!" << endl;
     }
 
 	double getZoom() const;

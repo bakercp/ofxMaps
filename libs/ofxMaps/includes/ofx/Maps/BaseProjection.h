@@ -46,6 +46,7 @@ public:
     virtual ~BaseProjection();
 
     TileCoordinate geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const;
+    
     Geo::Coordinate tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const;
 
 protected:
