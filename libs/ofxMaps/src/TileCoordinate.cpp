@@ -76,6 +76,24 @@ double TileCoordinate::getZoom() const
 }
 
 
+void TileCoordinate::setColumn(double _column)
+{
+    column = _column;
+}
+
+
+void TileCoordinate::setRow(double _row)
+{
+    row = _row;
+}
+
+
+void TileCoordinate::setZoom(double _zoom)
+{
+    zoom = _zoom;
+}
+
+
 TileCoordinate TileCoordinate::getFloored() const
 {
     return TileCoordinate(floor(row), floor(column), zoom);

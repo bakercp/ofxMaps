@@ -47,6 +47,10 @@ public:
     double getRow() const;
     double getZoom() const;
 
+    void setColumn(double column);
+    void setRow(double row);
+    void setZoom(double zoom);
+
 	TileCoordinate getFloored() const;
 	
 	TileCoordinate zoomTo(double destination) const;
@@ -63,7 +67,6 @@ public:
     static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
     static double scaleForZoom(int zoom);
 
-    // TODO: These should be doubles in the future.
     double& column;
 	double& row;
 	double& zoom;
