@@ -28,9 +28,7 @@
 
 #include <map>
 #include "ofImage.h"
-#include "ofURLFileLoader.h"
 #include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/lrucache.h"
 
 
 namespace ofx {
@@ -40,35 +38,29 @@ namespace Maps {
 class BaseTileStore
 {
 public:
-    typedef std::shared_ptr<ofImage> SharedImagePtr;
+    typedef std::shared_ptr<ofImage> Tile;
 
     BaseTileStore(std::size_t cacheSize = DEFAULT_CACHE_SIZE);
 
     virtual ~BaseTileStore();
 
-    SharedImagePtr getTile(const TileCoordinate& coordinate);
-
-    void urlResponse(ofHttpResponse& args);
-
-    void queueTile(const TileCoordinate& coord);
+    /// \brief Get a shared pointer to a Tile.
+    ///
+    /// If the tile is not yet available, the BaseTileStore will choose an
+    /// alternate or return a null pointer if nothing is available.
+    ///
+    /// \param coordinate The TileCoordinate that describes the tile
+    Tile getTile(const TileCoordinate& coordinate);
 
     enum
     {
-        DEFAULT_CACHE_SIZE = 64
+        /// \brief The maximum number of items cached.
+        DEFAULT_CACHE_SIZE = 128
     };
 
 private:
-    typedef std::shared_ptr<ofURLFileLoader> SharedLoaderPtr;
-
     /// \brief Image store.
-    cache::lru_cache<TileCoordinate, SharedImagePtr> _images;
-
-    std::map<int, std::shared_ptr<ofURLFileLoader> > _loaders;
-
-    /// \brief Tiles waiting to load.
-    std::map<TileCoordinate, int> _pending;
-
-    mutable Poco::FastMutex _mutex;
+//    cache::lru_cache<TileCoordinate, Tile> _cache;
 
 };
 

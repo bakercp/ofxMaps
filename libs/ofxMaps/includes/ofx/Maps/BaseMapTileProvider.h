@@ -27,8 +27,9 @@
 #pragma once
 
 
+#include "ofVec2d.h"
 #include "ofx/Geo/Coordinate.h"
-#include "ofx/Maps/Transformation.h"
+#include "ofx/Maps/BaseProjection.h"
 #include "ofx/Maps/TileCoordinate.h"
 
 
@@ -36,48 +37,54 @@ namespace ofx {
 namespace Maps {
 
 
-/// \brief A class responsible for projecting coordinates.
-class BaseProjection
+/// \brief A simplified BaseMapTileProvider.
+class BaseMapTileProvider
 {
 public:
-    /// \brief Construct a BaseProjection with a default zoom and Transformation.
-    /// \param zoom The default zoom level used by this Projection.
-    /// \param transformation The transformation used by this projection.
-    BaseProjection(double zoom, const Transformation& transformation);
+    /// \brief Create a BaseMapTileProvider.
+    /// \param tileWidth The width of the provider's tiles in pixels.
+    /// \param tileHeight The height of the provider's tiles in pixels.
+    /// \param minZoom The minimum zoom level supported by the provider.
+    /// \param maxZoom The maximum zoom level supported by the provider.
+    /// \param projection The projection used by the provider.
+    BaseMapTileProvider(int minZoom,
+                        int maxZoom,
+                        int tileWidth,
+                        int tileHeight,
+                        const BaseProjection& projection);
 
-    /// \brief Destroy the BaseProjection.
-    virtual ~BaseProjection();
+    /// \brief Destroy the BaseMapProvider.
+    virtual ~BaseMapTileProvider();
 
-    /// \brief Get the TileCoordinate from the given Geo::Coordinate at the default zoom.
-    /// \param location The the Geo::Coordinate at the default zoom level.
-    /// \returns the TileCoordinate at the default zoom level.
+    int getMinZoom() const;
+    int getMaxZoom() const;
+
+	int getTileWidth() const;
+	int getTileHeight() const;
+
+    ofVec2d getTileSize() const;
+
+    virtual double zoomForScale(double scale) const;
+
     TileCoordinate geoToTile(const Geo::Coordinate& location) const;
     
-    /// \brief Get the GeoCoordinate from the given TileCoordinate.
-    /// \param coordinate The TileCoordinate to transform to a Geo::Coordinate.
-    /// \returns the GeoCoordinate corresponding to the TileCoordinate.
     Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const;
 
 protected:
-    /// \brief Calculate the raw projection between two points.
-    /// \param point The point to be projected.
-    /// \returns The projected point.
-	virtual ofVec2d rawProject(const ofVec2d& unProjectedPoint) const = 0;
+    /// \brief The minimum zoom level for this provider.
+    int _minZoom;
 
-    /// \brief Calculate the raw reverse projection between two points.
-    /// \param point The point to be unprojected.
-    /// \returns The unprojected point.
-	virtual ofVec2d rawUnproject(const ofVec2d& projectedPoint) const = 0;
+    /// \brief The maximum zoom level for this provider.
+    int _maxZoom;
+    
+    /// \brief The tile width used by this provider.
+    int _tileWidth;
 
-	ofVec2d project(const ofVec2d& point) const;
-	ofVec2d unproject(const ofVec2d& point) const;
+    /// \brief The tile height used by this provider.
+    int _tileHeight;
 
-    /// \brief The default zoom level used by this Projection.
-	double _zoom;
-
-    /// \brief The transformation used by this projection.
-	Transformation _transformation;
-
+    /// \brief A reference to this provider's projection.
+    const BaseProjection& _projection;
 };
 
 

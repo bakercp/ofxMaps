@@ -26,17 +26,26 @@
 #include "ofApp.h"
 
 
+ofApp::ofApp(): map(osmProvider, ofGetWidth(), ofGetHeight())
+{
+}
+
+
+ofApp::~ofApp()
+{
+}
+
+
 void ofApp::setup()
 {
 	ofSetVerticalSync(true);
 
-    map.setup(std::shared_ptr<Maps::OpenStreetMapProvider>(new Maps::OpenStreetMapProvider()),
-              ofGetWidth(),
-              ofGetHeight());
+//    map.setup(std::shared_ptr<ofx::Maps::OpenStreetMapProvider>(new ofx::Maps::OpenStreetMapProvider()),
+//              ofGetWidth(),
+//              ofGetHeight());
 
-    map.setGeoLocationCenter(Geo::Coordinate(41.878247, -87.629767));
-	map.setZoom(12);
-
+//    map.setGeoLocationCenter(ofx::Geo::Coordinate(41.878247, -87.629767));
+//	map.setZoom(12);
 }
 
 
@@ -49,25 +58,25 @@ void ofApp::draw()
 {
     ofBackground(0);
 
-    map.draw();
+    map.draw(0, 0);
 
     ofSetColor(255, 127, 255);
 
 //    cout << map.getGeoLocationCenter() << endl;
 
-    ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
-                                ofGetWidth() / 2,
-                                ofGetHeight() / 2);
-
-    ofVec2d mousePosition(mouseX, mouseY);
-
-    ofDrawBitmapStringHighlight(ofToString(map.pointToTileCoordinate(mousePosition)),
-                                mouseX + 16,
-                                mouseY);
-
-    ofDrawBitmapStringHighlight(ofToString(map.pointToGeolocation(mousePosition)),
-                                mouseX + 16,
-                                mouseY + 14);
+//    ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
+//                                ofGetWidth() / 2,
+//                                ofGetHeight() / 2);
+//
+//    ofVec2d mousePosition(mouseX, mouseY);
+//
+//    ofDrawBitmapStringHighlight(">>" + ofToString(map.pointToTileCoordinate(mousePosition)),
+//                                mouseX + 16,
+//                                mouseY);
+//
+//    ofDrawBitmapStringHighlight("<<" + ofToString(map.pointToGeolocation(mousePosition)),
+//                                mouseX + 16,
+//                                mouseY + 14);
 
 
 }
@@ -81,10 +90,10 @@ void ofApp::keyPressed(int key)
 	}
     else if (key == 'r')
     {
-        map.rotateBy(TWO_PI / 180, 40, 40);
+//        map.rotateBy(TWO_PI / 180, 40, 40);
     }
     else if (key == 'R')
     {
-        map.rotateBy(-TWO_PI / 180, 40, 40);
+//        map.rotateBy(-TWO_PI / 180, 40, 40);
     }
 }

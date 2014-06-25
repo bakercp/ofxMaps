@@ -24,74 +24,26 @@
 // =============================================================================
 
 
-#include "ofx/Maps/BaseMapProvider.h"
-#include "ofx/Maps/SphericalMercatorProjection.h"
+#include "ofx/Maps/DefaultMapTileProvider.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class OpenStreetMapProvider: public BaseMapProvider
+class OpenStreetMapProvider: public DefaultMapTileProvider
 {
 public:
+	OpenStreetMapProvider();
 
-    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
-
-	OpenStreetMapProvider():
-		BaseMapProvider(BaseProjection::SharedPtr(new SperhicalMercatorProjection()),
-                        OSM_TILE_WIDTH,
-                        OSM_TILE_HEIGHT,
-                        OSM_MIN_ZOOM,
-                        OSM_MAX_ZOOM)
-    
-	{
-		_subdomains.push_back("");
-		_subdomains.push_back("a.");
-		_subdomains.push_back("b.");
-		_subdomains.push_back("c.");
-	}
-
-    std::vector<std::string> getTileUrls(const TileCoordinate& rawCoordinate) const
-    {
-		std::vector<std::string> urls;
-
-        if (rawCoordinate.getRow() >= 0 && rawCoordinate.getRow() < pow(2, rawCoordinate.getZoom()))
-        {
-			TileCoordinate coordinate = TileCoordinate::normalizeTileCoordinate(rawCoordinate);
-
-            std::stringstream url;
-
-			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
-
-			url << "http://"<< subdomain << "tile.openstreetmap.org/";
-            url << (int)coordinate.getZoom() << "/" << (int)coordinate.getColumn();
-            url << "/" << (int)coordinate.getRow() << ".png";
-
-			urls.push_back(url.str());
-		}
-        
-		return urls;
-	}
-
-    static SharedPtr makeShared()
-    {
-        return SharedPtr(new OpenStreetMapProvider());
-    }
+    virtual ~OpenStreetMapProvider();
 
     enum
     {
-        OSM_TILE_WIDTH = 256,
-        OSM_TILE_HEIGHT = 256,
         OSM_MIN_ZOOM = 0,
         OSM_MAX_ZOOM = 19
     };
 
-
-protected:
-    std::vector<std::string> _subdomains;
-
-	
 };
 
 

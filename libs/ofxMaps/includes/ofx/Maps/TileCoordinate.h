@@ -28,48 +28,64 @@
 
 
 #include <math.h>
-#include "ofx/Geo/Utils.h"
+#include <string>
+#include "ofVec3d.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-/// \brief A tile coordinate in a tiled mapping system.
+/// \brief A tile coordinate in a tiled image system.
 class TileCoordinate: public ofVec3d
 {
 public:
 	TileCoordinate();
     TileCoordinate(const TileCoordinate& coordinate);
-	TileCoordinate(double _row, double _column, double _zoom);
+	TileCoordinate(double row,
+                   double column,
+                   double zoom,
+                   const std::string& id = DEFAULT_SET_ID);
 
     double getColumn() const;
     double getRow() const;
     double getZoom() const;
+    const std::string& getId() const;
 
     void setColumn(double column);
     void setRow(double row);
     void setZoom(double zoom);
+    void setId(const std::string& id);
 
 	TileCoordinate getFloored() const;
 	
 	TileCoordinate zoomTo(double destination) const;
 	TileCoordinate zoomBy(double distance) const;
 	
-	TileCoordinate up(double distance = 1) const;
-	TileCoordinate right(double distance = 1) const;
-	TileCoordinate down(double distance = 1) const;
-	TileCoordinate left(double distance = 1) const;
+	TileCoordinate up(double distance = DEFAULT_STEP) const;
+	TileCoordinate right(double distance = DEFAULT_STEP) const;
+	TileCoordinate down(double distance = DEFAULT_STEP) const;
+	TileCoordinate left(double distance = DEFAULT_STEP) const;
 
-	bool operator < (const TileCoordinate& c) const;
-    TileCoordinate& operator = (const TileCoordinate& rect);
+	bool operator < (const TileCoordinate& coordiante) const;
+    TileCoordinate& operator = (const TileCoordinate& coordiante);
 
     static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
     static double scaleForZoom(int zoom);
 
-    double& column;
-	double& row;
-	double& zoom;
+    static const std::string DEFAULT_SET_ID;
+
+    enum
+    {
+        DEFAULT_STEP = 1
+    };
+
+private:
+    double& _column;
+	double& _row;
+	double& _zoom;
+
+    std::string _id;
 
 };
 

@@ -32,20 +32,19 @@ namespace Maps {
 
 
 const Transformation SperhicalMercatorProjection::DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION
-    = Transformation::deriveTransformation(-M_PI,  M_PI, 0, 0,
-                                            M_PI,  M_PI, 1, 0,
-                                           -M_PI, -M_PI, 0, 1);
+    = Transformation(-M_PI,  M_PI, 0, 0,
+                      M_PI,  M_PI, 1, 0,
+                     -M_PI, -M_PI, 0, 1);
 
-
-const double SperhicalMercatorProjection::MINIMUM_LATITUDE = -RAD_TO_DEG * atan(sinh(M_PI));
-const double SperhicalMercatorProjection::MAXIMUM_LATITUDE =  RAD_TO_DEG * atan(sinh(M_PI));
+const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = -RAD_TO_DEG * atan(sinh(M_PI));
+const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =  RAD_TO_DEG * atan(sinh(M_PI));
 const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
 const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
 
 
 SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom,
-                                                         Transformation t):
-    BaseProjection(zoom, t)
+                                                         const Transformation& transformation):
+    BaseProjection(zoom, transformation)
 {
 }
 

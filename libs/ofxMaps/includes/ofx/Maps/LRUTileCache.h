@@ -27,8 +27,47 @@
 #pragma once
 
 
+#include "ofx/LRUCache.h"
+#include "ofx/Maps/TileCoordinate.h"
+#include "ofx/Maps/MapTile.h"
+#include "ofx/Maps/AbstractMapTypes.h"
+
+
 namespace ofx {
 namespace Maps {
+
+
+/// \brief A simplified BaseMapTileCache.
+class LRUTileCache: public AbstractTileSink, public AbstractTileSource
+{
+public:
+    LRUTileCache(long LRUCacheSize = DEFAULT_LRU_CACHE_SIZE);
+
+    virtual ~LRUTileCache();
+
+    bool putTile(const TileCoordinate& coordinate,
+                 const SharedTile& tile);
+
+    SharedTile getTile(const TileCoordinate& coordinate);
+
+    void clear();
+
+    enum
+    {
+        DEFAULT_LRU_CACHE_SIZE = 128
+    };
+
+protected:
+    void onAdd(const Poco::KeyValueArgs<TileCoordinate, Tile>& args);
+    void onUpdate(const Poco::KeyValueArgs<TileCoordinate, Tile>& args);
+    void onRemove(const TileCoordinate& args);
+    void onGet(const TileCoordinate& args);
+    void onClear(const Poco::EventArgs& args);
+
+private:
+    ofx::LRUCache<TileCoordinate, Tile> _LRUCache;
+    
+};
 
 
 } } // namespace ofx::Maps

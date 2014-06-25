@@ -56,7 +56,7 @@ ofVec2d BaseProjection::unproject(const ofVec2d& point) const
 }
 
 
-TileCoordinate BaseProjection::geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const
+TileCoordinate BaseProjection::geoToTile(const Geo::Coordinate& location) const
 {
     ofVec2d point = project(ofVec2d(DEG_TO_RAD * location.getLongitude(),
                                     DEG_TO_RAD * location.getLatitude()));
@@ -65,7 +65,7 @@ TileCoordinate BaseProjection::geoCoordinateToTileCoordinate(const Geo::Coordina
 }
 
 
-Geo::Coordinate BaseProjection::tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const
+Geo::Coordinate BaseProjection::tileToGeo(const TileCoordinate& coordinate) const
 {
     TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
 

@@ -27,68 +27,32 @@
 #pragma once
 
 
-#include <set>
-#include "ofBaseTypes.h"
+#include "Poco/URI.h"
+#include "ofVec2d.h"
+#include "ofx/Geo/Coordinate.h"
+#include "ofx/Maps/AbstractMapTypes.h"
+#include "ofx/Maps/BaseProjection.h"
+#include "ofx/Maps/SphericalMercatorProjection.h"
 #include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/BaseMapTileProvider.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class Map: public ofBaseDraws
+/// \brief A simplified BaseMapTileURLSource.
+template<typename MapType>
+class BaseMapTileURLSource: public AbstractMapTileURISource<MapType>
 {
 public:
-	Map(BaseMapTileProvider& provider, double width, double height);
+    /// \brief Destroy the BaseMapProvider.
+    virtual ~BaseMapTileURLSource();
 
-    virtual ~Map();
-
-    void draw(float x, float y);
-
-	void draw(float x, float y, float w, float h);
-
-    ofVec2d getSize() const;
-
-    float getWidth();
-    double getWidth() const;
-
-    void setWidth(double width);
-
-    float getHeight();
-    double getHeight() const;
-
-    void setHeight(double height);
-
-    const TileCoordinate& getCenter() const;
-
-    void setCenter(const TileCoordinate& center);
-
-protected:
-    /// \brief The Map tile Provider.
-    BaseMapTileProvider& _provider;
-
-    /// \brief Map width.
-    double _width;
-
-    /// \brief Map height.
-    double _height;
-
-    /// \brief Pan and anchor coordinate.
-    TileCoordinate _center;
-
-    std::set<TileCoordinate> getVisibleCoordinates() const;
-
-    /// \brief Allow the MapNavigator class to have direct access.
-    friend class MapNavigator;
-
-    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
+    /// \brief Get a map tile for a given TileCoordinate.
+    /// \param coordinate The tile coordinate.
+    /// \returns A tile of type TileType.
+    Poco::UUID requestTile(const TileCoordinate& coordinate) const
     {
-        TileCoordinate coord = getCenter();
-
-        coord += (point - getSize() / 2.0) / _provider.getTileSize();
-
-        return coord;
     }
 
 };

@@ -27,9 +27,13 @@
 #pragma once
 
 
-#include <set>
-#include "ofBaseTypes.h"
-#include "ofx/Maps/TileCoordinate.h"
+//#include "Poco/URI.h"
+//#include "ofVec2d.h"
+//#include "ofx/Geo/Coordinate.h"
+//#include "ofx/Maps/AbstractMapTypes.h"
+//#include "ofx/Maps/BaseProjection.h"
+#include "ofx/Maps/SphericalMercatorProjection.h"
+//#include "ofx/Maps/TileCoordinate.h"
 #include "ofx/Maps/BaseMapTileProvider.h"
 
 
@@ -37,60 +41,37 @@ namespace ofx {
 namespace Maps {
 
 
-class Map: public ofBaseDraws
+/// \brief A BaseMapTileProvider with default settings.
+class DefaultMapTileProvider: public BaseMapTileProvider
 {
 public:
-	Map(BaseMapTileProvider& provider, double width, double height);
+    /// \brief Create a DefaultMapTileProvider.
+    DefaultMapTileProvider();
 
-    virtual ~Map();
+    /// \brief Create a DefaultMapTileProvider.
+    /// \param tileWidth The width of the provider's tiles in pixels.
+    /// \param tileHeight The height of the provider's tiles in pixels.
+    /// \param minZoom The minimum zoom level supported by the provider.
+    /// \param maxZoom The maximum zoom level supported by the provider.
+    /// \param projection The projection used by the provider.
+    DefaultMapTileProvider(int minZoom,
+                           int maxZoom,
+                           int tileWidth,
+                           int tileHeight,
+                           const BaseProjection& projection);
 
-    void draw(float x, float y);
+    /// \brief Destroy the BaseMapProvider.
+    virtual ~DefaultMapTileProvider();
 
-	void draw(float x, float y, float w, float h);
-
-    ofVec2d getSize() const;
-
-    float getWidth();
-    double getWidth() const;
-
-    void setWidth(double width);
-
-    float getHeight();
-    double getHeight() const;
-
-    void setHeight(double height);
-
-    const TileCoordinate& getCenter() const;
-
-    void setCenter(const TileCoordinate& center);
-
-protected:
-    /// \brief The Map tile Provider.
-    BaseMapTileProvider& _provider;
-
-    /// \brief Map width.
-    double _width;
-
-    /// \brief Map height.
-    double _height;
-
-    /// \brief Pan and anchor coordinate.
-    TileCoordinate _center;
-
-    std::set<TileCoordinate> getVisibleCoordinates() const;
-
-    /// \brief Allow the MapNavigator class to have direct access.
-    friend class MapNavigator;
-
-    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
+    enum
     {
-        TileCoordinate coord = getCenter();
+        DEFAULT_MIN_ZOOM = 0,
+        DEFAULT_MAX_ZOOM = 19,
+        DEFAULT_TILE_WIDTH = 256,
+        DEFAULT_TILE_HEIGHT = 256
+    };
 
-        coord += (point - getSize() / 2.0) / _provider.getTileSize();
-
-        return coord;
-    }
-
+    static const SperhicalMercatorProjection DEFAULT_PROJECTION;
 };
 
 

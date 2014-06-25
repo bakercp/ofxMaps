@@ -35,8 +35,6 @@ namespace Maps {
 class OpenStreetMapProvider: public AbstractMapProvider
 {
 public:
-    typedef std::shared_ptr<OpenStreetMapProvider> SharedPtr;
-
 	OpenStreetMapProvider():
 		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(0)))
 	{
@@ -77,11 +75,6 @@ public:
         
 		return urls;
 	}
-
-    static SharedPtr makeShared()
-    {
-        return SharedPtr(new OpenStreetMapProvider());
-    }
 
 protected:
     std::vector<std::string> _subdomains;

@@ -24,7 +24,6 @@
 // =============================================================================
 
 
-#include "ofx/Geo/Utils.h"
 #include "ofx/Maps/BaseProjection.h"
 
 
@@ -32,25 +31,42 @@ namespace ofx {
 namespace Maps {
 
 
-//EPSG:3857
-
-class Transformation;
-
-
+/// \brief An implementation of the EPSG:3857 project used by most tiled maps.
+///
+/// \sa http://gis.stackexchange.com/questions/48949/epsg-3857-or-4326-for-googlemaps-openstreetmap-and-leaflet
+/// \sa http://spatialreference.org/ref/sr-org/epsg3857/
 class SperhicalMercatorProjection: public BaseProjection
 {
-public:	
-    SperhicalMercatorProjection(double zoom = 0,
-                                Transformation t = DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION);
+public:
+    /// \brief Create a default SperhicalMercatorProjection.
+    /// \param zoom The default zoom used when calculating projections.
+    /// \param t The transformation used by this projection.
+    SperhicalMercatorProjection(double zoom = DEFAULT_ZOOM,
+                                const Transformation& transformation = DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION);
 
+    /// \brief Destroy the SperhicalMercatorProjection.
     virtual ~SperhicalMercatorProjection();
 
+    /// \brief The default Transform used for this projection.
     static const Transformation DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION;
 
+    /// \brief The minimum latitude represented by this projection.
     static const double MINIMUM_LATITUDE;
+
+    /// \brief The maximum latitude represented by this projection.
 	static const double MAXIMUM_LATITUDE;
+
+    /// \brief The minimum longitude represented by this projection.
 	static const double MINIMUM_LONGITUDE;
+
+    /// \brief The maximum longitude represented by this projection.
 	static const double MAXIMUM_LONGITUDE;
+
+    enum
+    {
+        /// \brief The default zoom level used by this projection.
+        DEFAULT_ZOOM = 0
+    };
 
 protected:
 	ofVec2d rawProject(const ofVec2d& point) const;

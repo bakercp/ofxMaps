@@ -27,61 +27,16 @@
 #pragma once
 
 
-#include "ofx/Geo/Coordinate.h"
-#include "ofx/Maps/BaseProjection.h"
-#include "ofx/Maps/TileCoordinate.h"
+#include "ofTypes.h"
+#include "ofImage.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class BaseMapProvider
-{
-public:
-    typedef std::shared_ptr<BaseMapProvider> SharedPtr;
-
-    BaseMapProvider(BaseProjection::SharedPtr projection,
-                    int tileWidth,
-                    int tileHeight,
-                    int minZoom,
-                    int maxZoom);
-
-    virtual ~BaseMapProvider();
-
-	virtual std::vector<std::string> getTileUrls(const TileCoordinate& coordinate) const = 0;
-
-	int getTileWidth() const;
-	int getTileHeight() const;
-
-    ofVec2d getTileSize() const;
-
-    /// \brief Get the minimum zoom level for this provider.
-    /// \returns the minimum zoom level;
-    int getMinZoom() const;
-
-    /// \brief Get the maximum zoom level for this provider.
-    /// \returns the maximum zoom level.
-    int getMaxZoom() const;
-
-    /// \brief Get the zoom level for a given map scale.
-    /// \param scale The scale to calculate.
-    /// \returns the zoom level for the given scale.
-    double zoomForScale(double scale) const;
-
-	TileCoordinate geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const;
-
-    Geo::Coordinate tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const;
-
-protected:
-    BaseProjection::SharedPtr _projection;
-
-    int _tileWidth;
-    int _tileHeight;
-    int _minZoom;
-    int _maxZoom;
-	
-};
+typedef ofImage Tile;
+typedef std::shared_ptr<ofImage> SharedTile;
 
 
 } } // namespace ofx::Maps

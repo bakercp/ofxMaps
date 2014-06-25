@@ -4,5 +4,7 @@ ofxIO
 ofxJSON
 ofxMaps
 ofxMediaType
-ofxSQLiteCpp
+ofxSpatialHash
 ofxSSLManager
+ofxTaskQueue
+ofxSQLiteCpp

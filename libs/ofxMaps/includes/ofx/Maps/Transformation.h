@@ -34,29 +34,33 @@ namespace ofx {
 namespace Maps {
 
 
+/// \brief A 2D linear transformation.
 class Transformation
 {
 public:
+    /// \brief Create an identity Transformation.
     Transformation();
+
+    /// \brief Create a Transform with a, b and c coefficients.
     Transformation(double ax, double bx, double cx,
                    double ay, double by, double cy);
-
-    Transformation(const Transformation &t);
-
-    ofVec2d transform(const ofVec2d& point) const;
-    ofVec2d untransform(const ofVec2d& point) const;
 
     /// \brief Generates a transform based on three pairs of points.
     ///
     /// a1 -> a2, b1 -> b2, c1 -> c2.
     ///
     /// \returns the derived Transformation.
-    static Transformation deriveTransformation(double a1x, double a1y,
-                                               double a2x, double a2y,
-                                               double b1x, double b1y,
-                                               double b2x, double b2y,
-                                               double c1x, double c1y,
-                                               double c2x, double c2y);
+    Transformation(double a1x, double a1y,
+                   double a2x, double a2y,
+                   double b1x, double b1y,
+                   double b2x, double b2y,
+                   double c1x, double c1y,
+                   double c2x, double c2y);
+
+    Transformation(const Transformation &t);
+
+    ofVec2d transform(const ofVec2d& point) const;
+    ofVec2d untransform(const ofVec2d& point) const;
 
     /// \brief Solves a system of linear equations.
     ///
@@ -67,10 +71,11 @@ public:
     /// r1 - t3 are the known values.
     /// a, b, c are the unknowns to be solved.
     ///
-    /// \returns the a, b, c coefficients.
-    static ofVec3d linearSolution(double r1, double s1, double t1,
-                                  double r2, double s2, double t2,
-                                  double r3, double s3, double t3);
+    /// \returns true iff a, b and c are valid.
+    static bool linearSolution(double r1, double s1, double t1,
+                               double r2, double s2, double t2,
+                               double r3, double s3, double t3,
+                               double& a, double& b, double& c);
     double ax;
     double bx;
     double cx;

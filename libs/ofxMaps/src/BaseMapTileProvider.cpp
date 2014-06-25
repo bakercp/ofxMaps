@@ -24,12 +24,6 @@
 // =============================================================================
 
 
-#pragma once
-
-
-#include <set>
-#include "ofBaseTypes.h"
-#include "ofx/Maps/TileCoordinate.h"
 #include "ofx/Maps/BaseMapTileProvider.h"
 
 
@@ -37,61 +31,72 @@ namespace ofx {
 namespace Maps {
 
 
-class Map: public ofBaseDraws
+BaseMapTileProvider::BaseMapTileProvider(int minZoom,
+                                         int maxZoom,
+                                         int tileWidth,
+                                         int tileHeight,
+                                         const BaseProjection& projection):
+    _minZoom(minZoom),
+    _maxZoom(maxZoom),
+    _tileWidth(tileWidth),
+    _tileHeight(tileHeight),
+    _projection(projection)
 {
-public:
-	Map(BaseMapTileProvider& provider, double width, double height);
+}
 
-    virtual ~Map();
 
-    void draw(float x, float y);
+BaseMapTileProvider::~BaseMapTileProvider()
+{
+}
 
-	void draw(float x, float y, float w, float h);
 
-    ofVec2d getSize() const;
+int BaseMapTileProvider::getMinZoom() const
+{
+    return _minZoom;
+}
 
-    float getWidth();
-    double getWidth() const;
 
-    void setWidth(double width);
+int BaseMapTileProvider::getMaxZoom() const
+{
+    return _maxZoom;
+}
 
-    float getHeight();
-    double getHeight() const;
 
-    void setHeight(double height);
+int BaseMapTileProvider::getTileWidth() const
+{
+    return _tileWidth;
+}
 
-    const TileCoordinate& getCenter() const;
 
-    void setCenter(const TileCoordinate& center);
+int BaseMapTileProvider::getTileHeight() const
+{
+    return _tileHeight;
+}
 
-protected:
-    /// \brief The Map tile Provider.
-    BaseMapTileProvider& _provider;
 
-    /// \brief Map width.
-    double _width;
+ofVec2d BaseMapTileProvider::getTileSize() const
+{
+    return ofVec2d(_tileWidth, _tileHeight);
+}
 
-    /// \brief Map height.
-    double _height;
+    
+double BaseMapTileProvider::zoomForScale(double scale) const
+{
+    return log(scale) / log(2);
+}
 
-    /// \brief Pan and anchor coordinate.
-    TileCoordinate _center;
 
-    std::set<TileCoordinate> getVisibleCoordinates() const;
+TileCoordinate BaseMapTileProvider::geoToTile(const Geo::Coordinate& location) const
+{
+    
+    return _projection.geoToTile(location);
+}
 
-    /// \brief Allow the MapNavigator class to have direct access.
-    friend class MapNavigator;
 
-    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
-    {
-        TileCoordinate coord = getCenter();
-
-        coord += (point - getSize() / 2.0) / _provider.getTileSize();
-
-        return coord;
-    }
-
-};
+Geo::Coordinate BaseMapTileProvider::tileToGeo(const TileCoordinate& coordinate) const
+{
+    return _projection.tileToGeo(coordinate);
+}
 
 
 } } // namespace ofx::Maps

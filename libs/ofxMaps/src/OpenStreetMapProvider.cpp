@@ -24,74 +24,27 @@
 // =============================================================================
 
 
-#pragma once
-
-
-#include <set>
-#include "ofBaseTypes.h"
-#include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/BaseMapTileProvider.h"
+#include "ofx/Maps/OpenStreetMapProvider.h"
+#include "ofMath.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class Map: public ofBaseDraws
+OpenStreetMapProvider::OpenStreetMapProvider():
+    DefaultMapTileProvider(OSM_MIN_ZOOM,
+                           OSM_MAX_ZOOM,
+                           DEFAULT_TILE_WIDTH,
+                           DEFAULT_TILE_HEIGHT,
+                           DEFAULT_PROJECTION)
 {
-public:
-	Map(BaseMapTileProvider& provider, double width, double height);
+}
 
-    virtual ~Map();
 
-    void draw(float x, float y);
-
-	void draw(float x, float y, float w, float h);
-
-    ofVec2d getSize() const;
-
-    float getWidth();
-    double getWidth() const;
-
-    void setWidth(double width);
-
-    float getHeight();
-    double getHeight() const;
-
-    void setHeight(double height);
-
-    const TileCoordinate& getCenter() const;
-
-    void setCenter(const TileCoordinate& center);
-
-protected:
-    /// \brief The Map tile Provider.
-    BaseMapTileProvider& _provider;
-
-    /// \brief Map width.
-    double _width;
-
-    /// \brief Map height.
-    double _height;
-
-    /// \brief Pan and anchor coordinate.
-    TileCoordinate _center;
-
-    std::set<TileCoordinate> getVisibleCoordinates() const;
-
-    /// \brief Allow the MapNavigator class to have direct access.
-    friend class MapNavigator;
-
-    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
-    {
-        TileCoordinate coord = getCenter();
-
-        coord += (point - getSize() / 2.0) / _provider.getTileSize();
-
-        return coord;
-    }
-
-};
+OpenStreetMapProvider::~OpenStreetMapProvider()
+{
+}
 
 
 } } // namespace ofx::Maps

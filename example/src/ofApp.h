@@ -29,18 +29,19 @@
 #include "ofxMaps.h"
 
 
-using namespace ofx;
-
-
 class ofApp: public ofBaseApp
 {
 public:
+    ofApp();
+    ~ofApp();
     void setup();
     void update();
     void draw();
 
     void keyPressed(int key);
 
-    Maps::Map map;
+    ofx::Maps::OpenStreetMapProvider osmProvider;
+
+    ofx::Maps::Map map;
 
 };

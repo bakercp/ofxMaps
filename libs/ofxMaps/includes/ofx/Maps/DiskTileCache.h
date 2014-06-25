@@ -24,78 +24,56 @@
 // =============================================================================
 
 
-#include "ofx/Maps/BaseMapProvider.h"
+#pragma once
+
+
+#include "Poco/File.h"
+#include "Poco/Path.h"
+#include "ofx/Maps/AbstractMapTypes.h"
+#include "ofx/Maps/TileCoordinate.h"
+#include "ofx/Maps/MapTile.h"
 
 
 namespace ofx {
 namespace Maps {
-        
-        
-BaseMapProvider::BaseMapProvider(BaseProjection::SharedPtr projection,
-                                 int tileWidth,
-                                 int tileHeight,
-                                 int minZoom,
-                                 int maxZoom):
-    _projection(projection),
-    _tileWidth(tileWidth),
-    _tileHeight(tileHeight),
-    _minZoom(minZoom),
-    _maxZoom(maxZoom)
+
+
+/// \brief A simplified BaseMapTileDiskSource.
+class DiskTileCache:
+    public AbstractTileSink,
+    public AbstractTileSource
 {
-}
+public:
+    DiskTileCache(const Poco::Path& cachePath,
+                  ofImageFormat imageFormat = DEFAULT_IMAGE_FORMAT,
+                  const std::string& imageExtension = DEFAULT_IMAGE_EXTENSION);
 
+    virtual ~DiskTileCache();
 
-BaseMapProvider::~BaseMapProvider()
-{
-}
+    SharedTile getTile(const TileCoordinate& coordinate);
 
+    bool putTile(const TileCoordinate& coordinate, const IO::ByteBuffer& tile);
+    bool putTile(const TileCoordinate& coordinate, const SharedTile& tile);
 
-int BaseMapProvider::getTileWidth() const
-{
-    return _tileWidth;
-}
+    void clear();
 
+    ofImageFormat getImageFormat() const;
+    const std::string& getImageExtension() const;
 
-int BaseMapProvider::getTileHeight() const
-{
-    return _tileHeight;
-}
+    static const ofImageFormat DEFAULT_IMAGE_FORMAT;
+    static const ofImageQualityType DEFAULT_IMAGE_QUALITY;
+    static const std::string DEFAULT_IMAGE_EXTENSION;
 
+protected:
+    Poco::Path getTilePath(const TileCoordinate& coordinate) const;
 
-ofVec2d BaseMapProvider::getTileSize() const
-{
-    return ofVec2d(_tileWidth, _tileHeight);
-}
+    Poco::Path _cachePath;
 
+    ofImageQualityType _imageQuality;
+    ofImageFormat _imageFormat;
+    std::string _imageExtension;
 
-int BaseMapProvider::getMinZoom() const
-{
-    return _minZoom;
-}
-
-
-int BaseMapProvider::getMaxZoom() const
-{
-    return _maxZoom;
-}
-
-
-TileCoordinate BaseMapProvider::geoCoordinateToTileCoordinate(const Geo::Coordinate& location) const
-{
-    return _projection->geoCoordinateToTileCoordinate(location);
-}
-
-
-Geo::Coordinate BaseMapProvider::tileCoordinateToGeoCoordinate(const TileCoordinate& coordinate) const
-{
-    return _projection->tileCoordinateToGeoCoordinate(coordinate);
-}
-
-
-double BaseMapProvider::zoomForScale(double scale) const
-{
-    return log(scale) / log(2);
-}
+};
 
 
 } } // namespace ofx::Maps
