@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,71 +26,16 @@
 #pragma once
 
 
-#include <set>
-#include "ofBaseTypes.h"
-#include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/BaseMapTileProvider.h"
+#include "ofTypes.h"
+#include "ofImage.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class Map: public ofBaseDraws
-{
-public:
-	Map(BaseMapTileProvider& provider, double width, double height);
-
-    virtual ~Map();
-
-    void draw(float x, float y);
-
-	void draw(float x, float y, float w, float h);
-
-    ofVec2d getSize() const;
-
-    float getWidth();
-    double getWidth() const;
-
-    void setWidth(double width);
-
-    float getHeight();
-    double getHeight() const;
-
-    void setHeight(double height);
-
-    const TileCoordinate& getCenter() const;
-
-    void setCenter(const TileCoordinate& center);
-
-protected:
-    /// \brief The Map tile Provider.
-    BaseMapTileProvider& _provider;
-
-    /// \brief Map width.
-    double _width;
-
-    /// \brief Map height.
-    double _height;
-
-    /// \brief Pan and anchor coordinate.
-    TileCoordinate _center;
-
-    std::set<TileCoordinate> getVisibleCoordinates() const;
-
-    /// \brief Allow the MapNavigator class to have direct access.
-    friend class MapNavigator;
-
-    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
-    {
-        TileCoordinate coord = getCenter();
-
-        coord += (point - getSize() / 2.0) / _provider.getTileSize();
-
-        return coord;
-    }
-
-};
+typedef ofImage Tile;
+typedef std::shared_ptr<ofImage> SharedTile;
 
 
 } } // namespace ofx::Maps

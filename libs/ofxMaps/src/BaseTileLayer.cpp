@@ -1,4 +1,4 @@
-#include "ofx/Maps/Map.h"
+#include "ofx/Maps/BaseTileLayer.h"
 #include "ofx/Maps/QueueSorter.h"
 
 
@@ -6,7 +6,7 @@ namespace ofx {
 namespace Maps {
 
 
-Map::Map(BaseMapTileProvider& provider, double width, double height):
+BaseTileLayer::BaseTileLayer(BaseTileProvider& provider, double width, double height):
     _provider(provider),
     _width(width),
     _height(height)
@@ -20,78 +20,66 @@ Map::Map(BaseMapTileProvider& provider, double width, double height):
 }
 
 
-Map::~Map()
+BaseTileLayer::~BaseTileLayer()
 {
 }
 
 
-void Map::draw(float x, float y)
+void BaseTileLayer::draw(float x, float y)
 {
     draw(x, y, _width, _height);
 }
 
 
-void Map::draw(float x, float y, float w, float h)
+void BaseTileLayer::draw(float x, float y, float w, float h)
 {
-    getVisibleCoordinates();
+//    getVisibleCoordinates();
 }
 
 
-ofVec2d Map::getSize() const
+ofVec2d BaseTileLayer::getSize() const
 {
     return ofVec2d(_width, _height);
 }
 
 
-float Map::getWidth()
-{
-    return (float)_width;
-}
-
-
-double Map::getWidth() const
+float BaseTileLayer::getWidth() const
 {
     return _width;
 }
 
 
-void Map::setWidth(double width)
+void BaseTileLayer::setWidth(double width)
 {
     _width = width;
 }
 
 
-float Map::getHeight()
-{
-    return (float)_height;
-}
-
-
-double Map::getHeight() const
+float BaseTileLayer::getHeight() const
 {
     return _height;
 }
 
 
-void Map::setHeight(double height)
+void BaseTileLayer::setHeight(double height)
 {
     _height = height;
 }
 
 
-const TileCoordinate& Map::getCenter() const
+const TileCoordinate& BaseTileLayer::getCenter() const
 {
     return _center;
 }
 
 
-void Map::setCenter(const TileCoordinate& center)
+void BaseTileLayer::setCenter(const TileCoordinate& center)
 {
     _center = center;
 }
 
 
-std::set<TileCoordinate> Map::getVisibleCoordinates() const
+std::set<TileCoordinate> BaseTileLayer::getVisibleCoordinates() const
 {
     std::set<TileCoordinate> coordinates;
 

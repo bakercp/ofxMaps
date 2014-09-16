@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,76 +23,87 @@
 // =============================================================================
 
 
-#include "ofx/Maps/BaseMapTileProvider.h"
+#include "ofx/Maps/BaseTileProvider.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-BaseMapTileProvider::BaseMapTileProvider(int minZoom,
-                                         int maxZoom,
-                                         int tileWidth,
-                                         int tileHeight,
-                                         const BaseProjection& projection):
+const double BaseTileProvider::LOG_2 = log(2);
+
+
+BaseTileProvider::BaseTileProvider(int minZoom,
+                                   int maxZoom,
+                                   int tileWidth,
+                                   int tileHeight,
+                                   const BaseProjection& projection,
+                                   const std::string& attribution):
     _minZoom(minZoom),
     _maxZoom(maxZoom),
     _tileWidth(tileWidth),
     _tileHeight(tileHeight),
-    _projection(projection)
+    _projection(projection),
+    _attribution(attribution)
 {
 }
 
 
-BaseMapTileProvider::~BaseMapTileProvider()
+BaseTileProvider::~BaseTileProvider()
 {
 }
 
 
-int BaseMapTileProvider::getMinZoom() const
+int BaseTileProvider::getMinZoom() const
 {
     return _minZoom;
 }
 
 
-int BaseMapTileProvider::getMaxZoom() const
+int BaseTileProvider::getMaxZoom() const
 {
     return _maxZoom;
 }
 
 
-int BaseMapTileProvider::getTileWidth() const
+int BaseTileProvider::getTileWidth() const
 {
     return _tileWidth;
 }
 
 
-int BaseMapTileProvider::getTileHeight() const
+int BaseTileProvider::getTileHeight() const
 {
     return _tileHeight;
 }
 
 
-ofVec2d BaseMapTileProvider::getTileSize() const
+ofVec2d BaseTileProvider::getTileSize() const
 {
     return ofVec2d(_tileWidth, _tileHeight);
 }
 
     
-double BaseMapTileProvider::zoomForScale(double scale) const
+double BaseTileProvider::zoomForScale(double scale) const
 {
-    return log(scale) / log(2);
+    return log(scale) / LOG_2;
 }
 
 
-TileCoordinate BaseMapTileProvider::geoToTile(const Geo::Coordinate& location) const
+const std::string& BaseTileProvider::getAttribution() const
+{
+    return _attribution;
+}
+
+
+TileCoordinate BaseTileProvider::geoToTile(const Geo::Coordinate& location) const
 {
     
     return _projection.geoToTile(location);
 }
 
 
-Geo::Coordinate BaseMapTileProvider::tileToGeo(const TileCoordinate& coordinate) const
+Geo::Coordinate BaseTileProvider::tileToGeo(const TileCoordinate& coordinate) const
 {
     return _projection.tileToGeo(coordinate);
 }

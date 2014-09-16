@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,62 +23,77 @@
 // =============================================================================
 
 
-#include "ofx/Maps/AbstractMapProvider.h"
-#include "ofx/Maps/MercatorProjection.h"
+#pragma once
+
+
+#include <set>
+#include "ofBaseTypes.h"
+#include "ofx/Maps/BaseTileProvider.h"
+#include "ofx/Maps/TileCoordinate.h"
+#include "ofx/Maps/TileLoader.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class OpenStreetMapProvider: public AbstractMapProvider
+class BaseTileLayer: public ofBaseDraws
 {
 public:
-	OpenStreetMapProvider():
-		AbstractMapProvider(AbstractProjection::SharedPtr(new MercatorProjection(0)))
-	{
-		_subdomains.push_back("");
-		_subdomains.push_back("a.");
-		_subdomains.push_back("b.");
-		_subdomains.push_back("c.");
-	}
-	
-	int getTileWidth() const
-    {
-		return 256;
-	}
-	
-	int getTileHeight() const
-    {
-		return 256;
-	}
-	
-    std::vector<std::string> getTileUrls(const Coordinate& rawCoordinate) const
-    {
-		std::vector<std::string> urls;
+	BaseTileLayer(BaseTileProvider& provider, double width, double height);
 
-        if (rawCoordinate.row >= 0 && rawCoordinate.row < pow(2, rawCoordinate.zoom))
-        {
-			Coordinate coordinate = sourceCoordinate(rawCoordinate);
+    virtual ~BaseTileLayer();
 
-            std::stringstream url;
+    void draw(float x, float y);
 
-			std::string subdomain = _subdomains[(int)ofRandom(0, _subdomains.size())];
+	void draw(float x, float y, float w, float h);
 
-			url << "http://" << subdomain << "tile.openstreetmap.org/";
-            url << (int)coordinate.zoom << "/" << (int)coordinate.column;
-            url << "/" << (int)coordinate.row << ".png";
+    ofVec2d getSize() const;
 
-			urls.push_back(url.str());
-		}
-        
-		return urls;
-	}
+    float getWidth() const;
+
+    void setWidth(double width);
+
+    float getHeight() const;
+
+    void setHeight(double height);
+
+    const TileCoordinate& getCenter() const;
+
+    void setCenter(const TileCoordinate& center);
 
 protected:
-    std::vector<std::string> _subdomains;
+//    bool onTileLoaded(const TileEventArgs& args);
+//    bool onTileError(const TileErrorEventArgs& args);
 
-	
+
+    /// \brief The Map tile Provider.
+    BaseTileProvider& _provider;
+//    BaseTileLoader& _tileLoader;
+
+    /// \brief Map width.
+    double _width;
+
+    /// \brief Map height.
+    double _height;
+
+    /// \brief Pan and anchor coordinate.
+    TileCoordinate _center;
+
+    std::set<TileCoordinate> getVisibleCoordinates() const;
+
+    /// \brief Allow the MapNavigator class to have direct access.
+    friend class MapNavigator;
+
+    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
+    {
+        TileCoordinate coord = getCenter();
+
+        coord += (point - getSize() / 2.0) / _provider.getTileSize();
+
+        return coord;
+    }
+
 };
 
 

@@ -23,6 +23,16 @@
 // =============================================================================
 
 
+// Dependencies
 #include "ofxGeo.h"
-#include "ofx/Maps/Map.h"
-#include "ofx/Maps/OpenStreetMapProvider.h"
+
+// Tile Layers
+#include "ofx/Maps/BaseTileLayer.h"
+
+// Tile Loaders
+#include "ofx/Maps/TileLoader.h"
+
+// Tile Providers
+#include "ofx/Maps/BaseTileProvider.h"
+#include "ofx/Maps/OSMTileProvider.h"
+#include "ofx/Maps/StamenTileProvider.h"

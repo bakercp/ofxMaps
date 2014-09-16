@@ -32,16 +32,16 @@
 class ofApp: public ofBaseApp
 {
 public:
-    ofApp();
-    ~ofApp();
     void setup();
     void update();
     void draw();
 
     void keyPressed(int key);
 
-    ofx::Maps::OpenStreetMapProvider osmProvider;
+//    ofx::Maps::TileLoader<ofx::Maps::OSMTileProvider> tileLoader;
+    ofx::Maps::TileLoader<ofx::Maps::StamenTonerStyleProvider> tileLoader;
+//    ofx::Maps::TileLoader<ofx::Maps::StamenWatercolorTileProvider> tileLoader;
 
-    ofx::Maps::Map map;
+//    ofx::Maps::Map map;
 
 };

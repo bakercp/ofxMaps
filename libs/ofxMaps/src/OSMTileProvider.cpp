@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +23,41 @@
 // =============================================================================
 
 
-#include "ofx/Maps/OpenStreetMapProvider.h"
-#include "ofMath.h"
+#include "ofx/Maps/OSMTileProvider.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-OpenStreetMapProvider::OpenStreetMapProvider():
-    DefaultMapTileProvider(OSM_MIN_ZOOM,
-                           OSM_MAX_ZOOM,
-                           DEFAULT_TILE_WIDTH,
-                           DEFAULT_TILE_HEIGHT,
-                           DEFAULT_PROJECTION)
+const std::string OSMTileProvider::DEFAULT_OSM_URI_TEMPLATE = "http://{s}.tile.osm.org/{z}/{x}/{y}.png";
+const std::string OSMTileProvider::DEFAULT_OSM_SUBDOMAINS_ARRAY[] = { "a", "b", "c" };
+const std::vector<std::string> OSMTileProvider::DEFAULT_OSM_SUBDOMAINS(INIT_VECTOR_WITH_ARRAY(DEFAULT_OSM_SUBDOMAINS_ARRAY));
+const SperhicalMercatorProjection OSMTileProvider::DEFAULT_OSM_PROJECTION = SperhicalMercatorProjection();
+const std::string OSMTileProvider::DEFAULT_OSM_ATTRIBUTION = "&copy; <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors";
+
+
+OSMTileProvider::OSMTileProvider(const std::vector<std::string>& subdomains,
+                                 const std::string& URITemplate,
+                                 int minZoom,
+                                 int maxZoom,
+                                 int tileWidth,
+                                 int tileHeight,
+                                 const BaseProjection& projection,
+                                 const std::string& attribution):
+    BaseURLTileProvider(subdomains,
+                        URITemplate,
+                        minZoom,
+                        maxZoom,
+                        tileWidth,
+                        tileHeight,
+                        projection,
+                        attribution)
 {
 }
 
 
-OpenStreetMapProvider::~OpenStreetMapProvider()
+OSMTileProvider::~OSMTileProvider()
 {
 }
 

@@ -26,19 +26,20 @@
 #include "ofApp.h"
 
 
-ofApp::ofApp(): map(osmProvider, ofGetWidth(), ofGetHeight())
-{
-}
-
-
-ofApp::~ofApp()
-{
-}
-
-
 void ofApp::setup()
 {
+    ofSetFrameRate(60);
 	ofSetVerticalSync(true);
+
+
+//    std::cout << osmTileProvider.getTileURI(c0).toString() << std::endl;
+//    std::cout << osmTileProvider.getTileURI(c1).toString() << std::endl;
+//    std::cout << osmTileProvider.getTileURI(c2).toString() << std::endl;
+//
+//    tile0 = tileLoader.getTile(c0);
+//    tile1 = tileLoader.getTile(c1);
+//    tile2 = tileLoader.getTile(c2);
+
 
 //    map.setup(std::shared_ptr<ofx::Maps::OpenStreetMapProvider>(new ofx::Maps::OpenStreetMapProvider()),
 //              ofGetWidth(),
@@ -58,9 +59,24 @@ void ofApp::draw()
 {
     ofBackground(0);
 
-    map.draw(0, 0);
+//    map.draw(0, 0);
 
-    ofSetColor(255, 127, 255);
+    ofSetColor(255);
+
+    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 0, 3))->draw(0, 0);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 1, 3))->draw(256, 0);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 2, 3))->draw(512, 0);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 3, 3))->draw(512+256, 0);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 0, 3))->draw(0, 256);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 1, 3))->draw(256, 256);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 2, 3))->draw(512, 256);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 3, 3))->draw(512+256, 256);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 0, 3))->draw(0, 512);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 1, 3))->draw(256, 512);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 2, 3))->draw(512, 512);
+    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 3, 3))->draw(512+256, 512);
+
+//    std::cout << "Hi!" << endl;
 
 //    cout << map.getGeoLocationCenter() << endl;
 

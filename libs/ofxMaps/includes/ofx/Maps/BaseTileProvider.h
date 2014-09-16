@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,51 +26,78 @@
 #pragma once
 
 
-//#include "Poco/URI.h"
-//#include "ofVec2d.h"
-//#include "ofx/Geo/Coordinate.h"
-//#include "ofx/Maps/AbstractMapTypes.h"
-//#include "ofx/Maps/BaseProjection.h"
+#include "ofVec2d.h"
+#include "ofx/Geo/Coordinate.h"
+#include "ofx/Maps/AbstractMapTypes.h"
+#include "ofx/Maps/BaseProjection.h"
 #include "ofx/Maps/SphericalMercatorProjection.h"
-//#include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/BaseMapTileProvider.h"
+#include "ofx/Maps/TileCoordinate.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-/// \brief A BaseMapTileProvider with default settings.
-class DefaultMapTileProvider: public BaseMapTileProvider
+/// \brief A simplified BaseTileProvider.
+class BaseTileProvider: public AbstractTileProvider
 {
 public:
-    /// \brief Create a DefaultMapTileProvider.
-    DefaultMapTileProvider();
-
-    /// \brief Create a DefaultMapTileProvider.
+    /// \brief Create a BaseTileProvider.
     /// \param tileWidth The width of the provider's tiles in pixels.
     /// \param tileHeight The height of the provider's tiles in pixels.
     /// \param minZoom The minimum zoom level supported by the provider.
     /// \param maxZoom The maximum zoom level supported by the provider.
     /// \param projection The projection used by the provider.
-    DefaultMapTileProvider(int minZoom,
-                           int maxZoom,
-                           int tileWidth,
-                           int tileHeight,
-                           const BaseProjection& projection);
+    BaseTileProvider(int minZoom,
+                     int maxZoom,
+                     int tileWidth,
+                     int tileHeight,
+                     const BaseProjection& projection,
+                     const std::string& attribution);
 
     /// \brief Destroy the BaseMapProvider.
-    virtual ~DefaultMapTileProvider();
+    virtual ~BaseTileProvider();
 
-    enum
-    {
-        DEFAULT_MIN_ZOOM = 0,
-        DEFAULT_MAX_ZOOM = 19,
-        DEFAULT_TILE_WIDTH = 256,
-        DEFAULT_TILE_HEIGHT = 256
-    };
+    int getMinZoom() const;
 
-    static const SperhicalMercatorProjection DEFAULT_PROJECTION;
+    int getMaxZoom() const;
+
+	int getTileWidth() const;
+
+    int getTileHeight() const;
+
+    ofVec2d getTileSize() const;
+
+    virtual double zoomForScale(double scale) const;
+
+    const std::string& getAttribution() const;
+
+    TileCoordinate geoToTile(const Geo::Coordinate& location) const;
+    
+    Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const;
+
+protected:
+    /// \brief The minimum zoom level for this provider.
+    int _minZoom;
+
+    /// \brief The maximum zoom level for this provider.
+    int _maxZoom;
+    
+    /// \brief The tile width used by this provider.
+    int _tileWidth;
+
+    /// \brief The tile height used by this provider.
+    int _tileHeight;
+
+    /// \brief A reference to this provider's projection.
+    const BaseProjection& _projection;
+
+    /// \brief A string containing this provider's attribution.
+    std::string _attribution;
+
+    /// \brief The log of 2 (i.e. log(2)).
+    static const double LOG_2;
+
 };
 
 

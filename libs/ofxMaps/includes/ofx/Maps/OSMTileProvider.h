@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,53 +26,51 @@
 #pragma once
 
 
-#include "Poco/File.h"
-#include "Poco/Path.h"
-#include "ofx/Maps/AbstractMapTypes.h"
-#include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/MapTile.h"
+#include "ofx/Maps/BaseURLTileProvider.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-/// \brief A simplified BaseMapTileDiskSource.
-class DiskTileCache:
-    public AbstractTileSink,
-    public AbstractTileSource
+class OSMTileProvider: public BaseURLTileProvider
 {
 public:
-    DiskTileCache(const Poco::Path& cachePath,
-                  ofImageFormat imageFormat = DEFAULT_IMAGE_FORMAT,
-                  const std::string& imageExtension = DEFAULT_IMAGE_EXTENSION);
+    OSMTileProvider(const std::vector<std::string>& subdomains = DEFAULT_OSM_SUBDOMAINS,
+                    const std::string& URITemplate = DEFAULT_OSM_URI_TEMPLATE,
+                    int minZoom = DEFAULT_OSM_MIN_ZOOM,
+                    int maxZoom = DEFAULT_OSM_MAX_ZOOM,
+                    int tileWidth = DEFAULT_OSM_TILE_WIDTH,
+                    int tileHeight = DEFAULT_OSM_TILE_HEIGHT,
+                    const BaseProjection& projection = DEFAULT_OSM_PROJECTION,
+                    const std::string& attribution = DEFAULT_OSM_ATTRIBUTION);
 
-    virtual ~DiskTileCache();
+    virtual ~OSMTileProvider();
 
-    SharedTile getTile(const TileCoordinate& coordinate);
+    enum
+    {
+        DEFAULT_OSM_MIN_ZOOM = 0,
+        DEFAULT_OSM_MAX_ZOOM = 19,
+        DEFAULT_OSM_TILE_WIDTH = 256,
+        DEFAULT_OSM_TILE_HEIGHT = 256
+    };
 
-    bool putTile(const TileCoordinate& coordinate, const IO::ByteBuffer& tile);
-    bool putTile(const TileCoordinate& coordinate, const SharedTile& tile);
+    static const std::string DEFAULT_OSM_URI_TEMPLATE;
 
-    void clear();
+    /// \brief An unfortunate compromise until C++11.
+    /// \note C++ is not able to initialize static collections until
+    ///        after C++11.  This is a compromise until then.
+    static const std::string DEFAULT_OSM_SUBDOMAINS_ARRAY[];
 
-    ofImageFormat getImageFormat() const;
-    const std::string& getImageExtension() const;
+    /// \brief The default HTTP methods for this route.
+    static const std::vector<std::string> DEFAULT_OSM_SUBDOMAINS;
 
-    static const ofImageFormat DEFAULT_IMAGE_FORMAT;
-    static const ofImageQualityType DEFAULT_IMAGE_QUALITY;
-    static const std::string DEFAULT_IMAGE_EXTENSION;
+    static const SperhicalMercatorProjection DEFAULT_OSM_PROJECTION;
 
-protected:
-    Poco::Path getTilePath(const TileCoordinate& coordinate) const;
-
-    Poco::Path _cachePath;
-
-    ofImageQualityType _imageQuality;
-    ofImageFormat _imageFormat;
-    std::string _imageExtension;
+    static const std::string DEFAULT_OSM_ATTRIBUTION;
 
 };
+
 
 
 } } // namespace ofx::Maps

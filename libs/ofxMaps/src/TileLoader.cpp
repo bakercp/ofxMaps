@@ -1,7 +1,6 @@
 // =============================================================================
 //
 // Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
-// Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +23,14 @@
 // =============================================================================
 
 
-#pragma once
-
-
-#include "ofTypes.h"
-#include "ofImage.h"
+#include "ofx/Maps/TileLoader.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-typedef ofImage Tile;
-typedef std::shared_ptr<ofImage> SharedTile;
+
 
 
 } } // namespace ofx::Maps
