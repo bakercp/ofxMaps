@@ -43,20 +43,23 @@ class BaseTileProvider: public AbstractTileProvider
 {
 public:
     /// \brief Create a BaseTileProvider.
-    /// \param tileWidth The width of the provider's tiles in pixels.
-    /// \param tileHeight The height of the provider's tiles in pixels.
+    /// \param attribution The attribution string for the tile source.
     /// \param minZoom The minimum zoom level supported by the provider.
     /// \param maxZoom The maximum zoom level supported by the provider.
+    /// \param tileWidth The width of the provider's tiles in pixels.
+    /// \param tileHeight The height of the provider's tiles in pixels.
     /// \param projection The projection used by the provider.
-    BaseTileProvider(int minZoom,
+    BaseTileProvider(const std::string& attribution,
+                     int minZoom,
                      int maxZoom,
                      int tileWidth,
                      int tileHeight,
-                     const BaseProjection& projection,
-                     const std::string& attribution);
+                     const BaseProjection& projection);
 
     /// \brief Destroy the BaseMapProvider.
     virtual ~BaseTileProvider();
+
+    const std::string& getAttribution() const;
 
     int getMinZoom() const;
 
@@ -70,13 +73,29 @@ public:
 
     virtual double zoomForScale(double scale) const;
 
-    const std::string& getAttribution() const;
-
     TileCoordinate geoToTile(const Geo::Coordinate& location) const;
     
     Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const;
 
+    enum
+    {
+        /// \brief The minimum zoom level supported by most map tile providers.
+        DEFAULT_MIN_ZOOM = 0,
+        /// \brief The maximum zoom level supported by most map tile providers.
+        DEFAULT_MAX_ZOOM = 19,
+        /// \brief The default tile width supported by most map tile providers.
+        DEFAULT_TILE_WIDTH = 256,
+        /// \brief The default tile height supported by most map tile providers.
+        DEFAULT_TILE_HEIGHT = 256
+    };
+
+    /// \brief The default projection used by most map tile providers.
+    static const SperhicalMercatorProjection DEFAULT_PROJECTION;
+
 protected:
+    /// \brief A string containing this provider's attribution.
+    std::string _attribution;
+
     /// \brief The minimum zoom level for this provider.
     int _minZoom;
 
@@ -91,9 +110,6 @@ protected:
 
     /// \brief A reference to this provider's projection.
     const BaseProjection& _projection;
-
-    /// \brief A string containing this provider's attribution.
-    std::string _attribution;
 
     /// \brief The log of 2 (i.e. log(2)).
     static const double LOG_2;

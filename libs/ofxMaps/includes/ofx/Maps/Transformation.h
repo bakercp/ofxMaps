@@ -27,7 +27,8 @@
 #pragma once
 
 
-#include "ofx/Geo/Utils.h"
+#include "ofx/Geo/GeoUtils.h"
+#include "ofMain.h"
 
 
 namespace ofx {
@@ -57,9 +58,8 @@ public:
                    double c1x, double c1y,
                    double c2x, double c2y);
 
-    Transformation(const Transformation &t);
-
     ofVec2d transform(const ofVec2d& point) const;
+    
     ofVec2d untransform(const ofVec2d& point) const;
 
     /// \brief Solves a system of linear equations.
@@ -76,6 +76,7 @@ public:
                                double r2, double s2, double t2,
                                double r3, double s3, double t3,
                                double& a, double& b, double& c);
+
     double ax;
     double bx;
     double cx;

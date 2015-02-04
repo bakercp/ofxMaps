@@ -83,17 +83,6 @@ Transformation::Transformation(double a1x, double a1y,
 }
 
 
-Transformation::Transformation(const Transformation &t):
-    ax(t.ax),
-    bx(t.bx),
-    cx(t.cx),
-    ay(t.ay),
-    by(t.by),
-    cy(t.cy)
-{
-}
-
-
 ofVec2d Transformation::transform(const ofVec2d& point) const
 {
     double x = ax * point.x + bx * point.y + cx;

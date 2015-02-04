@@ -26,6 +26,8 @@
 #include "ofx/Maps/BaseURLTileProvider.h"
 #include "Poco/NumberFormatter.h"
 #include "Poco/String.h"
+#include "Poco/UTF8Encoding.h"
+#include "Poco/TextIterator.h"
 #include "ofx/HTTP/GetRequest.h"
 
 
@@ -39,22 +41,25 @@ const std::string BaseURLTileProvider::TEMPLATE_PARAM_X         = "{x}";
 const std::string BaseURLTileProvider::TEMPLATE_PARAM_Y         = "{y}";
 const std::string BaseURLTileProvider::TEMPLATE_PARAM_ID        = "{id}";
 
+const std::vector<std::string> BaseURLTileProvider::DEFAULT_NUMERICAL_SUBDOMAINS = BaseURLTileProvider::parseSubdomains("0123");
+const std::vector<std::string> BaseURLTileProvider::DEFAULT_ALPHABETICAL_SUBDOMAINS = BaseURLTileProvider::parseSubdomains("abc");
 
-BaseURLTileProvider::BaseURLTileProvider(const std::vector<std::string>& subdomains,
-                                         const std::string& URITemplate,
+
+BaseURLTileProvider::BaseURLTileProvider(const std::string& URITemplate,
+                                         const std::string& attribution,
+                                         const std::vector<std::string>& subdomains,
                                          int minZoom,
                                          int maxZoom,
                                          int tileWidth,
                                          int tileHeight,
-                                         const BaseProjection& projection,
-                                         const std::string& attribution):
+                                         const BaseProjection& projection):
     BaseURITileProvider(URITemplate,
+                        attribution,
                         minZoom,
                         maxZoom,
                         tileWidth,
                         tileHeight,
-                        projection,
-                        attribution),
+                        projection),
     _subdomains(subdomains),
     _currentSubdomainIndex(0)
 {
@@ -121,6 +126,31 @@ HTTP::Context* BaseURLTileProvider::createDefaultContext() const
 HTTP::BaseResponse* BaseURLTileProvider::createDefaultResponse() const
 {
     return new HTTP::BaseResponse();
+}
+
+
+std::vector<std::string> BaseURLTileProvider::parseSubdomains(const std::string& subdomains)
+{
+    std::vector<std::string> _subdomains;
+//    Poco::UTF8Encoding utf8Encoding;
+//    Poco::TextIterator it(subdomains, utf8Encoding);
+//    Poco::TextIterator end(subdomains);
+//
+//    while (it != end)
+//    {
+//        _subdomains.push_back(*it);
+//        ++it;
+//    }
+
+    for (std::size_t i = 0; i < subdomains.size(); ++i)
+    {
+        std::stringstream ss;
+        ss << subdomains[i];
+        _subdomains.push_back(ss.str());
+
+    }
+
+    return _subdomains;
 }
 
 

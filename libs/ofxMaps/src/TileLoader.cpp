@@ -30,7 +30,121 @@ namespace ofx {
 namespace Maps {
 
 
+TileLoader::TileLoader(long LRUCacheSize,
+                       int maxTasks,
+                       Poco::ThreadPool& threadPool):
+    TaskQueue_<TileCoordinate>(maxTasks, threadPool),
+    _LRUTileCache(LRUCacheSize)
+{
+    _LRUTileCache.Add    += Poco::delegate(this, &TileLoader::onAdd);
+    _LRUTileCache.Update += Poco::delegate(this, &TileLoader::onUpdate);
+    _LRUTileCache.Remove += Poco::delegate(this, &TileLoader::onRemove);
+    _LRUTileCache.Get    += Poco::delegate(this, &TileLoader::onGet);
+    _LRUTileCache.Clear  += Poco::delegate(this, &TileLoader::onClear);
 
+    registerTaskProgressEvents(this);
+}
+
+
+TileLoader::~TileLoader()
+{
+    unregisterTaskProgressEvents(this);
+
+    _LRUTileCache.Add    -= Poco::delegate(this, &TileLoader::onAdd);
+    _LRUTileCache.Update -= Poco::delegate(this, &TileLoader::onUpdate);
+    _LRUTileCache.Remove -= Poco::delegate(this, &TileLoader::onRemove);
+    _LRUTileCache.Get    -= Poco::delegate(this, &TileLoader::onGet);
+    _LRUTileCache.Clear  -= Poco::delegate(this, &TileLoader::onClear);
+}
+
+
+SharedTile TileLoader::getTile(const TileCoordinate& coordinate)
+{
+    return _LRUTileCache.get(coordinate);
+}
+
+
+void TileLoader::handleTaskCustomNotification(const TileCoordinate& taskID,
+                                              TaskNotificationPtr pNotification)
+{
+    Poco::AutoPtr<Poco::TaskCustomNotification<SharedTile> > taskCustomNotification = 0;
+
+    if (!(taskCustomNotification = pNotification.cast<Poco::TaskCustomNotification<SharedTile> >()).isNull())
+    {
+        SharedTile tile = taskCustomNotification->custom();
+
+        if (tile && !_LRUTileCache.has(taskID))
+        {
+            tile->setUseTexture(true);
+            tile->update();
+
+            _LRUTileCache.add(taskID, tile);
+        }
+    }
+    else
+    {
+        TaskQueue_<TileCoordinate>::handleTaskCustomNotification(taskID, pNotification);
+    }
+}
+
+
+void TileLoader::onAdd(const Poco::KeyValueArgs<TileCoordinate, Tile>& args)
+{
+    ofNotifyEvent(onTileCached, args.key(), this);
+}
+
+
+void TileLoader::onUpdate(const Poco::KeyValueArgs<TileCoordinate, Tile>& args)
+{
+}
+
+
+void TileLoader::onRemove(const TileCoordinate& args)
+{
+    ofNotifyEvent(onTileUncached, args, this);
+}
+
+
+void TileLoader::onGet(const TileCoordinate& args)
+{
+}
+
+
+void TileLoader::onClear(const Poco::EventArgs& args)
+{
+}
+
+
+void TileLoader::onTaskQueued(const ofx::TaskQueueEventArgs_<TileCoordinate>& args)
+{
+}
+
+
+void TileLoader::onTaskStarted(const ofx::TaskQueueEventArgs_<TileCoordinate>& args)
+{
+}
+
+
+void TileLoader::onTaskCancelled(const ofx::TaskQueueEventArgs_<TileCoordinate>& args)
+{
+}
+
+
+void TileLoader::onTaskFinished(const ofx::TaskQueueEventArgs_<TileCoordinate>& args)
+{
+}
+
+
+void TileLoader::onTaskFailed(const ofx::TaskFailedEventArgs_<TileCoordinate>& args)
+{
+    ofLogError("TileLoader::onTaskFailed") << args.getTaskName();
+    ofLogError("TileLoader::onTaskFailed") << args.getException().displayText();
+}
+
+
+void TileLoader::onTaskProgress(const ofx::TaskProgressEventArgs_<TileCoordinate>& args)
+{
+}
 
 
 } } // namespace ofx::Maps

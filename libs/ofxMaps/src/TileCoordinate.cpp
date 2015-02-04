@@ -121,6 +121,16 @@ TileCoordinate TileCoordinate::getFloored() const
 }
 
 
+TileCoordinate TileCoordinate::getClamped() const
+{
+    double gridSize = std::pow(2.0, _zoom) - 1;
+
+    return TileCoordinate(CLAMP(_row, 0, gridSize),
+                          CLAMP(_column, 0, gridSize),
+                          _zoom);
+}
+
+
 TileCoordinate TileCoordinate::zoomTo(double destination) const
 {
     double p = std::pow(2.0, destination - _zoom);

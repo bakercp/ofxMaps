@@ -62,13 +62,12 @@ public:
 
             img->setUseTexture(false);
 
-            if (img->loadImage(buffer))
+            if (img->load(buffer))
             {
                 postNotification(new Poco::TaskCustomNotification<std::shared_ptr<ofImage> >(this, img));
             }
             else
             {
-                std::cout << "><>>><><>" << _uri.toString() << endl;
                 throw Poco::Exception("Unable to load image: " + _uri.toString());
             }
         }
@@ -88,13 +87,21 @@ private:
 class BaseURITileProvider: public BaseTileProvider
 {
 public:
+    /// \brief Create a BaseURITileProvider.
+    /// \param URITemplate The template URL for requesting tiles by coordinate.
+    /// \param attribution The attribution string for the tile source.
+    /// \param minZoom The minimum zoom level supported by the provider.
+    /// \param maxZoom The maximum zoom level supported by the provider.
+    /// \param tileWidth The width of the provider's tiles in pixels.
+    /// \param tileHeight The height of the provider's tiles in pixels.
+    /// \param projection The projection used by the provider.
     BaseURITileProvider(const std::string& URITemplate,
+                        const std::string& attribution,
                         int minZoom,
                         int maxZoom,
                         int tileWidth,
                         int tileHeight,
-                        const BaseProjection& projection,
-                        const std::string& attribution);
+                        const BaseProjection& projection);
 
     /// \brief Destroy the BaseMapProvider.
     virtual ~BaseURITileProvider();
@@ -106,18 +113,34 @@ public:
     Poco::URI getTileURI(const TileCoordinate& coordinate) const;
 
 protected:
+    /// \brief Extracts a template parameter value if it is available.
+    ///
+    /// This class should be overriden if the provider uses additional URI
+    /// template variables.
+    ///
+    /// \param coordinate The tile coordinate requested.
+    /// \param templateParameter The template parameter requested.
+    /// \param templateValue The extracted value to be filled.
+    /// \returns true iff the extraction was successful.
     virtual bool getTileURITemplateValue(const TileCoordinate& coordinate,
                                          const std::string& templateParameter,
                                          std::string& templateValue) const = 0;
 
+    /// \brief The URI template used for extraction.
     const std::string _URITemplate;
+
+    /// \brief A collection of URI template parameters for the template.
     const std::vector<std::string> _URITemplateParameters;
 
+    /// \brief A regular expression used for extracting the template parameters.
     static const Poco::RegularExpression TEMPLATE_PARAM_REGEX;
+
+    /// \brief A utility method for extracting parameters from a template.
     static std::vector<std::string> extractTemplateParameters(const std::string& URITemplate);
 
 private:
-    std::string _id;
+    /// \brief A unique ID for the provider, based on the URI template.
+    std::string _ID;
     
 };
 

@@ -33,10 +33,6 @@
 #include "ofx/Maps/BaseURITileProvider.h"
 
 
-/// \brief An unfortunate compromise until C++11.
-#define INIT_VECTOR_WITH_ARRAY(x) x, x + sizeof(x) / sizeof(x[0])
-
-
 namespace ofx {
 namespace Maps {
 
@@ -81,14 +77,14 @@ public:
 class BaseURLTileProvider: public BaseURITileProvider
 {
 public:
-    BaseURLTileProvider(const std::vector<std::string>& subdomains,
-                        const std::string& URITemplate,
+    BaseURLTileProvider(const std::string& URITemplate,
+                        const std::string& attribution,
+                        const std::vector<std::string>& subdomains,
                         int minZoom,
                         int maxZoom,
                         int tileWidth,
                         int tileHeight,
-                        const BaseProjection& projection,
-                        const std::string& attribution);
+                        const BaseProjection& projection);
 
     /// \brief Destroy the BaseMapProvider.
     virtual ~BaseURLTileProvider();
@@ -100,6 +96,11 @@ public:
     static const std::string TEMPLATE_PARAM_X;
     static const std::string TEMPLATE_PARAM_Y;
     static const std::string TEMPLATE_PARAM_ID;
+
+    static const std::vector<std::string> DEFAULT_NUMERICAL_SUBDOMAINS;
+    static const std::vector<std::string> DEFAULT_ALPHABETICAL_SUBDOMAINS;
+
+    static std::vector<std::string> parseSubdomains(const std::string& subdomains);
 
 protected:
     virtual bool getTileURITemplateValue(const TileCoordinate& coordinate,

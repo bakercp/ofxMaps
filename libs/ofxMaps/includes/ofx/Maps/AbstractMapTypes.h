@@ -27,6 +27,7 @@
 
 
 #include "ofx/Maps/TileCoordinate.h"
+#include "ofx/Maps/Tile.h"
 #include "Poco/Task.h"
 
 
@@ -64,6 +65,10 @@ public:
     /// \returns A task that will load the given tile when submitted.
     virtual Poco::Task* requestTile(const TileCoordinate& coordinate) const = 0;
 
+    /// \brief Get the attribution string for the current tile provider.
+    /// \returns An attribution string.
+    virtual const std::string& getAttribution() const = 0;
+
     /// \brief Get the minimum zoom level for this provider.
     /// \returns the minimum zoom level;
     virtual int getMinZoom() const = 0;
@@ -84,10 +89,6 @@ public:
     /// \param scale The scale to calculate.
     /// \returns the zoom level for the given scale.
     virtual double zoomForScale(double scale) const = 0;
-
-    /// \brief Get the attribution string for the current tile provider.
-    /// \returns An attribution string.
-    virtual const std::string& getAttribution() const = 0;
 
     /// \brief Get the TileCoordinate from the given Geo::Coordinate at the default zoom.
     /// \param location The the Geo::Coordinate at the default zoom level.

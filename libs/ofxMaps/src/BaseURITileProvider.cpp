@@ -57,18 +57,18 @@ std::vector<std::string> BaseURITileProvider::extractTemplateParameters(const st
 
 
 BaseURITileProvider::BaseURITileProvider(const std::string& URITemplate,
+                                         const std::string& attribution,
                                          int minZoom,
                                          int maxZoom,
                                          int tileWidth,
                                          int tileHeight,
-                                         const BaseProjection& projection,
-                                         const std::string& attribution):
-    BaseTileProvider(minZoom,
+                                         const BaseProjection& projection):
+    BaseTileProvider(attribution,
+                     minZoom,
                      maxZoom,
                      tileWidth,
                      tileHeight,
-                     projection,
-                     attribution),
+                     projection),
     _URITemplate(URITemplate),
     _URITemplateParameters(extractTemplateParameters(_URITemplate))
 {
@@ -77,7 +77,7 @@ BaseURITileProvider::BaseURITileProvider(const std::string& URITemplate,
     ostr << _URITemplate;
     ostr.flush(); // Ensure everything gets passed to the digest engine
     const Poco::DigestEngine::Digest& digest = md5.digest(); // obtain result
-    _id = Poco::DigestEngine::digestToHex(digest);
+    _ID = Poco::DigestEngine::digestToHex(digest);
 }
 
 
@@ -88,7 +88,7 @@ BaseURITileProvider::~BaseURITileProvider()
 
 std::string BaseURITileProvider::getID() const
 {
-    return _id;
+    return _ID;
 }
 
 

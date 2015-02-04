@@ -23,17 +23,14 @@
 // =============================================================================
 
 
-// Dependencies
-#include "ofxGeo.h"
-
-// Tile Layers
-#include "ofx/Maps/TileLayer.h"
-
-// Tile Loaders
-#include "ofx/Maps/TileLoader.h"
-
-// Tile Providers
-#include "ofx/Maps/BaseTileProvider.h"
-#include "ofx/Maps/OSMTileProviders.h"
 #include "ofx/Maps/GoogleTileProvider.h"
-#include "ofx/Maps/MicrosoftTileProvider.h"
+
+
+namespace ofx {
+namespace Maps {
+
+
+const std::string BaseGoogleTileProvider::DEFAULT_GOOGLE_ATTRIBUTION = "&copy; Tiles Courtesy of Google";
+
+
+} } // namespace ofx::Maps

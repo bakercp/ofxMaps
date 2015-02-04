@@ -41,14 +41,6 @@ public:
     {
     }
 	
-	static double dist(double x0, double y0, double x1, double y1)
-    {
-		double dx = x1 - x0;
-		double dy = y1 - y0;
-
-		return sqrt(dx * dx + dy * dy);
-	}
-
     // TODO: simplify these calculations by using internal vec calculations
 	bool operator () (const TileCoordinate& c0, const TileCoordinate& c1) const
     {
@@ -56,15 +48,25 @@ public:
         {
 			if (c1.getZoom() == _center.getZoom())
             {
-				double d0 = dist(_center.getColumn(),
-                                 _center.getRow(),
-                                 c0.getColumn() + 0.5,
-                                 c0.getRow() + 0.5);
+                ofVec2d offset(0.5, 0.5);
 
-				double d1 = dist(_center.getColumn(),
-                                 _center.getRow(),
-                                 c1.getColumn() + 0.5,
-                                 c1.getRow() + 0.5);
+                ofVec2d center2d(_center);
+                ofVec2d c02d(c0);
+                ofVec2d c12d(c1);
+
+                double d0 = center2d.distanceSquared(c02d + offset);
+                double d1 = center2d.distanceSquared(c12d + offset);
+
+//
+//				double d0 = dist(_center.getColumn(),
+//                                 _center.getRow(),
+//                                 c0.getColumn() + 0.5,
+//                                 c0.getRow() + 0.5);
+//
+//				double d1 = dist(_center.getColumn(),
+//                                 _center.getRow(),
+//                                 c1.getColumn() + 0.5,
+//                                 c1.getRow() + 0.5);
 
 				return d0 < d1;
 			}

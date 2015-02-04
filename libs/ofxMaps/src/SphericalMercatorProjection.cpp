@@ -31,20 +31,16 @@ namespace ofx {
 namespace Maps {
 
 
-const Transformation SperhicalMercatorProjection::DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION
-    = Transformation(-M_PI,  M_PI, 0, 0,
-                      M_PI,  M_PI, 1, 0,
-                     -M_PI, -M_PI, 0, 1);
-
 const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = -RAD_TO_DEG * atan(sinh(M_PI));
 const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =  RAD_TO_DEG * atan(sinh(M_PI));
 const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
 const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
 
 
-SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom,
-                                                         const Transformation& transformation):
-    BaseProjection(zoom, transformation)
+SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom):
+    BaseProjection(DEFAULT_ZOOM, Transformation(-M_PI,  M_PI, 0, 0,
+                                                 M_PI,  M_PI, 1, 0,
+                                                -M_PI, -M_PI, 0, 1))
 {
 }
 

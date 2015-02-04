@@ -58,7 +58,8 @@ public:
     void setId(const std::string& id);
 
 	TileCoordinate getFloored() const;
-	
+    TileCoordinate getClamped() const;
+
 	TileCoordinate zoomTo(double destination) const;
 	TileCoordinate zoomBy(double distance) const;
 	

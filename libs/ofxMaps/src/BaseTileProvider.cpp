@@ -31,20 +31,21 @@ namespace Maps {
 
 
 const double BaseTileProvider::LOG_2 = log(2);
+const SperhicalMercatorProjection BaseTileProvider::DEFAULT_PROJECTION = SperhicalMercatorProjection();
 
 
-BaseTileProvider::BaseTileProvider(int minZoom,
+BaseTileProvider::BaseTileProvider(const std::string& attribution,
+                                   int minZoom,
                                    int maxZoom,
                                    int tileWidth,
                                    int tileHeight,
-                                   const BaseProjection& projection,
-                                   const std::string& attribution):
+                                   const BaseProjection& projection):
+    _attribution(attribution),
     _minZoom(minZoom),
     _maxZoom(maxZoom),
     _tileWidth(tileWidth),
     _tileHeight(tileHeight),
-    _projection(projection),
-    _attribution(attribution)
+    _projection(projection)
 {
 }
 
@@ -53,6 +54,12 @@ BaseTileProvider::~BaseTileProvider()
 {
 }
 
+
+const std::string& BaseTileProvider::getAttribution() const
+{
+    return _attribution;
+}
+    
 
 int BaseTileProvider::getMinZoom() const
 {
@@ -87,12 +94,6 @@ ofVec2d BaseTileProvider::getTileSize() const
 double BaseTileProvider::zoomForScale(double scale) const
 {
     return log(scale) / LOG_2;
-}
-
-
-const std::string& BaseTileProvider::getAttribution() const
-{
-    return _attribution;
 }
 
 

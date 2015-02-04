@@ -28,7 +28,9 @@
 
 #include <set>
 #include "ofBaseTypes.h"
+#include "ofFbo.h"
 #include "ofx/Maps/BaseTileProvider.h"
+#include "ofx/Maps/BaseURITileProvider.h"
 #include "ofx/Maps/TileCoordinate.h"
 #include "ofx/Maps/TileLoader.h"
 
@@ -37,18 +39,27 @@ namespace ofx {
 namespace Maps {
 
 
-class BaseTileLayer: public ofBaseDraws
+class TileLayer: public ofBaseDraws
 {
 public:
-	BaseTileLayer(BaseTileProvider& provider, double width, double height);
+    typedef std::shared_ptr<TileLayer> SharedPtr;
+    typedef std::shared_ptr<ofx::Maps::BaseURITileProvider> Provider;
 
-    virtual ~BaseTileLayer();
+	TileLayer();
 
-    void draw(float x, float y);
+    virtual ~TileLayer();
 
-	void draw(float x, float y, float w, float h);
+    void setup(Provider provider,
+               int width,
+               int height);
+
+    void draw(float x, float y) const;
+
+	void draw(float x, float y, float w, float h) const;
 
     ofVec2d getSize() const;
+
+    void setSize(const ofVec2d& size);
 
     float getWidth() const;
 
@@ -62,38 +73,39 @@ public:
 
     void setCenter(const TileCoordinate& center);
 
-protected:
-//    bool onTileLoaded(const TileEventArgs& args);
-//    bool onTileError(const TileErrorEventArgs& args);
+    void setCenter(const Geo::Coordinate& center, double zoom);
 
+protected:
+    std::set<TileCoordinate> getVisibleCoordinates() const;
+
+    TileCoordinate layerPointToTileCoordinate(const ofVec2d& layerPoint) const;
 
     /// \brief The Map tile Provider.
-    BaseTileProvider& _provider;
-//    BaseTileLoader& _tileLoader;
+    Provider _provider;
 
-    /// \brief Map width.
+    /// \brief Layer width.
     double _width;
 
-    /// \brief Map height.
+    /// \brief Layer height.
     double _height;
+
+    int _padColumn;
+
+    int _padRow;
 
     /// \brief Pan and anchor coordinate.
     TileCoordinate _center;
 
-    std::set<TileCoordinate> getVisibleCoordinates() const;
+    mutable TileLoader _loader;
 
-    /// \brief Allow the MapNavigator class to have direct access.
-    friend class MapNavigator;
+    void onTileCached(const TileCoordinate& args);
+    void onTileUncached(const TileCoordinate& args);
 
-    TileCoordinate pointToTileCoordinate(const ofVec2d& point) const
-    {
-        TileCoordinate coord = getCenter();
+    mutable std::set<TileCoordinate> _visisbleCoords;
 
-        coord += (point - getSize() / 2.0) / _provider.getTileSize();
+    mutable bool _coordsDirty;
 
-        return coord;
-    }
-
+    mutable ofFbo _fbo;
 };
 
 

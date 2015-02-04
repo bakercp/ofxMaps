@@ -44,14 +44,10 @@ public:
     /// \brief Create a default SperhicalMercatorProjection.
     /// \param zoom The default zoom used when calculating projections.
     /// \param t The transformation used by this projection.
-    SperhicalMercatorProjection(double zoom = DEFAULT_ZOOM,
-                                const Transformation& transformation = DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION);
+    SperhicalMercatorProjection(double zoom = DEFAULT_ZOOM);
 
     /// \brief Destroy the SperhicalMercatorProjection.
     virtual ~SperhicalMercatorProjection();
-
-    /// \brief The default Transform used for this projection.
-    static const Transformation DEFAULT_SPHERICAL_MERCATOR_TRANSFORMATION;
 
     /// \brief The minimum latitude represented by this projection.
     static const double MINIMUM_LATITUDE;
