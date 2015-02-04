@@ -28,73 +28,95 @@
 
 void ofApp::setup()
 {
+    Geo::Coordinate dresden(51.0530, 13.7337);
+    Geo::Coordinate saic(41.880645, -87.624415);
+    Geo::Coordinate bean(41.882672, -87.62336);
+    Geo::Coordinate ts(40.758895, -73.985131);
+
+    cout << Gd(18, 41.89155578613281, -87.63175964355469) << endl;
+
+
+//    ofExit();
+
     ofSetFrameRate(60);
 	ofSetVerticalSync(true);
 
+    ofEnableAlphaBlending();
 
-//    std::cout << osmTileProvider.getTileURI(c0).toString() << std::endl;
-//    std::cout << osmTileProvider.getTileURI(c1).toString() << std::endl;
-//    std::cout << osmTileProvider.getTileURI(c2).toString() << std::endl;
-//
-//    tile0 = tileLoader.getTile(c0);
-//    tile1 = tileLoader.getTile(c1);
-//    tile2 = tileLoader.getTile(c2);
+    Poco::ThreadPool::defaultPool().addCapacity(32);
 
 
-//    map.setup(std::shared_ptr<ofx::Maps::OpenStreetMapProvider>(new ofx::Maps::OpenStreetMapProvider()),
-//              ofGetWidth(),
-//              ofGetHeight());
+    layers.push_back(std::shared_ptr<Maps::TileLayer>(new Maps::TileLayer()));
+    layers.push_back(std::shared_ptr<Maps::TileLayer>(new Maps::TileLayer()));
+    layers.push_back(std::shared_ptr<Maps::TileLayer>(new Maps::TileLayer()));
 
-//    map.setGeoLocationCenter(ofx::Geo::Coordinate(41.878247, -87.629767));
-//	map.setZoom(12);
+    layers[0]->setup(Maps::TileLayer::Provider(new Maps::MicrosoftAerialStyleProvider()),
+                     ofGetWidth(),
+                     ofGetHeight());
+
+    layers[1]->setup(Maps::TileLayer::Provider(new Maps::EsriSatelliteTileProvider()),
+                     ofGetWidth(),
+                     ofGetHeight());
+
+    layers[2]->setup(Maps::TileLayer::Provider(new Maps::GoogleAerialTileProvider()),
+                     ofGetWidth(),
+                     ofGetHeight());
+
+
+    for (std::size_t i = 0; i < layers.size(); ++i)
+    {
+        layers[i]->setCenter(saic, 19);
+    }
+
+
+    cout << "here" << endl;
+
 }
 
 
 void ofApp::update()
 {
+    
 }
 
 
 void ofApp::draw()
 {
-    ofBackground(0);
+    ofBackgroundGradient(ofColor(255), ofColor(0));
 
-//    map.draw(0, 0);
+    ofDrawBitmapString(ofToString(layers[0]->getCenter()), ofVec2f(15, 15));
 
+    ofFill();
     ofSetColor(255);
 
-    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 0, 3))->draw(0, 0);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 1, 3))->draw(256, 0);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 2, 3))->draw(512, 0);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(1, 3, 3))->draw(512+256, 0);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 0, 3))->draw(0, 256);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 1, 3))->draw(256, 256);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 2, 3))->draw(512, 256);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(2, 3, 3))->draw(512+256, 256);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 0, 3))->draw(0, 512);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 1, 3))->draw(256, 512);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 2, 3))->draw(512, 512);
-    tileLoader.getTile(ofx::Maps::TileCoordinate(3, 3, 3))->draw(512+256, 512);
-
-//    std::cout << "Hi!" << endl;
-
-//    cout << map.getGeoLocationCenter() << endl;
-
-//    ofDrawBitmapStringHighlight(ofToString(map.getGeoLocationCenter()),
-//                                ofGetWidth() / 2,
-//                                ofGetHeight() / 2);
-//
-//    ofVec2d mousePosition(mouseX, mouseY);
-//
-//    ofDrawBitmapStringHighlight(">>" + ofToString(map.pointToTileCoordinate(mousePosition)),
-//                                mouseX + 16,
-//                                mouseY);
-//
-//    ofDrawBitmapStringHighlight("<<" + ofToString(map.pointToGeolocation(mousePosition)),
-//                                mouseX + 16,
-//                                mouseY + 14);
+    ofPushMatrix();
 
 
+    if (ofGetKeyPressed('0'))
+    {
+        layers[0]->draw(0, 0);
+    }
+    else if (ofGetKeyPressed('1'))
+    {
+        layers[1]->draw(0, 0);
+    }
+    else
+    {
+//        ofFill();
+//        ofSetColor(255, 150);
+
+//        for (std::size_t i = 0; i < layers.size(); ++i)
+//        {
+            layers[ofGetFrameNum() % layers.size()]->draw(0, 0);
+//        }
+    }
+
+
+
+
+
+
+    ofPopMatrix();
 }
 
 
@@ -104,12 +126,47 @@ void ofApp::keyPressed(int key)
     {
 		ofToggleFullscreen();
 	}
-    else if (key == 'r')
+    else if (key == '-')
     {
-//        map.rotateBy(TWO_PI / 180, 40, 40);
+        for (std::size_t i = 0; i < layers.size(); ++i)
+        {
+            layers[i]->setCenter(layers[i]->getCenter().zoomBy(-0.5));
+        }
     }
-    else if (key == 'R')
+    else if (key == '=')
     {
-//        map.rotateBy(-TWO_PI / 180, 40, 40);
+        for (std::size_t i = 0; i < layers.size(); ++i)
+        {
+            layers[i]->setCenter(layers[i]->getCenter().zoomBy(0.5));
+        }
+    }
+    else if (key == 'w')
+    {
+        for (std::size_t i = 0; i < layers.size(); ++i)
+        {
+            layers[i]->setCenter(layers[i]->getCenter().up(0.5));
+        }
+    }
+    else if (key == 'a')
+    {
+        for (std::size_t i = 0; i < layers.size(); ++i)
+        {
+            layers[i]->setCenter(layers[i]->getCenter().left(0.5));
+        }
+    }
+    else if (key == 's')
+    {
+        for (std::size_t i = 0; i < layers.size(); ++i)
+        {
+            layers[i]->setCenter(layers[i]->getCenter().down(0.5));
+        }
+    }
+    else if (key == 'd')
+    {
+        for (std::size_t i = 0; i < layers.size(); ++i)
+        {
+            layers[i]->setCenter(layers[i]->getCenter().right(0.5));
+        }
     }
 }
+

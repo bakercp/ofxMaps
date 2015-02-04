@@ -1,5 +1,3 @@
-ofxGeo
-ofxHTTP
 ofxIO
 ofxJSON
 ofxMaps
@@ -8,3 +6,8 @@ ofxSpatialHash
 ofxSSLManager
 ofxTaskQueue
 ofxSQLiteCpp
+ofxGeoServices
+ofxJSONRPC
+ofxGeo
+ofxNetworkUtils
+ofxHTTP
