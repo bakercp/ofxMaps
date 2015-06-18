@@ -73,7 +73,8 @@ BaseURLTileProvider::~BaseURLTileProvider()
 
 Poco::Task* BaseURLTileProvider::requestTile(const TileCoordinate& coordinate) const
 {
-    return new URLTileLoaderTask(new HTTP::GetRequest(getTileURI(coordinate).toString()),
+    return new URLTileLoaderTask(new HTTP::GetRequest(getTileURI(coordinate).toString(),
+                                                      Poco::Net::HTTPMessage::HTTP_1_1),
                                  createDefaultResponse(),
                                  createDefaultContext());
 }
