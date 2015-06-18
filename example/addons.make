@@ -1,13 +1,1 @@
-ofxIO
-ofxJSON
 ofxMaps
-ofxMediaType
-ofxSpatialHash
-ofxSSLManager
-ofxTaskQueue
-ofxSQLiteCpp
-ofxGeoServices
-ofxJSONRPC
-ofxGeo
-ofxNetworkUtils
-ofxHTTP
