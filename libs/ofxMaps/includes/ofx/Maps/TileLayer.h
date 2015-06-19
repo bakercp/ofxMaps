@@ -43,7 +43,7 @@ class TileLayer: public ofBaseDraws
 {
 public:
     typedef std::shared_ptr<TileLayer> SharedPtr;
-    typedef std::shared_ptr<ofx::Maps::BaseURITileProvider> Provider;
+    typedef std::shared_ptr<BaseURITileProvider> Provider;
 
 	TileLayer();
 
