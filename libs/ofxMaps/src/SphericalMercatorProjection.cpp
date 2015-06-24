@@ -27,20 +27,22 @@
 #include "ofx/Maps/SphericalMercatorProjection.h"
 
 
+
+
 namespace ofx {
 namespace Maps {
 
 
-const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = -RAD_TO_DEG * atan(sinh(M_PI));
-const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =  RAD_TO_DEG * atan(sinh(M_PI));
-const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * M_PI;
-const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * M_PI;
+const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = -RAD_TO_DEG * atan(sinh(PI));
+const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =  RAD_TO_DEG * atan(sinh(PI));
+const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * PI;
+const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * PI;
 
 
 SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom):
-    BaseProjection(DEFAULT_ZOOM, Transformation(-M_PI,  M_PI, 0, 0,
-                                                 M_PI,  M_PI, 1, 0,
-                                                -M_PI, -M_PI, 0, 1))
+    BaseProjection(DEFAULT_ZOOM, Transformation(-PI,  PI, 0, 0,
+                                                 PI,  PI, 1, 0,
+                                                -PI, -PI, 0, 1))
 {
 }
 
@@ -52,13 +54,13 @@ SperhicalMercatorProjection::~SperhicalMercatorProjection()
 
 ofVec2d SperhicalMercatorProjection::rawProject(const ofVec2d& point) const
 {
-	return ofVec2d(point.x, log(tan(0.25 * M_PI + 0.5 * point.y)));
+	return ofVec2d(point.x, log(tan(0.25 * PI + 0.5 * point.y)));
 }
 
 
 ofVec2d SperhicalMercatorProjection::rawUnproject(const ofVec2d& point) const
 {
-	return ofVec2d(point.x, 2.0 * atan(pow(M_E, 1.0 * point.y)) - 0.5 * M_PI);
+	return ofVec2d(point.x, 2.0 * atan(pow(PI, 1.0 * point.y)) - 0.5 * PI);
 }
 
 
