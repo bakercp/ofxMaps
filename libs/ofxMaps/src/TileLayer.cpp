@@ -200,6 +200,12 @@ void TileLayer::setCenter(const Geo::Coordinate& center, double zoom)
 }
 
 
+std::shared_ptr<BaseURITileProvider> TileLayer::getProvider()
+{
+    return _provider;
+}
+
+
 std::set<TileCoordinate> TileLayer::getVisibleCoordinates() const
 {
     if (!_provider)

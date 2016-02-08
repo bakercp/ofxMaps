@@ -49,7 +49,7 @@ public:
 
     virtual ~TileLayer();
 
-    void setup(Provider provider,
+    void setup(std::shared_ptr<BaseURITileProvider> provider,
                int width,
                int height);
 
@@ -75,13 +75,15 @@ public:
 
     void setCenter(const Geo::Coordinate& center, double zoom);
 
+    std::shared_ptr<BaseURITileProvider> getProvider();
+
 protected:
     std::set<TileCoordinate> getVisibleCoordinates() const;
 
     TileCoordinate layerPointToTileCoordinate(const ofVec2d& layerPoint) const;
 
     /// \brief The Map tile Provider.
-    Provider _provider;
+    std::shared_ptr<BaseURITileProvider> _provider;
 
     /// \brief Layer width.
     double _width;

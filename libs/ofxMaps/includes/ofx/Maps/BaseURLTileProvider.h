@@ -53,11 +53,11 @@ public:
     }
 
 
-    virtual void handleBufferEvent(const HTTP::ClientResponseBufferEventArgs& bufferEvent)
+    virtual void handleBufferEvent(const HTTP::ClientResponseBufferEventArgs& bufferEvent) override
     {
         IO::ByteBuffer byteBuffer = bufferEvent.getByteBuffer();
         ofBuffer buffer(byteBuffer.getCharPtr(), byteBuffer.size());
-        std::shared_ptr<ofImage> img = std::shared_ptr<ofImage>(new ofImage());
+        std::shared_ptr<ofImage> img = std::make_shared<ofImage>();
         img->setUseTexture(false);
 
         if (img->loadImage(buffer))
@@ -89,7 +89,7 @@ public:
     /// \brief Destroy the BaseMapProvider.
     virtual ~BaseURLTileProvider();
 
-    Poco::Task* requestTile(const TileCoordinate& coordinate) const;
+    Poco::Task* requestTile(const TileCoordinate& coordinate) const override;
 
     static const std::string TEMPLATE_PARAM_SUBDOMAIN;
     static const std::string TEMPLATE_PARAM_ZOOM;
@@ -105,7 +105,7 @@ public:
 protected:
     virtual bool getTileURITemplateValue(const TileCoordinate& coordinate,
                                          const std::string& templateParameter,
-                                         std::string& templateValue) const;
+                                         std::string& templateValue) const override;
 
     const std::vector<std::string> _subdomains;
     
