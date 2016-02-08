@@ -1,6 +1,6 @@
 // =============================================================================
 //
-// Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
+// Copyright (c) 2014-2016 Christopher Baker <http://christopherbaker.net>
 // Portions Copyright (c) 2006-2009 Microsoft Corporation.
 // Source: http://msdn.microsoft.com/en-us/library/bb259689.aspx
 //

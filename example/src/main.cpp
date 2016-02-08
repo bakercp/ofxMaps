@@ -1,6 +1,6 @@
 // =============================================================================
 //
-// Copyright (c) 2014 Christopher Baker <http://christopherbaker.net>
+// Copyright (c) 2014-2016 Christopher Baker <http://christopherbaker.net>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,11 +23,20 @@
 // =============================================================================
 
 
+
+#include "ofAppRunner.h"
 #include "ofApp.h"
 
 
 int main()
 {
-	ofSetupOpenGL(1280, 768, OF_WINDOW);
-	ofRunApp(new ofApp());
+    ofGLWindowSettings settings;
+    settings.width = 1280;
+    settings.height = 768;
+    settings.setGLVersion(3, 2);
+    settings.windowMode = OF_WINDOW;
+    auto window = ofCreateWindow(settings);
+    auto app = std::make_shared<ofApp>();
+
+    ofRunApp(app);
 }

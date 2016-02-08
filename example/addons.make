@@ -1,1 +1,9 @@
+ofxGeo
+ofxHTTP
+ofxIO
 ofxMaps
+ofxMediaType
+ofxNetworkUtils
+ofxSSLManager
+ofxSpatialHash
+ofxTaskQueue
