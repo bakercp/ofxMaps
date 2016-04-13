@@ -46,21 +46,21 @@ void ofApp::setup()
     Poco::ThreadPool::defaultPool().addCapacity(32);
 
     layers.push_back(std::make_shared<Maps::TileLayer>());
-    layers.push_back(std::make_shared<Maps::TileLayer>());
-    layers.push_back(std::make_shared<Maps::TileLayer>());
+//    layers.push_back(std::make_shared<Maps::TileLayer>());
+//    layers.push_back(std::make_shared<Maps::TileLayer>());
 
-    layers[0]->setup(std::make_shared<Maps::MicrosoftAerialStyleProvider>(),
+//    layers[0]->setup(std::make_shared<Maps::MicrosoftAerialStyleProvider>(),
+//                     ofGetWidth(),
+//                     ofGetHeight());
+
+//    layers[1]->setup(std::make_shared<Maps::EsriSatelliteTileProvider>(),
+//                     ofGetWidth(),
+//                     ofGetHeight());
+//
+    layers[0]->setup(std::make_shared<Maps::GoogleAerialTileProvider>(),
                      ofGetWidth(),
                      ofGetHeight());
-
-    layers[1]->setup(std::make_shared<Maps::EsriSatelliteTileProvider>(),
-                     ofGetWidth(),
-                     ofGetHeight());
-
-    layers[2]->setup(std::make_shared<Maps::GoogleAerialTileProvider>(),
-                     ofGetWidth(),
-                     ofGetHeight());
-
+//
 
     for (std::size_t i = 0; i < layers.size(); ++i)
     {
@@ -68,8 +68,7 @@ void ofApp::setup()
     }
 
 
-    cout << "here" << endl;
-
+   // layers[0]->
 }
 
 
@@ -112,7 +111,7 @@ void ofApp::draw()
 
 
 
-
+//    layers[0]->getProvider()->til
 
 
     ofPopMatrix();

@@ -60,7 +60,14 @@ TileLoader::~TileLoader()
 
 SharedTile TileLoader::getTile(const TileCoordinate& coordinate)
 {
-    return _LRUTileCache.get(coordinate);
+    if (_LRUTileCache.has(coordinate))
+    {
+        return *_LRUTileCache.get(coordinate).get();
+    }
+    else
+    {
+        return SharedTile();
+    }
 }
 
 
@@ -88,13 +95,13 @@ void TileLoader::handleTaskCustomNotification(const TileCoordinate& taskID,
 }
 
 
-void TileLoader::onAdd(const Poco::KeyValueArgs<TileCoordinate, Tile>& args)
+void TileLoader::onAdd(const Poco::KeyValueArgs<TileCoordinate, SharedTile>& args)
 {
     ofNotifyEvent(onTileCached, args.key(), this);
 }
 
 
-void TileLoader::onUpdate(const Poco::KeyValueArgs<TileCoordinate, Tile>& args)
+void TileLoader::onUpdate(const Poco::KeyValueArgs<TileCoordinate, SharedTile>& args)
 {
 }
 

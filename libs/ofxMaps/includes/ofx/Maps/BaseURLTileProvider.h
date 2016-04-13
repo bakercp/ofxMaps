@@ -55,7 +55,7 @@ public:
 
     virtual void handleBufferEvent(const HTTP::ClientResponseBufferEventArgs& bufferEvent) override
     {
-        IO::ByteBuffer byteBuffer = bufferEvent.getByteBuffer();
+        IO::ByteBuffer byteBuffer = bufferEvent.buffer();
         ofBuffer buffer(byteBuffer.getCharPtr(), byteBuffer.size());
         std::shared_ptr<ofImage> img = std::make_shared<ofImage>();
         img->setUseTexture(false);
@@ -66,7 +66,7 @@ public:
         }
         else
         {
-            throw Poco::Exception("Unable to load image: " + bufferEvent.getRequest().getURI());
+            throw Poco::Exception("Unable to load image: " + bufferEvent.request().getURI());
         }
     }
 

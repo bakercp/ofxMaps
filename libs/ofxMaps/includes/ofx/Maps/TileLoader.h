@@ -26,7 +26,7 @@
 #pragma once
 
 
-#include "ofx/LRUCache.h"
+#include "Poco/LRUCache.h"
 #include "ofx/TaskQueue.h"
 #include "ofx/Maps/AbstractMapTypes.h"
 #include "ofx/Maps/Tile.h"
@@ -70,13 +70,13 @@ protected:
     void handleTaskCustomNotification(const TileCoordinate& taskID,
                                       TaskNotificationPtr pNotification);
 
-    void onAdd(const Poco::KeyValueArgs<TileCoordinate, Tile>& args);
-    void onUpdate(const Poco::KeyValueArgs<TileCoordinate, Tile>& args);
+    void onAdd(const Poco::KeyValueArgs<TileCoordinate, SharedTile>& args);
+    void onUpdate(const Poco::KeyValueArgs<TileCoordinate, SharedTile>& args);
     void onRemove(const TileCoordinate& args);
     void onGet(const TileCoordinate& args);
     void onClear(const Poco::EventArgs& args);
 
-    ofx::LRUCache<TileCoordinate, Tile> _LRUTileCache;
+    Poco::LRUCache<TileCoordinate, SharedTile> _LRUTileCache;
 
 };
 
