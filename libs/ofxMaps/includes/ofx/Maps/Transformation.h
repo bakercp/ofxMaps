@@ -28,7 +28,7 @@
 
 
 #include "ofx/Geo/GeoUtils.h"
-#include "ofMain.h"
+#include "ofTypes.h"
 
 
 namespace ofx {
@@ -58,9 +58,9 @@ public:
                    double c1x, double c1y,
                    double c2x, double c2y);
 
-    ofVec2d transform(const ofVec2d& point) const;
+    glm::dvec2 transform(const glm::dvec2& point) const;
     
-    ofVec2d untransform(const ofVec2d& point) const;
+    glm::dvec2 untransform(const glm::dvec2& point) const;
 
     /// \brief Solves a system of linear equations.
     ///

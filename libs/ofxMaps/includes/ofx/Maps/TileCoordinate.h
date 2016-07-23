@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include <string>
-#include "ofVec3d.h"
+#include "ofConstants.h"
 
 
 namespace ofx {
@@ -37,7 +37,7 @@ namespace Maps {
 
 
 /// \brief A tile coordinate in a tiled image system.
-class TileCoordinate: public ofVec3d
+class TileCoordinate: public glm::dvec3
 {
 public:
 	TileCoordinate();

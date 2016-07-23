@@ -27,6 +27,7 @@
 #pragma once
 
 
+#include "ofConstants.h"
 #include "ofx/Maps/TileCoordinate.h"
 
 
@@ -48,14 +49,18 @@ public:
         {
 			if (c1.getZoom() == _center.getZoom())
             {
-                ofVec2d offset(0.5, 0.5);
+                glm::vec2 offset(0.5, 0.5);
 
-                ofVec2d center2d(_center);
-                ofVec2d c02d(c0);
-                ofVec2d c12d(c1);
+                glm::vec2 center2d(_center);
+                glm::vec2 c02d(c0);
+                glm::vec2 c12d(c1);
 
-                double d0 = center2d.distanceSquared(c02d + offset);
-                double d1 = center2d.distanceSquared(c12d + offset);
+
+                double d0 = glm::distance2(center2d, c02d + offset);
+                double d1 = glm::distance2(center2d, c12d + offset);
+
+//                double d0 = center2d.distanceSquared(c02d + offset);
+//                double d1 = center2d.distanceSquared(c12d + offset);
 
 //
 //				double d0 = dist(_center.getColumn(),

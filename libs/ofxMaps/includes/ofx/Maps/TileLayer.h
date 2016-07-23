@@ -29,6 +29,7 @@
 #include <set>
 #include "ofBaseTypes.h"
 #include "ofFbo.h"
+#include "ofTypes.h"
 #include "ofx/Maps/BaseTileProvider.h"
 #include "ofx/Maps/BaseURITileProvider.h"
 #include "ofx/Maps/TileCoordinate.h"
@@ -57,9 +58,9 @@ public:
 
 	void draw(float x, float y, float w, float h) const;
 
-    ofVec2d getSize() const;
+    glm::dvec2 getSize() const;
 
-    void setSize(const ofVec2d& size);
+    void setSize(const glm::dvec2& size);
 
     float getWidth() const;
 
@@ -80,7 +81,7 @@ public:
 protected:
     std::set<TileCoordinate> getVisibleCoordinates() const;
 
-    TileCoordinate layerPointToTileCoordinate(const ofVec2d& layerPoint) const;
+    TileCoordinate layerPointToTileCoordinate(const glm::dvec2& layerPoint) const;
 
     /// \brief The Map tile Provider.
     std::shared_ptr<BaseURITileProvider> _provider;

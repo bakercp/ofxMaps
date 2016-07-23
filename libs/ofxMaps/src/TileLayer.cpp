@@ -107,12 +107,12 @@ void TileLayer::draw(float x, float y) const
         {
             double scale = pow(2.0, _center.getZoom() - coord.getZoom());
 
-            ofVec2d tileSize(_provider->getTileWidth(),
-                             _provider->getTileHeight());
+            glm::dvec2 tileSize(_provider->getTileWidth(),
+                                _provider->getTileHeight());
 
             tileSize *= scale;
 
-            ofVec2d center = ofVec2d(_width, _height) * 0.5;
+            glm::dvec2 center = glm::dvec2(_width, _height) * 0.5;
             
             TileCoordinate theCoord = _center.zoomTo(coord.getZoom());
 
@@ -142,9 +142,9 @@ void TileLayer::draw(float x, float y, float w, float h) const
 }
 
 
-ofVec2d TileLayer::getSize() const
+glm::dvec2 TileLayer::getSize() const
 {
-    return ofVec2d(_width, _height);
+    return glm::dvec2(_width, _height);
 }
 
 
@@ -223,10 +223,10 @@ std::set<TileCoordinate> TileLayer::getVisibleCoordinates() const
     double gridSize = pow(2.0, baseZoom);
 
     // Get the layers points of the current screen.
-    ofVec2d topLeftPoint     = ofVec2d(0,      0);
-    ofVec2d topRightPoint    = ofVec2d(_width, 0);
-    ofVec2d bottomLeftPoint  = ofVec2d(0,      _height);
-    ofVec2d bottomRightPoint = ofVec2d(_width, _height);
+    glm::dvec2 topLeftPoint(0, 0);
+    glm::dvec2 topRightPoint(_width, 0);
+    glm::dvec2 bottomLeftPoint(0, _height);
+    glm::dvec2 bottomRightPoint(_width, _height);
 
     // Translate the layer points to tile coordinates, then zoom them to baseZoom.
 	TileCoordinate topLeft     = layerPointToTileCoordinate(topLeftPoint).zoomTo(baseZoom);
@@ -359,19 +359,22 @@ std::set<TileCoordinate> TileLayer::getVisibleCoordinates() const
 }
 
 
-TileCoordinate TileLayer::layerPointToTileCoordinate(const ofVec2d& layerPoint) const
+TileCoordinate TileLayer::layerPointToTileCoordinate(const glm::dvec2& layerPoint) const
 {
     TileCoordinate coord = getCenter();
 
-    if (_provider)
+    if (_provider != nullptr)
     {
 
-        ofVec2d layerSize(_width, _height);
+        glm::dvec2 layerSize(_width, _height);
 
-        ofVec2d tileSize(_provider->getTileWidth(),
-                         _provider->getTileHeight());
+        glm::dvec2 tileSize(_provider->getTileWidth(),
+                            _provider->getTileHeight());
 
-        coord += (layerPoint - layerSize / 2.0) / tileSize;
+        glm::dvec2 factor = (layerPoint - layerSize / 2.0) / tileSize;
+
+        coord.x += factor.x;
+        coord.y += factor.y;
     }
     else
     {

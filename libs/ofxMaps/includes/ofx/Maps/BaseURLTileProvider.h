@@ -29,6 +29,7 @@
 #include <vector>
 #include "Poco/AtomicCounter.h"
 #include "ofx/HTTP/DefaultClientTask.h"
+#include "ofx/HTTP/Context.h"
 #include "ofx/IO/ByteBuffer.h"
 #include "ofx/Maps/BaseURITileProvider.h"
 
@@ -60,7 +61,7 @@ public:
         std::shared_ptr<ofImage> img = std::make_shared<ofImage>();
         img->setUseTexture(false);
 
-        if (img->loadImage(buffer))
+        if (img->load(buffer))
         {
             postNotification(new Poco::TaskCustomNotification<std::shared_ptr<ofImage> >(this, img));
         }

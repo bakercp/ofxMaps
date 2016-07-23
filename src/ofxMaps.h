@@ -34,3 +34,5 @@
 #include "ofx/Maps/OSMTileProviders.h"
 #include "ofx/Maps/GoogleTileProvider.h"
 #include "ofx/Maps/MicrosoftTileProvider.h"
+
+namespace ofxMaps = ofx::Maps;

@@ -35,7 +35,7 @@ const std::string TileCoordinate::DEFAULT_SET_ID = "default";
 
 
 TileCoordinate::TileCoordinate():
-    ofVec3d(0, 0, 0),
+    glm::dvec3(0, 0, 0),
     _column(x),
     _row(y),
     _zoom(z),
@@ -45,7 +45,7 @@ TileCoordinate::TileCoordinate():
 
 
 TileCoordinate::TileCoordinate(const TileCoordinate& coordinate):
-    ofVec3d(coordinate),
+    glm::dvec3(coordinate),
     _column(x),
     _row(y),
     _zoom(z),
@@ -58,7 +58,7 @@ TileCoordinate::TileCoordinate(double row,
                                double column,
                                double zoom,
                                const std::string& id):
-    ofVec3d(column, row, zoom),
+    glm::dvec3(column, row, zoom),
     _column(x),
     _row(y),
     _zoom(z),
@@ -180,7 +180,10 @@ bool TileCoordinate::operator < (const TileCoordinate& coordiante) const
 
 TileCoordinate& TileCoordinate::operator = (const TileCoordinate& coordiante)
 {
-    set(coordiante);
+    _column = coordiante._column;
+    _row  = coordiante._row;
+    _zoom  = coordiante._zoom;
+    _id = coordiante._id;
     return *this;
 }
 

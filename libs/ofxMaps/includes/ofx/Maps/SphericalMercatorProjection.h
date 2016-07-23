@@ -68,8 +68,8 @@ public:
     };
 
 protected:
-	ofVec2d rawProject(const ofVec2d& point) const;
-	ofVec2d rawUnproject(const ofVec2d& point) const;
+	glm::dvec2 rawProject(const glm::dvec2& point) const;
+	glm::dvec2 rawUnproject(const glm::dvec2& point) const;
 
 };
 

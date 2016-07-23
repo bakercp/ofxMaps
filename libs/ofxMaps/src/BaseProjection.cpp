@@ -43,13 +43,13 @@ BaseProjection::~BaseProjection()
 }
 
 
-ofVec2d BaseProjection::project(const ofVec2d& point) const
+glm::dvec2 BaseProjection::project(const glm::dvec2& point) const
 {
     return _transformation.transform(rawProject(point));
 }
 
 
-ofVec2d BaseProjection::unproject(const ofVec2d& point) const
+glm::dvec2 BaseProjection::unproject(const glm::dvec2& point) const
 {
     return rawUnproject(_transformation.untransform(point));
 }
@@ -57,8 +57,8 @@ ofVec2d BaseProjection::unproject(const ofVec2d& point) const
 
 TileCoordinate BaseProjection::geoToTile(const Geo::Coordinate& location) const
 {
-    ofVec2d point = project(ofVec2d(DEG_TO_RAD * location.getLongitude(),
-                                    DEG_TO_RAD * location.getLatitude()));
+    glm::dvec2 point = project(glm::dvec2(DEG_TO_RAD * location.getLongitude(),
+                                          DEG_TO_RAD * location.getLatitude()));
 
     return TileCoordinate(point.y, point.x, _zoom);
 }
@@ -68,8 +68,8 @@ Geo::Coordinate BaseProjection::tileToGeo(const TileCoordinate& coordinate) cons
 {
     TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
 
-    ofVec2d point = unproject(ofVec2d(newCoordinate.getColumn(),
-                                      newCoordinate.getRow()));
+    glm::dvec2 point = unproject(glm::dvec2(newCoordinate.getColumn(),
+                                            newCoordinate.getRow()));
 
     return Geo::Coordinate(RAD_TO_DEG * point.x, RAD_TO_DEG * point.y);
 }

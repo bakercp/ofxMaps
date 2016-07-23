@@ -83,21 +83,21 @@ Transformation::Transformation(double a1x, double a1y,
 }
 
 
-ofVec2d Transformation::transform(const ofVec2d& point) const
+glm::dvec2 Transformation::transform(const glm::dvec2& point) const
 {
     double x = ax * point.x + bx * point.y + cx;
     double y = ay * point.x + by * point.y + cy;
 
-    return ofVec2d(x, y);
+    return glm::dvec2(x, y);
 }
 
 
-ofVec2d Transformation::untransform(const ofVec2d& point) const
+glm::dvec2 Transformation::untransform(const glm::dvec2& point) const
 {
     double x = (point.x * by - point.y * bx - cx * by + cy * bx) / (ax * by - ay * bx);
     double y = (point.x * ay - point.y * ax - cx * ay + cy * ax) / (bx * ay - by * ax);
 
-    return ofVec2d(x, y);
+    return glm::dvec2(x, y);
 }
 
 

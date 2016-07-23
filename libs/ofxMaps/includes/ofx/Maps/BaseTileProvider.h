@@ -26,7 +26,6 @@
 #pragma once
 
 
-#include "ofVec2d.h"
 #include "ofx/Geo/Coordinate.h"
 #include "ofx/Maps/AbstractMapTypes.h"
 #include "ofx/Maps/BaseProjection.h"
@@ -69,7 +68,7 @@ public:
 
     int getTileHeight() const;
 
-    ofVec2d getTileSize() const;
+    glm::dvec2 getTileSize() const;
 
     virtual double zoomForScale(double scale) const;
 

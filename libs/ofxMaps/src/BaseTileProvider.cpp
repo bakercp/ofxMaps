@@ -85,9 +85,9 @@ int BaseTileProvider::getTileHeight() const
 }
 
 
-ofVec2d BaseTileProvider::getTileSize() const
+glm::dvec2 BaseTileProvider::getTileSize() const
 {
-    return ofVec2d(_tileWidth, _tileHeight);
+    return glm::dvec2(_tileWidth, _tileHeight);
 }
 
     

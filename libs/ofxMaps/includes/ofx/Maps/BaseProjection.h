@@ -26,6 +26,7 @@
 #pragma once
 
 
+#include "ofConstants.h"
 #include "ofx/Geo/Coordinate.h"
 #include "ofx/Maps/Transformation.h"
 #include "ofx/Maps/TileCoordinate.h"
@@ -61,15 +62,15 @@ protected:
     /// \brief Calculate the raw projection between two points.
     /// \param point The point to be projected.
     /// \returns The projected point.
-	virtual ofVec2d rawProject(const ofVec2d& unProjectedPoint) const = 0;
+	virtual glm::dvec2 rawProject(const glm::dvec2& unProjectedPoint) const = 0;
 
     /// \brief Calculate the raw reverse projection between two points.
     /// \param point The point to be unprojected.
     /// \returns The unprojected point.
-	virtual ofVec2d rawUnproject(const ofVec2d& projectedPoint) const = 0;
+	virtual glm::dvec2 rawUnproject(const glm::dvec2& projectedPoint) const = 0;
 
-	ofVec2d project(const ofVec2d& point) const;
-	ofVec2d unproject(const ofVec2d& point) const;
+	glm::dvec2 project(const glm::dvec2& point) const;
+	glm::dvec2 unproject(const glm::dvec2& point) const;
 
     /// \brief The default zoom level used by this Projection.
 	double _zoom;

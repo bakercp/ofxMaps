@@ -52,15 +52,15 @@ SperhicalMercatorProjection::~SperhicalMercatorProjection()
 }
 
 
-ofVec2d SperhicalMercatorProjection::rawProject(const ofVec2d& point) const
+glm::dvec2 SperhicalMercatorProjection::rawProject(const glm::dvec2& point) const
 {
-	return ofVec2d(point.x, log(tan(0.25 * PI + 0.5 * point.y)));
+	return glm::dvec2(point.x, log(tan(0.25 * PI + 0.5 * point.y)));
 }
 
 
-ofVec2d SperhicalMercatorProjection::rawUnproject(const ofVec2d& point) const
+glm::dvec2 SperhicalMercatorProjection::rawUnproject(const glm::dvec2& point) const
 {
-	return ofVec2d(point.x, 2.0 * atan(pow(PI, 1.0 * point.y)) - 0.5 * PI);
+	return glm::dvec2(point.x, 2.0 * atan(pow(PI, 1.0 * point.y)) - 0.5 * PI);
 }
 
 
