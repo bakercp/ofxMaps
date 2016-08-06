@@ -31,13 +31,7 @@ namespace ofx {
 namespace Maps {
 
 
-Transformation::Transformation():
-    ax(1),
-    bx(0),
-    cx(0),
-    ay(0),
-    by(1),
-    cy(0)
+Transformation::Transformation()
 {
 }
 
@@ -63,23 +57,23 @@ Transformation::Transformation(double a1x, double a1y,
                                double b1x, double b1y,
                                double b2x, double b2y,
                                double c1x, double c1y,
-                               double c2x, double c2y):
-    ax(1),
-    bx(0),
-    cx(0),
-    ay(0),
-    by(1),
-    cy(0)
+                               double c2x, double c2y)
 {
-    linearSolution(a1x, a1y, a2x,
-                   b1x, b1y, b2x,
-                   c1x, c1y, c2x,
-                   ax,  bx,  cx);
+    glm::dvec3 x = linearSolution(a1x, a1y, a2x,
+                                  b1x, b1y, b2x,
+                                  c1x, c1y, c2x);
 
-    linearSolution(a1x, a1y, a2y,
-                   b1x, b1y, b2y,
-                   c1x, c1y, c2y,
-                   ay,  by,  cy);
+    ax = x.x;
+    bx = x.y;
+    cx = x.z;
+
+    glm::dvec3 y = linearSolution(a1x, a1y, a2y,
+                                  b1x, b1y, b2y,
+                                  c1x, c1y, c2y);
+
+    ay = y.x;
+    by = y.y;
+    cy = y.z;
 }
 
 
@@ -101,20 +95,21 @@ glm::dvec2 Transformation::untransform(const glm::dvec2& point) const
 }
 
 
-bool Transformation::linearSolution(double r1, double s1, double t1,
-                                    double r2, double s2, double t2,
-                                    double r3, double s3, double t3,
-                                    double& a, double& b, double& c)
+glm::dvec3 Transformation::linearSolution(double r1, double s1, double t1,
+                                          double r2, double s2, double t2,
+                                          double r3, double s3, double t3)
 {
-    a = (((t2 - t3) * (s1 - s2)) - ((t1 - t2) * (s2 - s3)))
-      / (((r2 - r3) * (s1 - s2)) - ((r1 - r2) * (s2 - s3)));
+    glm::dvec3 result;
 
-    b = (((t2 - t3) * (r1 - r2)) - ((t1 - t2) * (r2 - r3)))
-      / (((s2 - s3) * (r1 - r2)) - ((s1 - s2) * (r2 - r3)));
+    result.x = (((t2 - t3) * (s1 - s2)) - ((t1 - t2) * (s2 - s3)))
+             / (((r2 - r3) * (s1 - s2)) - ((r1 - r2) * (s2 - s3)));
 
-    c = t1 - (r1 * a) - (s1 * b);
+    result.y = (((t2 - t3) * (r1 - r2)) - ((t1 - t2) * (r2 - r3)))
+             / (((s2 - s3) * (r1 - r2)) - ((s1 - s2) * (r2 - r3)));
 
-    return true;
+    result.z = t1 - (r1 * result.x) - (s1 * result.y);
+
+    return result;
 };
 
 

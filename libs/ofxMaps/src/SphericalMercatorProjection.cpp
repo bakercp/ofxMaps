@@ -33,16 +33,19 @@ namespace ofx {
 namespace Maps {
 
 
-const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = -RAD_TO_DEG * atan(sinh(PI));
-const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =  RAD_TO_DEG * atan(sinh(PI));
-const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = -RAD_TO_DEG * PI;
-const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =  RAD_TO_DEG * PI;
+//const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = - glm::degrees<double>(std::atan(std::sinh(glm::pi<double>())));
+//const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =   glm::degrees<double>(std::atan(std::sinh(glm::pi<double>())));
+//const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = - glm::degrees<double>(glm::pi<double>());
+//const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =   glm::degrees<double>(glm::pi<double>());
+const std::string SperhicalMercatorProjection::EPSG_3857 = "EPSG:3857";
 
 
 SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom):
-    BaseProjection(DEFAULT_ZOOM, Transformation(-PI,  PI, 0, 0,
-                                                 PI,  PI, 1, 0,
-                                                -PI, -PI, 0, 1))
+    BaseProjection(EPSG_3857,
+                   DEFAULT_ZOOM,
+                   Transformation(-glm::pi<double>(),  glm::pi<double>(), 0, 0,
+                                   glm::pi<double>(),  glm::pi<double>(), 1, 0,
+                                  -glm::pi<double>(), -glm::pi<double>(), 0, 1))
 {
 }
 
@@ -54,13 +57,13 @@ SperhicalMercatorProjection::~SperhicalMercatorProjection()
 
 glm::dvec2 SperhicalMercatorProjection::rawProject(const glm::dvec2& point) const
 {
-	return glm::dvec2(point.x, log(tan(0.25 * PI + 0.5 * point.y)));
+    return glm::dvec2(point.x, std::log(std::tan(glm::quarter_pi<double>() + 0.5 * point.y)));
 }
 
 
 glm::dvec2 SperhicalMercatorProjection::rawUnproject(const glm::dvec2& point) const
 {
-	return glm::dvec2(point.x, 2.0 * atan(pow(PI, 1.0 * point.y)) - 0.5 * PI);
+	return glm::dvec2(point.x, 2.0 * std::atan(std::pow(glm::pi<double>(), 1.0 * point.y)) - glm::half_pi<double>());
 }
 
 

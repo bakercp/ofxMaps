@@ -71,8 +71,8 @@ glm::dvec2 BaseProjection::unproject(const glm::dvec2& point) const
 
 TileCoordinate BaseProjection::geoToTile(const Geo::Coordinate& location) const
 {
-    glm::dvec2 point = project(glm::dvec2(DEG_TO_RAD * location.getLongitude(),
-                                          DEG_TO_RAD * location.getLatitude()));
+    glm::dvec2 point = project(glm::dvec2(location.getLongitudeRad(),
+                                          location.getLatitudeRad()));
 
     return TileCoordinate(point.y, point.x, _zoom);
 }
@@ -80,12 +80,12 @@ TileCoordinate BaseProjection::geoToTile(const Geo::Coordinate& location) const
 
 Geo::Coordinate BaseProjection::tileToGeo(const TileCoordinate& coordinate) const
 {
-    TileCoordinate newCoordinate = coordinate.zoomTo(_zoom);
+    auto newCoordinate = TileCoordinateUtils::zoomTo(coordinate, _zoom);
 
-    glm::dvec2 point = unproject(glm::dvec2(newCoordinate.getColumn(),
-                                            newCoordinate.getRow()));
+    glm::dvec2 point = glm::degrees(unproject(glm::dvec2(newCoordinate.getColumn(),
+                                                         newCoordinate.getRow())));
 
-    return Geo::Coordinate(RAD_TO_DEG * point.x, RAD_TO_DEG * point.y);
+    return Geo::Coordinate(point.x, point.y);
 }
 
 

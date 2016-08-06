@@ -64,25 +64,24 @@ public:
 
     /// \brief Solves a system of linear equations.
     ///
-    ///     t1 = (a * r1) + (b + s1) + c
-    ///     t2 = (a * r2) + (b + s2) + c
-    ///     t3 = (a * r3) + (b + s3) + c
+    ///     t1 = (x * r1) + (y + s1) + z
+    ///     t2 = (x * r2) + (y + s2) + z
+    ///     t3 = (x * r3) + (y + s3) + z
     ///
     /// r1 - t3 are the known values.
-    /// a, b, c are the unknowns to be solved.
+    /// x, y, z are the unknowns to be solved.
     ///
-    /// \returns true iff a, b and c are valid.
-    static bool linearSolution(double r1, double s1, double t1,
-                               double r2, double s2, double t2,
-                               double r3, double s3, double t3,
-                               double& a, double& b, double& c);
+    /// \returns a vector of a, b, c values.
+    static glm::dvec3 linearSolution(double r1, double s1, double t1,
+                                     double r2, double s2, double t2,
+                                     double r3, double s3, double t3);
 
-    double ax;
-    double bx;
-    double cx;
-    double ay;
-    double by;
-    double cy;
+    double ax = 1.0;
+    double bx = 0.0;
+    double cx = 0.0;
+    double ay = 0.0;
+    double by = 1.0;
+    double cy = 0.0;
 
 };
 

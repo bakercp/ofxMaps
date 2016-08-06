@@ -42,30 +42,32 @@ class SperhicalMercatorProjection: public BaseProjection
 {
 public:
     /// \brief Create a default SperhicalMercatorProjection.
+    /// \param name The name of the projection.
     /// \param zoom The default zoom used when calculating projections.
-    /// \param t The transformation used by this projection.
     SperhicalMercatorProjection(double zoom = DEFAULT_ZOOM);
 
     /// \brief Destroy the SperhicalMercatorProjection.
     virtual ~SperhicalMercatorProjection();
 
-    /// \brief The minimum latitude represented by this projection.
-    static const double MINIMUM_LATITUDE;
-
-    /// \brief The maximum latitude represented by this projection.
-	static const double MAXIMUM_LATITUDE;
-
-    /// \brief The minimum longitude represented by this projection.
-	static const double MINIMUM_LONGITUDE;
-
-    /// \brief The maximum longitude represented by this projection.
-	static const double MAXIMUM_LONGITUDE;
+//    /// \brief The minimum latitude represented by this projection.
+//    static const double MINIMUM_LATITUDE;
+//
+//    /// \brief The maximum latitude represented by this projection.
+//	static const double MAXIMUM_LATITUDE;
+//
+//    /// \brief The minimum longitude represented by this projection.
+//	static const double MINIMUM_LONGITUDE;
+//
+//    /// \brief The maximum longitude represented by this projection.
+//	static const double MAXIMUM_LONGITUDE;
 
     enum
     {
         /// \brief The default zoom level used by this projection.
         DEFAULT_ZOOM = 0
     };
+
+    static const std::string EPSG_3857;
 
 protected:
 	glm::dvec2 rawProject(const glm::dvec2& point) const;
