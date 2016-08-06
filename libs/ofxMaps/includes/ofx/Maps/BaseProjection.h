@@ -43,10 +43,18 @@ public:
     /// \brief Construct a BaseProjection with a default zoom and Transformation.
     /// \param zoom The default zoom level used by this Projection.
     /// \param transformation The transformation used by this projection.
-    BaseProjection(double zoom, const Transformation& transformation);
+    BaseProjection(const std::string& name,
+                   double zoom,
+                   const Transformation& transformation);
 
     /// \brief Destroy the BaseProjection.
     virtual ~BaseProjection();
+
+    /// \returns the name of this projection.
+    std::string name() const;
+
+    /// \returns the default zoom level used with this projection.
+    double zoom() const;
 
     /// \brief Get the TileCoordinate from the given Geo::Coordinate at the default zoom.
     /// \param location The the Geo::Coordinate at the default zoom level.
@@ -78,6 +86,8 @@ protected:
     /// \brief The transformation used by this projection.
 	Transformation _transformation;
 
+    /// \brief The name of the proejction.
+    std::string _name;
 };
 
 

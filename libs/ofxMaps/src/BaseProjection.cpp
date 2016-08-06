@@ -30,8 +30,10 @@ namespace ofx {
 namespace Maps {
 
 
-BaseProjection::BaseProjection(double zoom,
+BaseProjection::BaseProjection(const std::string& name,
+                               double zoom,
                                const Transformation& transformation):
+    _name(name),
     _zoom(zoom),
     _transformation(transformation)
 {
@@ -40,6 +42,18 @@ BaseProjection::BaseProjection(double zoom,
 
 BaseProjection::~BaseProjection()
 {
+}
+
+
+std::string BaseProjection::name() const
+{
+    return _name;
+}
+
+
+double BaseProjection::zoom() const
+{
+    return _zoom;
 }
 
 
