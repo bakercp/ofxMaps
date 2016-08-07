@@ -23,51 +23,77 @@
 // =============================================================================
 
 
-#pragma once
-
-
-#include "ofPixels.h"
-#include "ofTexture.h"
+#include "ofx/Maps/Tile.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-class Tile: public ofBaseDraws
+Tile::Tile(const ofPixels& pixels):
+    _type(Type::RASTER),
+    _pixels(pixels)
 {
-public:
-    enum class Type
-    {
-        RASTER
-    };
+}
 
-    Tile(const ofPixels& pixels);
 
-    virtual ~Tile();
+Tile::~Tile()
+{
+}
 
-    using ofBaseDraws::draw;
 
-    void draw(float x, float y, float width, float height) const override;
+void Tile::draw(float x, float y, float width, float height) const
+{
+    _texture.draw(x, y, width, height);
+}
 
-    float getWidth() const override;
-    float getHeight() const override;
+    
+float Tile::getWidth() const
+{
+    return _pixels.getWidth();
+}
 
-    const ofPixels& pixels() const;
-    const ofTexture& texture() const;
 
-    Type type() const;
+float Tile::getHeight() const
+{
+    return _pixels.getHeight();
+}
 
-    bool hasTexture() const;
-    void loadTexture();
-    void clearTexture();
 
-private:
-    Type _type = Type::RASTER;
-    ofPixels _pixels;
-    ofTexture _texture;
+const ofPixels& Tile::pixels() const
+{
+    return _pixels;
+}
 
-};
+
+const ofTexture& Tile::texture() const
+{
+    return _texture;
+}
+
+
+Tile::Type Tile::type() const
+{
+    return _type;
+}
+
+
+bool Tile::hasTexture() const
+{
+    return _texture.isAllocated();
+}
+
+
+void Tile::loadTexture()
+{
+    _texture.loadData(_pixels);
+}
+
+
+void Tile::clearTexture()
+{
+    _texture.clear();
+}
 
 
 } } // namespace ofx::Maps
