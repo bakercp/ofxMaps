@@ -36,59 +36,178 @@ namespace ofx {
 namespace Maps {
 
 
+class TileData
+{
+public:
+    TileData();
+    TileData(const std::string& providerId,
+             const std::string& setId,
+             const std::string& tileId);
+
+    virtual ~TileData();
+
+    void setProviderId(const std::string& providerId);
+    std::string getProviderId() const;
+
+    void setSetId(const std::string& setId);
+    std::string getSetId() const;
+
+    void setTileId(const std::string& tileId);
+    std::string getTileId() const;
+
+    bool operator < (const TileData& data) const;
+
+    static const std::string DEFAULT_SET_ID;
+    static const std::string DEFAULT_TILE_ID;
+
+private:
+
+    /// \brief This is the id of the provider that generated this tile coordinate.
+    ///
+    /// Default value is an empty string.
+    std::string _providerId;
+
+    /// \brief This is the set id.
+    ///
+    /// Usually this is empty which indicates that it is part of a the default
+    /// set for the given providerId.
+    ///
+    /// This is often set for a given set of tiled images used in street-view
+    /// images, etc.
+    ///
+    /// Default value is an empty string.
+    std::string _setId;
+
+    /// \brief The unique tile id.
+    ///
+    /// This is usually used as the unique identifier for a given tile. For
+    /// instance, this might be the unique ETag delivered in a cacheable web
+    /// request.  This might also be used to connect loaded pixels back to
+    /// the raw buffered bytes.
+    ///
+    /// Default value is an empty string.
+    std::string _tileId;
+
+};
+
+
 /// \brief A tile coordinate in a tiled image system.
-class TileCoordinate: public glm::dvec3
+class TileCoordinate
 {
 public:
 	TileCoordinate();
-    TileCoordinate(const TileCoordinate& coordinate);
-	TileCoordinate(double row,
-                   double column,
-                   double zoom,
-                   const std::string& id = DEFAULT_SET_ID);
 
-    double getColumn() const;
-    double getRow() const;
-    double getZoom() const;
-    const std::string& getId() const;
+    TileCoordinate(double column,
+                   double row,
+                   double zoom);
 
     void setColumn(double column);
+    double getColumn() const;
+
     void setRow(double row);
+    double getRow() const;
+
     void setZoom(double zoom);
-    void setId(const std::string& id);
+    double getZoom() const;
 
-	TileCoordinate getFloored() const;
-    TileCoordinate getClamped() const;
+    void zoomTo(double zoom);
+    TileCoordinate getZoomedTo(double zoom) const;
 
-	TileCoordinate zoomTo(double destination) const;
-	TileCoordinate zoomBy(double distance) const;
-	
-	TileCoordinate up(double distance = DEFAULT_STEP) const;
-	TileCoordinate right(double distance = DEFAULT_STEP) const;
-	TileCoordinate down(double distance = DEFAULT_STEP) const;
-	TileCoordinate left(double distance = DEFAULT_STEP) const;
+    void zoomBy(double zoom);
+    TileCoordinate getZoomedBy(double zoom) const;
 
-	bool operator < (const TileCoordinate& coordiante) const;
-    TileCoordinate& operator = (const TileCoordinate& coordiante);
+    TileCoordinate moveRightBy(double distance);
+    TileCoordinate moveLeftBy(double distance);
+    TileCoordinate moveUpBy(double distance);
+    TileCoordinate moveDownBy(double distance);
 
-    static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
-    static double scaleForZoom(int zoom);
+    TileCoordinate getCoordinateRight() const;
+    TileCoordinate getCoordinateLeft() const;
+    TileCoordinate getCoordinateUp() const;
+    TileCoordinate getCoordinateDown() const;
 
-    static const std::string DEFAULT_SET_ID;
+    /// \brief This sorts tiles by zoom and row / column and zoom.
+	bool operator < (const TileCoordinate& coordinate) const;
 
-    enum
-    {
-        DEFAULT_STEP = 1
-    };
+    /// \brief This sorts tiles by zoom and row / column and zoom.
+    bool operator == (const TileCoordinate& coordiante) const;
+
+    std::string toString() const;
 
 private:
-    double& _column;
-	double& _row;
-	double& _zoom;
+    /// \brief The column position.
+    ///
+    /// This usually corresponds to the "x" position.
+    double _column = 0.0;
 
-    std::string _id;
+    /// \brief The row position.
+    ///
+    /// This usually corresponds to the "y" position.
+	double _row = 0.0;
+
+    /// \brief The tile zoom.
+    ///
+    /// This usually corresponds to the "z" position.
+	double _zoom = 0.0;
 
 };
+
+
+class TileCoordinateKey
+{
+public:
+    TileCoordinateKey();
+
+    TileCoordinateKey(const TileData& data,
+                      const TileCoordinate& coordinate);
+
+    virtual ~TileCoordinateKey();
+
+
+    TileData data() const;
+    TileCoordinate coordinate() const;
+
+    std::string tileId() const;
+    std::string setId() const;
+    std::string providerId() const;
+
+    /// \returns the floored integer representation of the row.
+    int row() const;
+
+    /// \returns the floored integer representation of the column.
+    int column() const;
+
+    /// \returns the floored integer representation of the zoom.
+    int zoom() const;
+
+    /// \brief This sorts tiles by the coordinate.
+    bool operator < (const TileCoordinateKey& coordiante) const;
+
+private:
+    TileData _data;
+    TileCoordinate _coordinate;
+
+};
+
+
+/// \brief A set of utilities for doing tile math.
+class TileCoordinateUtils
+{
+public:
+    static TileCoordinate normalizeTileCoordinate(const TileCoordinate& coordinate);
+
+    static TileCoordinate floorRowAndColumn(const TileCoordinate& coordinate);
+
+    static TileCoordinate clampRowAndColumn(const TileCoordinate& coordinate);
+
+    static TileCoordinate floor(const TileCoordinate& coordinate);
+
+    static double getScaleForZoom(int zoom);
+
+
+    static std::string hash(const TileCoordinateKey& key);
+};
+
 
 
 } } // namespace ofx::Maps

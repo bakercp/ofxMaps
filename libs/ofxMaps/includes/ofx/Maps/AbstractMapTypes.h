@@ -26,22 +26,15 @@
 #pragma once
 
 
-#include "ofx/Maps/TileCoordinate.h"
+#include <string>
+#include "ofx/Geo/Coordinate.h"
+#include "ofx/Geo/CoordinateBounds.h"
 #include "ofx/Maps/Tile.h"
-#include "Poco/Task.h"
+#include "ofx/Maps/TileCoordinate.h"
 
 
 namespace ofx {
-
-
-namespace Geo {
-    class Coordinate;
-}
-
 namespace Maps {
-
-
-class TileCoordinate;
 
 
 /// \brief An abstract class representing a Map Tile Provider.
@@ -58,33 +51,50 @@ public:
     /// This unique provider id is primarily used for caching purposes.
     ///
     /// \returns a unique provider ID.
-    virtual std::string getID() const = 0;
+    virtual std::string id() const = 0;
 
-    /// \brief Get a load task for the given TileCoordinate.
-    /// \param coordinate The tile coordinate of the requested tile.
-    /// \returns A task that will load the given tile when submitted.
-    virtual Poco::Task* requestTile(const TileCoordinate& coordinate) const = 0;
+    /// \brief Get the name of this provider if available.
+    /// \returns the name of this provider.
+    virtual std::string name() const = 0;
+
+    /// \brief Get the description of this provider if available.
+    /// \returns the description of this provider.
+    virtual std::string description() const = 0;
 
     /// \brief Get the attribution string for the current tile provider.
     /// \returns An attribution string.
-    virtual const std::string& getAttribution() const = 0;
+    virtual std::string attribution() const = 0;
+
+    /// \brief Get the version of this provider data if available.
+    /// \returns the version of this provider data.
+    virtual std::string version() const = 0;
 
     /// \brief Get the minimum zoom level for this provider.
-    /// \returns the minimum zoom level;
-    virtual int getMinZoom() const = 0;
+    /// \returns the minimum zoom level.
+    virtual int minZoom() const = 0;
 
     /// \brief Get the maximum zoom level for this provider.
     /// \returns the maximum zoom level.
-    virtual int getMaxZoom() const = 0;
+    virtual int maxZoom() const = 0;
 
     /// \brief Get the tile width.
     /// \returns the tile width;
-    virtual int getTileWidth() const = 0;
+    virtual int tileWidth() const = 0;
 
     /// \brief Get the tile height;
     /// \returns the tile height;
-    virtual int getTileHeight() const = 0;
-    
+    virtual int tileHeight() const = 0;
+
+    /// \brief Get the tile size.
+    /// \returns the tile size.
+    virtual glm::ivec2 tileSize() const = 0;
+
+    /// \returns the bounds for this provider.
+    virtual Geo::CoordinateBounds bounds() const = 0;
+
+    /// \returns the initial center for this provider.
+    virtual TileCoordinate center() const = 0;
+
     /// \brief Get the zoom level for a given map scale.
     /// \param scale The scale to calculate.
     /// \returns the zoom level for the given scale.
@@ -99,6 +109,21 @@ public:
     /// \param coordinate The TileCoordinate to transform to a Geo::Coordinate.
     /// \returns the GeoCoordinate corresponding to the TileCoordinate.
     virtual Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const = 0;
+
+};
+
+
+class AbstractURITileProvider: public AbstractTileProvider
+{
+public:
+    virtual ~AbstractURITileProvider()
+    {
+    }
+
+    /// \brief Get a URI for the given tile coordinate.
+    /// \param coordinate The TileCoordinate to get a URI for.
+    /// \returns the URI for the given TileCoordinate.
+    virtual std::string getTileURI(const TileCoordinateKey& key) const = 0;
 
 };
 

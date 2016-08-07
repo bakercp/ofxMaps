@@ -30,8 +30,7 @@
 #include "ofBaseTypes.h"
 #include "ofFbo.h"
 #include "ofTypes.h"
-#include "ofx/Maps/BaseTileProvider.h"
-#include "ofx/Maps/BaseURITileProvider.h"
+#include "ofx/Maps/TileProvider.h"
 #include "ofx/Maps/TileCoordinate.h"
 #include "ofx/Maps/TileLoader.h"
 
@@ -40,33 +39,34 @@ namespace ofx {
 namespace Maps {
 
 
+/// \brief A tile layer is a surface on which tiles are rendered.
+///
+/// A tile layer has a tile provider, a width and a height.
 class TileLayer: public ofBaseDraws
 {
 public:
-    typedef std::shared_ptr<TileLayer> SharedPtr;
-    typedef std::shared_ptr<BaseURITileProvider> Provider;
-
-	TileLayer();
+    TileLayer(std::shared_ptr<TileProvider> provider,
+              int width = 256,
+              int height = 256,
+              std::shared_ptr<TileLoader> loader = std::make_shared<TileLoader>());
 
     virtual ~TileLayer();
 
-    void setup(std::shared_ptr<BaseURITileProvider> provider,
-               int width,
-               int height);
+    void update();
 
-    void draw(float x, float y) const;
+    void draw(float x, float y) const override;
 
-	void draw(float x, float y, float w, float h) const;
+	void draw(float x, float y, float w, float h) const override;
 
-    glm::dvec2 getSize() const;
+    glm::vec2 getSize() const;
 
-    void setSize(const glm::dvec2& size);
+    void setSize(const glm::vec2& size);
 
-    float getWidth() const;
+    float getWidth() const override;
 
     void setWidth(double width);
 
-    float getHeight() const;
+    float getHeight() const override;
 
     void setHeight(double height);
 
@@ -76,39 +76,66 @@ public:
 
     void setCenter(const Geo::Coordinate& center, double zoom);
 
-    std::shared_ptr<BaseURITileProvider> getProvider();
+    void setSetId(const std::string& setId);
+
+    std::string getSetId() const;
+
+    TileCoordinate pixelsToTile(const glm::vec2& coordinates) const;
+    glm::vec2 tileToPixels(const TileCoordinate& coordinates) const;
+
+    Geo::Coordinate pixelsToGeo(const glm::vec2& coordinates) const;
+    glm::vec2 geoToPixels(const Geo::Coordinate& coordinates) const;
+
+//    std::shared_ptr<TileProvider> getProvider();
 
 protected:
-    std::set<TileCoordinate> getVisibleCoordinates() const;
+    TileCoordinateKey keyForCoordinate(const TileCoordinate& coordinate) const;
 
-    TileCoordinate layerPointToTileCoordinate(const glm::dvec2& layerPoint) const;
+    void cancelQueuedRequests() const;
+
+    bool hasTile(const TileCoordinate& coordinate) const;
+
+    std::shared_ptr<Tile> getTile(const TileCoordinate& coordinate) const;
+
+    void requestTiles(const std::set<TileCoordinate>& coordinates) const;
+
+    virtual std::set<TileCoordinate> calculateVisibleCoordinates() const;
 
     /// \brief The Map tile Provider.
-    std::shared_ptr<BaseURITileProvider> _provider;
+    std::shared_ptr<TileProvider> _provider = nullptr;
 
-    /// \brief Layer width.
-    double _width;
+    /// \brief The current set id being viewed.
+    std::string _setId;
 
-    /// \brief Layer height.
-    double _height;
+    /// \brief The size of the tile layer.
+    glm::vec2 _size;
 
-    int _padColumn;
-
-    int _padRow;
+    /// \brief The padding of the layer.
+    glm::ivec2 _padding;
 
     /// \brief Pan and anchor coordinate.
     TileCoordinate _center;
 
-    mutable TileLoader _loader;
+    /// \brief The tile loader.
+    mutable std::shared_ptr<TileLoader> _loader;
 
-    void onTileCached(const TileCoordinate& args);
-    void onTileUncached(const TileCoordinate& args);
+    void onTileCached(const TileCoordinateKey& args);
+    void onTileUncached(const TileCoordinateKey& args);
+    void onTileRequestCancelled(const std::string& args);
 
+    /// \brief The current visible coordinates.
     mutable std::set<TileCoordinate> _visisbleCoords;
+    mutable std::set<std::string> _outstandingRequests;
 
-    mutable bool _coordsDirty;
+    mutable bool _coordsDirty = true;
+    mutable bool _fboNeedsResize = true;
 
     mutable ofFbo _fbo;
+
+    ofEventListener _onTileCachedListener;
+    ofEventListener _onTileUncachedListener;
+    ofEventListener _onTileRequestCancelledListener;
+
 };
 
 

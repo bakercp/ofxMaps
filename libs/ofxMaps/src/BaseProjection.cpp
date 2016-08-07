@@ -80,8 +80,8 @@ TileCoordinate BaseProjection::geoToTile(const Geo::Coordinate& location) const
 
 Geo::Coordinate BaseProjection::tileToGeo(const TileCoordinate& coordinate) const
 {
-    auto newCoordinate = TileCoordinateUtils::zoomTo(coordinate, _zoom);
-
+    auto newCoordinate = coordinate.getZoomedTo(_zoom);
+    
     glm::dvec2 point = glm::degrees(unproject(glm::dvec2(newCoordinate.getColumn(),
                                                          newCoordinate.getRow())));
 

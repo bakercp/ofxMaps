@@ -25,69 +25,109 @@
 
 
 #include "ofx/Maps/TileCoordinate.h"
+#include "Poco/DigestStream.h"
+#include "Poco/Exception.h"
+#include "Poco/MD5Engine.h"
+#include "ofMath.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-const std::string TileCoordinate::DEFAULT_SET_ID = "default";
+const std::string TileData::DEFAULT_TILE_ID = "";
+const std::string TileData::DEFAULT_SET_ID = "";
 
 
-TileCoordinate::TileCoordinate():
-    glm::dvec3(0, 0, 0),
-    _column(x),
-    _row(y),
-    _zoom(z),
-    _id(DEFAULT_SET_ID)
+TileData::TileData()
 {
 }
 
 
-TileCoordinate::TileCoordinate(const TileCoordinate& coordinate):
-    glm::dvec3(coordinate),
-    _column(x),
-    _row(y),
-    _zoom(z),
-    _id(coordinate._id)
+TileData::TileData(const std::string& providerId,
+                   const std::string& setId,
+                   const std::string& tileId):
+    _providerId(providerId),
+    _setId(setId),
+    _tileId(tileId)
 {
 }
 
 
-TileCoordinate::TileCoordinate(double row,
-                               double column,
-                               double zoom,
-                               const std::string& id):
-    glm::dvec3(column, row, zoom),
-    _column(x),
-    _row(y),
-    _zoom(z),
-    _id(id)
+TileData::~TileData()
 {
 }
 
 
-double TileCoordinate::getColumn() const
+void TileData::setProviderId(const std::string& providerId)
 {
-    return _column;
+    _providerId = providerId;
 }
 
 
-double TileCoordinate::getRow() const
+std::string TileData::getProviderId() const
 {
-    return _row;
+    return _providerId;
 }
 
 
-double TileCoordinate::getZoom() const
+void TileData::setTileId(const std::string& tileId)
 {
-    return _zoom;
+    _tileId = tileId;
 }
 
 
-const std::string& TileCoordinate::getId() const
+std::string TileData::getTileId() const
 {
-    return _id;
+    return _tileId;
+}
+
+
+void TileData::setSetId(const std::string& setId)
+{
+    _setId = setId;
+}
+
+
+std::string TileData::getSetId() const
+{
+    return _setId;
+}
+
+
+bool TileData::operator < (const TileData& data) const
+{
+    if (_providerId != data.getProviderId())
+    {
+        return _providerId < data.getProviderId();
+    }
+    else if (_setId != data.getSetId())
+    {
+        return _setId < data.getSetId();
+    }
+    else if (_tileId != data.getTileId())
+    {
+        return _tileId < data.getTileId();
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+TileCoordinate::TileCoordinate()
+{
+}
+
+
+TileCoordinate::TileCoordinate(double column,
+                               double row,
+                               double zoom):
+    _column(column),
+    _row(row),
+    _zoom(zoom)
+{
 }
 
 
@@ -97,9 +137,21 @@ void TileCoordinate::setColumn(double column)
 }
 
 
+double TileCoordinate::getColumn() const
+{
+    return _column;
+}
+
+
 void TileCoordinate::setRow(double row)
 {
     _row = row;
+}
+    
+
+double TileCoordinate::getRow() const
+{
+    return _row;
 }
 
 
@@ -107,112 +159,290 @@ void TileCoordinate::setZoom(double zoom)
 {
     _zoom = zoom;
 }
-
-
-void TileCoordinate::setId(const std::string& id)
-{
-    _id = id;
-}
-
-
-TileCoordinate TileCoordinate::getFloored() const
-{
-    return TileCoordinate(std::floor(_row), std::floor(_column), _zoom);
-}
-
-
-TileCoordinate TileCoordinate::getClamped() const
-{
-    double gridSize = std::pow(2.0, _zoom) - 1;
-
-    return TileCoordinate(CLAMP(_row, 0, gridSize),
-                          CLAMP(_column, 0, gridSize),
-                          _zoom);
-}
-
-
-TileCoordinate TileCoordinate::zoomTo(double destination) const
-{
-    double p = std::pow(2.0, destination - _zoom);
-
-    return TileCoordinate(_row * p, _column * p, destination);
-}
-
-TileCoordinate TileCoordinate::zoomBy(double distance) const
-{
-    double p = std::pow(2.0, distance);
     
-    return TileCoordinate(_row * p, _column * p, _zoom + distance);
+
+double TileCoordinate::getZoom() const
+{
+    return _zoom;
+}
+
+void TileCoordinate::zoomTo(double zoom)
+{
+    auto scale = std::pow(2.0, zoom - _zoom);
+    _column *= scale;
+    _row *= scale;
+    _zoom = zoom;
 }
 
 
-TileCoordinate TileCoordinate::up(double distance) const
+TileCoordinate TileCoordinate::getZoomedTo(double zoom) const
 {
-    return TileCoordinate(_row - distance, _column, _zoom);
+    TileCoordinate result = *this;
+    result.zoomTo(zoom);
+    return result;
 }
 
 
-TileCoordinate TileCoordinate::right(double distance) const
+void TileCoordinate::zoomBy(double zoom)
 {
-    return TileCoordinate(_row, _column + distance, _zoom);
+    auto scale = std::pow(2.0, zoom);
+    _column *= scale;
+    _row *= scale;
+    _zoom += zoom;
 }
 
 
-TileCoordinate TileCoordinate::down(double distance) const
+TileCoordinate TileCoordinate::getZoomedBy(double zoom) const
 {
-    return TileCoordinate(_row + distance, _column, _zoom);
+    TileCoordinate result = *this;
+    result.zoomBy(zoom);
+    return result;
 }
 
 
-TileCoordinate TileCoordinate::left(double distance) const
+TileCoordinate TileCoordinate::moveRightBy(double distance)
 {
-    return TileCoordinate(_row, _column - distance, _zoom);
+    _column += distance;
 }
 
 
-bool TileCoordinate::operator < (const TileCoordinate& coordiante) const
+TileCoordinate TileCoordinate::moveLeftBy(double distance)
 {
-    return (_zoom < coordiante._zoom)
-        || (_zoom == coordiante._zoom && _row < coordiante._row)
-        || (_zoom == coordiante._zoom && _row == coordiante._row && _column < coordiante._column);
+    _column -= distance;
 }
 
 
-TileCoordinate& TileCoordinate::operator = (const TileCoordinate& coordiante)
+TileCoordinate TileCoordinate::moveUpBy(double distance)
 {
-    _column = coordiante._column;
-    _row  = coordiante._row;
-    _zoom  = coordiante._zoom;
-    _id = coordiante._id;
-    return *this;
+    _row -= distance;
+}
+
+TileCoordinate TileCoordinate::moveDownBy(double distance)
+{
+    _row += distance;
 }
 
 
-TileCoordinate TileCoordinate::normalizeTileCoordinate(const TileCoordinate& coordinate)
+TileCoordinate TileCoordinate::getCoordinateRight() const
 {
-    double gridSize = pow(2.0, coordinate.getZoom());
+    TileCoordinate result = *this;
+    result.moveRightBy(1);
+    return result;
+}
 
-    double wrappedColumn = fmod(coordinate.getColumn(), gridSize);
+
+TileCoordinate TileCoordinate::getCoordinateLeft() const
+{
+    TileCoordinate result = *this;
+    result.moveLeftBy(1);
+    return result;
+}
+
+
+TileCoordinate TileCoordinate::getCoordinateUp() const
+{
+    TileCoordinate result = *this;
+    result.moveUpBy(1);
+    return result;
+}
+
+
+TileCoordinate TileCoordinate::getCoordinateDown() const
+{
+    TileCoordinate result = *this;
+    result.moveDownBy(1);
+    return result;
+}
+
+
+bool TileCoordinate::operator < (const TileCoordinate& coordinate) const
+{
+    bool areZoomsEqual = ofIsFloatEqual(_zoom, coordinate._zoom);
+
+    return (_zoom < coordinate._zoom)
+        || (areZoomsEqual && _row < coordinate._row)
+        || (areZoomsEqual && ofIsFloatEqual(_row, coordinate._row) && _column < coordinate._column);
+}
+
+
+bool TileCoordinate::operator == (const TileCoordinate& coordinate) const
+{
+    return ofIsFloatEqual(_column, coordinate.getColumn())
+        && ofIsFloatEqual(_row, coordinate.getRow())
+        && ofIsFloatEqual(_zoom, coordinate.getZoom());
+}
+
+
+std::string TileCoordinate::toString() const
+{
+    std::stringstream ss;
+    ss << "column: " << _column << " ";
+    ss << "row: " << _row << " ";
+    ss << "zoom: " << _zoom << " ";
+    return ss.str();
+}
+
+
+TileCoordinateKey::TileCoordinateKey()
+{
+}
+
+
+TileCoordinateKey::TileCoordinateKey(const TileData& data,
+                                     const TileCoordinate& coordinate):
+    _data(data),
+    _coordinate(coordinate)
+{
+}
+
+
+TileCoordinateKey::~TileCoordinateKey()
+{
+}
+
+
+TileData TileCoordinateKey::data() const
+{
+    return _data;
+}
+
+
+TileCoordinate TileCoordinateKey::coordinate() const
+{
+    return _coordinate;
+}
+
+
+std::string TileCoordinateKey::tileId() const
+{
+    return _data.getTileId();
+}
+
+
+std::string TileCoordinateKey::setId() const
+{
+    return _data.getSetId();
+}
+
+
+std::string TileCoordinateKey::providerId() const
+{
+    return _data.getProviderId();
+}
+
+
+int TileCoordinateKey::row() const
+{
+    return static_cast<int>(std::floor(_coordinate.getRow()));
+}
+
+
+int TileCoordinateKey::column() const
+{
+    return static_cast<int>(std::floor(_coordinate.getColumn()));
+}
+
+
+int TileCoordinateKey::zoom() const
+{
+    return static_cast<int>(std::floor(_coordinate.getZoom()));
+}
+
+
+bool TileCoordinateKey::operator < (const TileCoordinateKey& coordinate) const
+{
+    if (_coordinate == coordinate.coordinate())
+    {
+        return _data < coordinate.data();
+    }
+    else
+    {
+        return _coordinate < coordinate.coordinate();
+    }
+}
+
+
+TileCoordinate TileCoordinateUtils::normalizeTileCoordinate(const TileCoordinate& coordinate)
+{
+    // TODO if this zoom is negative, these while loops could get stuck.
+
+    if (coordinate.getZoom() < 0)
+    {
+        throw Poco::InvalidArgumentException("Zoom must be >= 0");
+    }
+
+    int gridSize = TileCoordinateUtils::getScaleForZoom(coordinate.getZoom());
+
+    double wrappedColumn = std::fmod(coordinate.getColumn(), gridSize);
 
     while (wrappedColumn < 0)
     {
         wrappedColumn += gridSize;
     }
 
-    double wrappedRow = fmod(coordinate.getRow(), gridSize);
+    double wrappedRow = std::fmod(coordinate.getRow(), gridSize);
 
     while (wrappedRow < 0)
     {
         wrappedRow += gridSize;
     }
 
-    return TileCoordinate(wrappedRow, wrappedColumn, coordinate.getZoom());
+    return TileCoordinate(wrappedColumn,
+                          wrappedRow,
+                          coordinate.getZoom());
+}
+
+    
+TileCoordinate TileCoordinateUtils::floorRowAndColumn(const TileCoordinate& coordinate)
+{
+    return TileCoordinate(std::floor(coordinate.getColumn()),
+                          std::floor(coordinate.getRow()),
+                          coordinate.getZoom());
 }
 
 
-double TileCoordinate::scaleForZoom(int zoom)
+TileCoordinate TileCoordinateUtils::clampRowAndColumn(const TileCoordinate& coordinate)
 {
-    return pow(2.0, zoom);
+    double gridSize = getScaleForZoom(coordinate.getZoom()) - 1;
+
+    return TileCoordinate(glm::clamp(coordinate.getColumn(), 0.0, gridSize),
+                          glm::clamp(coordinate.getRow(), 0.0, gridSize),
+                          coordinate.getZoom());
+}
+
+
+TileCoordinate TileCoordinateUtils::floor(const TileCoordinate& coordinate)
+{
+    return TileCoordinate(std::floor(coordinate.getColumn()),
+                          std::floor(coordinate.getRow()),
+                          std::floor(coordinate.getZoom()));
+}
+
+
+
+
+double TileCoordinateUtils::getScaleForZoom(int zoom)
+{
+    return std::pow(2.0, zoom);
+}
+
+
+std::string TileCoordinateUtils::hash(const TileCoordinateKey& key)
+{
+    // TODO: use hash combine
+    // https://stackoverflow.com/questions/2590677/how-do-i-combine-hash-values-in-c0x
+    // http://en.cppreference.com/w/cpp/utility/hash
+
+    // Repeatable tile id based on its set id and column, row and zoom.
+    Poco::MD5Engine md5;
+    Poco::DigestOutputStream ostr(md5);
+    ostr << key.setId();
+    ostr << key.column();
+    ostr << key.row();
+    ostr << key.zoom();
+    ostr.flush(); // Ensure everything gets passed to the digest engine
+    const auto& digest = md5.digest(); // obtain result
+    return Poco::DigestEngine::digestToHex(digest);
 }
 
 

@@ -27,12 +27,9 @@
 
 
 #include "ofxGeo.h"
+#include "ofx/Maps/Tile.h"
 #include "ofx/Maps/TileLayer.h"
 #include "ofx/Maps/TileLoader.h"
-
-#include "ofx/Maps/BaseTileProvider.h"
-#include "ofx/Maps/OSMTileProviders.h"
-#include "ofx/Maps/GoogleTileProvider.h"
-#include "ofx/Maps/MicrosoftTileProvider.h"
+#include "ofx/Maps/TileProvider.h"
 
 namespace ofxMaps = ofx::Maps;
