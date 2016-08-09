@@ -72,13 +72,13 @@ public:
     std::string version() const override;
     int minZoom() const override;
     int maxZoom() const override;
-    int tileWidth() const override;
-    int tileHeight() const override;
-    glm::ivec2 tileSize() const override;
+    float tileWidth() const override;
+    float tileHeight() const override;
+    glm::vec2 tileSize() const override;
     Geo::CoordinateBounds bounds() const override;
     TileCoordinate center() const override;
     double zoomForScale(double scale) const override;
-    TileCoordinate geoToTile(const Geo::Coordinate& location) const override;
+    TileCoordinate geoToWorld(const Geo::Coordinate& location) const override;
     Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const override;
     std::string getTileURI(const TileCoordinateKey& coordinate) const override;
 

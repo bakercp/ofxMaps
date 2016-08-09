@@ -44,22 +44,10 @@ public:
     /// \brief Create a default SperhicalMercatorProjection.
     /// \param name The name of the projection.
     /// \param zoom The default zoom used when calculating projections.
-    SperhicalMercatorProjection(double zoom = DEFAULT_ZOOM);
+    SperhicalMercatorProjection();
 
     /// \brief Destroy the SperhicalMercatorProjection.
     virtual ~SperhicalMercatorProjection();
-
-//    /// \brief The minimum latitude represented by this projection.
-//    static const double MINIMUM_LATITUDE;
-//
-//    /// \brief The maximum latitude represented by this projection.
-//	static const double MAXIMUM_LATITUDE;
-//
-//    /// \brief The minimum longitude represented by this projection.
-//	static const double MINIMUM_LONGITUDE;
-//
-//    /// \brief The maximum longitude represented by this projection.
-//	static const double MAXIMUM_LONGITUDE;
 
     enum
     {

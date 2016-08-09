@@ -97,6 +97,8 @@ class TileCoordinate
 public:
 	TileCoordinate();
 
+    TileCoordinate(const glm::dvec2& columnRow, double zoom);
+
     TileCoordinate(double column,
                    double row,
                    double zoom);
@@ -121,10 +123,12 @@ public:
     TileCoordinate moveUpBy(double distance);
     TileCoordinate moveDownBy(double distance);
 
-    TileCoordinate getCoordinateRight() const;
-    TileCoordinate getCoordinateLeft() const;
-    TileCoordinate getCoordinateUp() const;
-    TileCoordinate getCoordinateDown() const;
+    TileCoordinate getNeighbor(double columnDistance, double rowDistance) const;
+
+    TileCoordinate getNeighborRight() const;
+    TileCoordinate getNeighborLeft() const;
+    TileCoordinate getNeighborUp() const;
+    TileCoordinate getNeighborDown() const;
 
     /// \brief This sorts tiles by zoom and row / column and zoom.
 	bool operator < (const TileCoordinate& coordinate) const;
@@ -132,7 +136,9 @@ public:
     /// \brief This sorts tiles by zoom and row / column and zoom.
     bool operator == (const TileCoordinate& coordiante) const;
 
-    std::string toString() const;
+    TileCoordinate& operator = (const TileCoordinate& coordinate);
+
+    std::string toString(int precision = 8) const;
 
 private:
     /// \brief The column position.
@@ -143,7 +149,7 @@ private:
     /// \brief The row position.
     ///
     /// This usually corresponds to the "y" position.
-	double _row = 0.0;
+    double _row = 0.0;
 
     /// \brief The tile zoom.
     ///

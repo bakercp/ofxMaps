@@ -80,13 +80,13 @@ public:
 
     std::string getSetId() const;
 
-    TileCoordinate pixelsToTile(const glm::vec2& coordinates) const;
-    glm::vec2 tileToPixels(const TileCoordinate& coordinates) const;
+    TileCoordinate pixelsToTile(const glm::vec2& pixelCoordinate) const;
+    glm::vec2 tileToPixels(const TileCoordinate& tileCoordinate) const;
 
-    Geo::Coordinate pixelsToGeo(const glm::vec2& coordinates) const;
-    glm::vec2 geoToPixels(const Geo::Coordinate& coordinates) const;
+    Geo::Coordinate pixelsToGeo(const glm::vec2& pixelCoordinate) const;
+    glm::vec2 geoToPixels(const Geo::Coordinate& geoCoordinate) const;
 
-//    std::shared_ptr<TileProvider> getProvider();
+//    Geo::CoordinateBounds visibleBounds() const;
 
 protected:
     TileCoordinateKey keyForCoordinate(const TileCoordinate& coordinate) const;

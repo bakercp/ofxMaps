@@ -121,19 +121,19 @@ int TileProvider::maxZoom() const
 }
 
 
-int TileProvider::tileWidth() const
+float TileProvider::tileWidth() const
 {
     return _tileSize.x;
 }
 
 
-int TileProvider::tileHeight() const
+float TileProvider::tileHeight() const
 {
     return _tileSize.y;
 }
 
 
-glm::ivec2 TileProvider::tileSize() const
+glm::vec2 TileProvider::tileSize() const
 {
     return _tileSize;
 }
@@ -157,9 +157,9 @@ double TileProvider::zoomForScale(double scale) const
 }
 
 
-TileCoordinate TileProvider::geoToTile(const Geo::Coordinate& location) const
+TileCoordinate TileProvider::geoToWorld(const Geo::Coordinate& location) const
 {
-    return _projection.geoToTile(location);
+    return _projection.geoToWorld(location);
 }
 
 
@@ -167,14 +167,6 @@ Geo::Coordinate TileProvider::tileToGeo(const TileCoordinate& coordinate) const
 {
     return _projection.tileToGeo(coordinate);
 }
-
-
-//std::shared_ptr<Tile> TileProvider::getTile(const TileCoordinate& coordinate) const
-//{
-//    
-//
-//    return nullptr;
-//}
 
 
 std::string TileProvider::getTileURI(const TileCoordinateKey& key) const
@@ -318,7 +310,7 @@ TileProvider TileProvider::fromJSON(const ofJson& json)
         }
         else if (key == "center")
         {
-            auto center = provider.geoToTile(Geo::Coordinate(value[0], value[1]));
+            auto center = provider.geoToWorld(Geo::Coordinate(value[0], value[1]));
             center.setZoom(value[2]);
             provider._center = center;
         }

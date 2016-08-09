@@ -27,20 +27,14 @@
 #include "ofx/Maps/SphericalMercatorProjection.h"
 
 
-
-
 namespace ofx {
 namespace Maps {
 
 
-//const double SperhicalMercatorProjection::MINIMUM_LATITUDE  = - glm::degrees<double>(std::atan(std::sinh(glm::pi<double>())));
-//const double SperhicalMercatorProjection::MAXIMUM_LATITUDE  =   glm::degrees<double>(std::atan(std::sinh(glm::pi<double>())));
-//const double SperhicalMercatorProjection::MINIMUM_LONGITUDE = - glm::degrees<double>(glm::pi<double>());
-//const double SperhicalMercatorProjection::MAXIMUM_LONGITUDE =   glm::degrees<double>(glm::pi<double>());
 const std::string SperhicalMercatorProjection::EPSG_3857 = "EPSG:3857";
 
 
-SperhicalMercatorProjection::SperhicalMercatorProjection(double zoom):
+SperhicalMercatorProjection::SperhicalMercatorProjection():
     BaseProjection(EPSG_3857,
                    DEFAULT_ZOOM,
                    Transformation(-glm::pi<double>(),  glm::pi<double>(), 0, 0,
@@ -57,13 +51,15 @@ SperhicalMercatorProjection::~SperhicalMercatorProjection()
 
 glm::dvec2 SperhicalMercatorProjection::rawProject(const glm::dvec2& point) const
 {
-    return glm::dvec2(point.x, std::log(std::tan(glm::quarter_pi<double>() + 0.5 * point.y)));
+    return glm::dvec2(point.x,
+                      std::log(std::tan(glm::quarter_pi<double>() + 0.5 * point.y)));
 }
 
 
 glm::dvec2 SperhicalMercatorProjection::rawUnproject(const glm::dvec2& point) const
 {
-	return glm::dvec2(point.x, 2.0 * std::atan(std::pow(glm::pi<double>(), 1.0 * point.y)) - glm::half_pi<double>());
+	return glm::dvec2(point.x,
+                      2.0 * std::atan(std::pow(glm::e<double>(), 1.0 * point.y)) - glm::half_pi<double>());
 }
 
 

@@ -79,15 +79,15 @@ public:
 
     /// \brief Get the tile width.
     /// \returns the tile width;
-    virtual int tileWidth() const = 0;
+    virtual float tileWidth() const = 0;
 
     /// \brief Get the tile height;
     /// \returns the tile height;
-    virtual int tileHeight() const = 0;
+    virtual float tileHeight() const = 0;
 
     /// \brief Get the tile size.
     /// \returns the tile size.
-    virtual glm::ivec2 tileSize() const = 0;
+    virtual glm::vec2 tileSize() const = 0;
 
     /// \returns the bounds for this provider.
     virtual Geo::CoordinateBounds bounds() const = 0;
@@ -103,7 +103,7 @@ public:
     /// \brief Get the TileCoordinate from the given Geo::Coordinate at the default zoom.
     /// \param location The the Geo::Coordinate at the default zoom level.
     /// \returns the TileCoordinate at the default zoom level.
-    virtual TileCoordinate geoToTile(const Geo::Coordinate& location) const = 0;
+    virtual TileCoordinate geoToWorld(const Geo::Coordinate& location) const = 0;
 
     /// \brief Get the GeoCoordinate from the given TileCoordinate.
     /// \param coordinate The TileCoordinate to transform to a Geo::Coordinate.

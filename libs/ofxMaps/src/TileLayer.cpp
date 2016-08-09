@@ -87,6 +87,60 @@ void TileLayer::update()
 }
 
 
+void TileLayer::draw(float x, float y) const
+{
+    //_fbo.begin();
+
+    //ofClear(0, 0, 0);
+
+    std::set<TileCoordinate>::const_reverse_iterator iter = _visisbleCoords.rbegin();
+
+    while (iter != _visisbleCoords.rend())
+    {
+        const TileCoordinate& coord = *iter;
+
+        auto tile = getTile(coord);
+
+        if (tile)
+        {
+            glm::vec2 position = tileToPixels(coord);
+            auto dZoom = _center.getZoom() - coord.getZoom();
+            double scale = dZoom < 1 ? 1 : std::pow(2.0, dZoom);
+            glm::dvec2 tileSize = _provider->tileSize() * scale;
+
+            tile->draw(position.x, position.y, tileSize.x, tileSize.y);
+
+            ofPushStyle();
+            ofNoFill();
+            ofSetColor(255, 0, 0, 127);
+            ofDrawRectangle(position.x, position.y, tileSize.x, tileSize.y);
+            ofPopStyle();
+
+            ofDrawBitmapStringHighlight(coord.toString(), position.x + 20, position.y + 20);
+        }
+        
+        ++iter;
+    }
+
+//    if (center.)
+
+
+
+    //_fbo.end();
+    
+    //_fbo.draw(x, y);
+}
+
+
+void TileLayer::draw(float x, float y, float w, float h) const
+{
+    ofPushMatrix();
+    ofScale(_size.x / w, _size.y / h);
+    draw(x, y);
+    ofPopMatrix();
+}
+
+
 glm::vec2 TileLayer::getSize() const
 {
     return _size;
@@ -143,26 +197,12 @@ void TileLayer::setCenter(const TileCoordinate& center)
 
 void TileLayer::setCenter(const Geo::Coordinate& center, double zoom)
 {
-    if (_provider != nullptr)
-    {
-        setCenter(_provider->geoToTile(center).getZoomedTo(zoom));
-    }
-    else
-    {
-        ofLogError("TileLayer::setCenter") << "Provider is not defined.";
-    }
+    setCenter(_provider->geoToWorld(center).getZoomedTo(zoom));
 }
 
 
 std::set<TileCoordinate> TileLayer::calculateVisibleCoordinates() const
 {
-    if (_provider == nullptr)
-    {
-        ofLogError("TileLayer::layerPointToTileCoordinate") << "Provider is not defined.";
-        std::set<TileCoordinate> coordinates;
-        return coordinates;
-    }
-
     // Round the current zoom in case we are in between levels.
     int baseZoom = glm::clamp(static_cast<int>(std::round(_center.getZoom())),
                               _provider->minZoom(),
@@ -205,7 +245,7 @@ std::set<TileCoordinate> TileLayer::calculateVisibleCoordinates() const
 	maxCol += _padding.x;
 	maxRow += _padding.y;
 
-   int gridSize = TileCoordinateUtils::getScaleForZoom(baseZoom);
+    int gridSize = TileCoordinateUtils::getScaleForZoom(baseZoom);
 
     minCol = glm::clamp(minCol, 0, gridSize);
     maxCol = glm::clamp(maxCol, 0, gridSize);
@@ -262,18 +302,15 @@ std::set<TileCoordinate> TileLayer::calculateVisibleCoordinates() const
 //                if (!foundParent)
 //                {
 //					TileCoordinate zoomed = coord.getZoomedBy(1);
-//					std::vector<Coordinate> kids;
+//					std::vector<TileCoordinate> kids;
 //					kids.push_back(zoomed);
-//					kids.push_back(zoomed.right());
-//					kids.push_back(zoomed.down());
-//					kids.push_back(zoomed.right().down());
-//					for (int i = 0; i < kids.size(); i++)
+//					kids.push_back(zoomed.getCoordinateRight());
+//					kids.push_back(zoomed.getCoordinateDown());
+//					kids.push_back(zoomed.getCoordinateRight().getCoordinateDown());
+//					for (int i = 0; i < kids.size(); ++i)
 //                    {
-//						if (images.count(kids[i]) > 0)
-//                        {
-//							visibleKeys.insert(kids[i]);
-//						}
-//					}            
+//                        coordinatesToDraw.insert(kids[i]);
+//					}
 //				}
             }
             else
@@ -338,44 +375,16 @@ void TileLayer::requestTiles(const std::set<TileCoordinate>& coordinates) const
         try
         {
             auto key = keyForCoordinate(coordinate);
-
-
             TileLoaderRequest request(key, _provider->getTileURI(key));
             std::string requestId = _loader->request(request);
             _outstandingRequests.insert(requestId);
         }
         catch (const Poco::ExistsException& exc)
         {
-            std::cout << exc.displayText() << endl;
+            //std::cout << exc.displayText() << endl;
         }
     }
 }
-
-
-//TileCoordinate TileLayer::layerPointToTileCoordinate(const glm::dvec2& layerPoint) const
-//{
-//    TileCoordinate coord = getCenter();
-//
-//    if (_provider != nullptr)
-//    {
-//
-//        glm::dvec2 layerSize(_width, _height);
-//
-//        glm::dvec2 tileSize(_provider->tileWidth(),
-//                            _provider->tileHeight());
-//
-//        glm::dvec2 factor = (layerPoint - layerSize / 2.0) / tileSize;
-//
-//        coord.setColumn(coord.getColumn() + factor.x);
-//        coord.setRow(coord.getRow() + factor.y);
-//    }
-//    else
-//    {
-//        ofLogError("TileLayer::layerPointToTileCoordinate") << "Provider is not defined.";
-//    }
-//
-//    return coord;
-//}
 
 
 void TileLayer::onTileRequestCancelled(const std::string& args)
@@ -409,46 +418,44 @@ std::string TileLayer::getSetId() const
 }
 
 
-TileCoordinate TileLayer::pixelsToTile(const glm::vec2& coordinates) const
+TileCoordinate TileLayer::pixelsToTile(const glm::vec2& pixelCoordinate) const
 {
-    TileCoordinate coord = getCenter();
+    glm::dvec2 factor = (pixelCoordinate - (_size * 0.5)) / _provider->tileSize();
 
-    if (_provider != nullptr)
-    {
-        glm::vec2 tileSize(_provider->tileWidth(),
-                            _provider->tileHeight());
-
-        glm::vec2 factor = (coordinates - _size / 2.0) / tileSize;
-
-        coord.setColumn(coord.getColumn() + factor.x);
-        coord.setRow(coord.getRow() + factor.y);
-    }
-    else
-    {
-        ofLogError("TileLayer::layerPointToTileCoordinate") << "Provider is not defined.";
-    }
-    
-    return coord;
+    return TileCoordinate(_center.getColumn() + factor.x,
+                          _center.getRow() + factor.y,
+                          _center.getZoom());
 }
 
 
-glm::vec2 TileLayer::tileToPixels(const TileCoordinate& coordinates) const
+glm::vec2 TileLayer::tileToPixels(const TileCoordinate& tileCoordinate) const
 {
-    TileCoordinate c = coordinates.getZoomedTo(_center.getZoom());
-    
-    return glm::vec2();
+    glm::dvec2 pixelCenter = _size * 0.5;
+
+    double scale = std::pow(2.0, _center.getZoom() - tileCoordinate.getZoom());
+
+    glm::dvec2 scaledTileSize = _provider->tileSize() * scale;
+
+    TileCoordinate zoomedCenterCoordinate = _center.getZoomedTo(tileCoordinate.getZoom());
+
+    glm::dvec2 _coordinate(tileCoordinate.getColumn() - zoomedCenterCoordinate.getColumn(),
+                           tileCoordinate.getRow() - zoomedCenterCoordinate.getRow());
+
+    glm::dvec2 result = pixelCenter + (scaledTileSize * _coordinate);
+
+    return result;
 }
 
 
-Geo::Coordinate TileLayer::pixelsToGeo(const glm::vec2& coordinates) const
+Geo::Coordinate TileLayer::pixelsToGeo(const glm::vec2& pixelCoordinate) const
 {
-    return Geo::Coordinate();
+    return _provider->tileToGeo(pixelsToTile(pixelCoordinate).getZoomedTo(_center.getZoom()));
 }
 
 
-glm::vec2 TileLayer::geoToPixels(const Geo::Coordinate& coordinates) const
+glm::vec2 TileLayer::geoToPixels(const Geo::Coordinate& geoCoordinate) const
 {
-    return glm::vec2();
+    return tileToPixels(_provider->geoToWorld(geoCoordinate).getZoomedTo(_center.getZoom()));
 }
 
 

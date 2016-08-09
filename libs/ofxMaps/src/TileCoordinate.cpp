@@ -116,7 +116,13 @@ bool TileData::operator < (const TileData& data) const
 }
 
 
-TileCoordinate::TileCoordinate()
+TileCoordinate::TileCoordinate(): TileCoordinate(0, 0, 0)
+{
+}
+
+
+TileCoordinate::TileCoordinate(const glm::dvec2& columnRow, double zoom):
+    TileCoordinate(columnRow.x, columnRow.y, zoom)
 {
 }
 
@@ -223,35 +229,36 @@ TileCoordinate TileCoordinate::moveDownBy(double distance)
 }
 
 
-TileCoordinate TileCoordinate::getCoordinateRight() const
+TileCoordinate TileCoordinate::getNeighbor(double columnDistance,
+                                           double rowDistance) const
 {
-    TileCoordinate result = *this;
-    result.moveRightBy(1);
-    return result;
+    return TileCoordinate(_column + columnDistance,
+                          _row + rowDistance,
+                          _zoom);
 }
 
 
-TileCoordinate TileCoordinate::getCoordinateLeft() const
+TileCoordinate TileCoordinate::getNeighborRight() const
 {
-    TileCoordinate result = *this;
-    result.moveLeftBy(1);
-    return result;
+    return getNeighbor(1, 0);
 }
 
 
-TileCoordinate TileCoordinate::getCoordinateUp() const
+TileCoordinate TileCoordinate::getNeighborLeft() const
 {
-    TileCoordinate result = *this;
-    result.moveUpBy(1);
-    return result;
+    return getNeighbor(-1, 0);
 }
 
 
-TileCoordinate TileCoordinate::getCoordinateDown() const
+TileCoordinate TileCoordinate::getNeighborUp() const
 {
-    TileCoordinate result = *this;
-    result.moveDownBy(1);
-    return result;
+    return getNeighbor(0, -1);
+}
+
+
+TileCoordinate TileCoordinate::getNeighborDown() const
+{
+    return getNeighbor(0, 1);
 }
 
 
@@ -273,12 +280,21 @@ bool TileCoordinate::operator == (const TileCoordinate& coordinate) const
 }
 
 
-std::string TileCoordinate::toString() const
+TileCoordinate& TileCoordinate::operator = (const TileCoordinate& coordinate)
+{
+    _column = coordinate._column;
+    _row = coordinate._row;
+    _zoom = coordinate._zoom;
+    return *this;
+}
+
+
+std::string TileCoordinate::toString(int precision) const
 {
     std::stringstream ss;
-    ss << "column: " << _column << " ";
-    ss << "row: " << _row << " ";
-    ss << "zoom: " << _zoom << " ";
+    ss << "column: " << std::fixed << std::setprecision(precision) << _column << std::endl;
+    ss << "   row: " << std::fixed << std::setprecision(precision) << _row << std::endl;
+    ss << "  zoom: " << std::fixed << std::setprecision(precision) << _zoom;
     return ss.str();
 }
 
