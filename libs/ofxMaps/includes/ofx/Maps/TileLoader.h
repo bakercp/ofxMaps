@@ -138,96 +138,96 @@ private:
 };
 
 
-/// \brief A persistent cache that does not share memory.
-template<typename KeyType, typename ValueType>
-class BaseCache
-{
-public:
-    virtual ~BaseCache()
-    {
-    }
-
-    bool has(const KeyType& key) const
-    {
-        return _has(key);
-    }
-
-    std::shared_ptr<ValueType> get(const KeyType& key) const
-    {
-        return _get(key);
-    }
-
-    bool put(const KeyType& key, const std::shared_ptr<ValueType>& value)
-    {
-        return put(key, value);
-    }
-
-protected:
-    virtual bool _has(const KeyType& key) const = 0;
-    virtual std::shared_ptr<ValueType> _get(const KeyType& key) const = 0;
-    virtual bool _put(const KeyType& key, const std::shared_ptr<ValueType>& value) = 0;
-
-};
-
-
-template<typename KeyType, typename ValueType>
-class DiskCache: public BaseCache<KeyType, ofBuffer>
-{
-public:
-    DiskCache(const std::string& cacheLocation,
-              const std::string& pathTemplate);
-
-    virtual ~DiskCache()
-    {
-    }
-
-    std::string cacheLocation() const
-    {
-        return _cacheLocation;
-    }
-
-
-    std::string pathTemplate() const
-    {
-        return _pathTemplate;
-    }
-
-//    constexpr auto DEFAULT_CACHE_LOCATION = "";
-//    constexpr auto DEFAULT_CACHE_PATH_TEMPLATE = "{id}/{set_id}/";
-//    static const std::string DEFAULT_CACHE_LOCATION;
-//    static const std::string DEFAULT_CACHE_PATH_TEMPLATE;
-
-
-private:
-    std::string _cacheLocation;
-    std::string _pathTemplate;
-
-};
-
-
-
-//    template<typename KeyType, typename ValueType>
-//    class DiskCache: public BaseCache<KeyType, ofBuffer>
-//
-//
-//
-//    std::shared_ptr<ofBuffer> _get(const KeyType& key) const override
+///// \brief A persistent cache that does not share memory.
+//template<typename KeyType, typename ValueType>
+//class BaseCache
+//{
+//public:
+//    virtual ~BaseCache()
 //    {
-//        return nullptr;
 //    }
 //
-//    std::shared_ptr<ofBuffer> _get(const KeyType& key) const override
+//    bool has(const KeyType& key) const
 //    {
-//        return nullptr;
+//        return _has(key);
+//    }
+//
+//    std::shared_ptr<ValueType> get(const KeyType& key) const
+//    {
+//        return _get(key);
+//    }
+//
+//    bool put(const KeyType& key, const std::shared_ptr<ValueType>& value)
+//    {
+//        return put(key, value);
+//    }
+//
+//protected:
+//    virtual bool _has(const KeyType& key) const = 0;
+//    virtual std::shared_ptr<ValueType> _get(const KeyType& key) const = 0;
+//    virtual bool _put(const KeyType& key, const std::shared_ptr<ValueType>& value) = 0;
+//
+//};
+//
+//
+//template<typename KeyType, typename ValueType>
+//class DiskCache: public BaseCache<KeyType, ofBuffer>
+//{
+//public:
+//    DiskCache(const std::string& cacheLocation,
+//              const std::string& pathTemplate);
+//
+//    virtual ~DiskCache()
+//    {
+//    }
+//
+//    std::string cacheLocation() const
+//    {
+//        return _cacheLocation;
 //    }
 //
 //
-//    bool _put(const KeyType& key, const std::shared_ptr<ofBuffer>& value) override
+//    std::string pathTemplate() const
 //    {
-//        return false;
+//        return _pathTemplate;
 //    }
-
-
+//
+////    constexpr auto DEFAULT_CACHE_LOCATION = "";
+////    constexpr auto DEFAULT_CACHE_PATH_TEMPLATE = "{id}/{set_id}/";
+////    static const std::string DEFAULT_CACHE_LOCATION;
+////    static const std::string DEFAULT_CACHE_PATH_TEMPLATE;
+//
+//
+//private:
+//    std::string _cacheLocation;
+//    std::string _pathTemplate;
+//
+//};
+//
+//
+//
+////    template<typename KeyType, typename ValueType>
+////    class DiskCache: public BaseCache<KeyType, ofBuffer>
+////
+////
+////
+////    std::shared_ptr<ofBuffer> _get(const KeyType& key) const override
+////    {
+////        return nullptr;
+////    }
+////
+////    std::shared_ptr<ofBuffer> _get(const KeyType& key) const override
+////    {
+////        return nullptr;
+////    }
+////
+////
+////    bool _put(const KeyType& key, const std::shared_ptr<ofBuffer>& value) override
+////    {
+////        return false;
+////    }
+//
+//
 
 
 

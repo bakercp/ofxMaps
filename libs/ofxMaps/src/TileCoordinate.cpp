@@ -28,6 +28,9 @@
 #include "Poco/DigestStream.h"
 #include "Poco/Exception.h"
 #include "Poco/MD5Engine.h"
+#include "Poco/SHA1Engine.h"
+#include "Poco/Crypto/RSAKey.h"
+#include "Poco/Crypto/RSADigestEngine.h"
 #include "ofMath.h"
 
 
@@ -457,6 +460,34 @@ std::string TileCoordinateUtils::hash(const TileCoordinateKey& key)
     ostr << key.row();
     ostr << key.zoom();
     ostr.flush(); // Ensure everything gets passed to the digest engine
+    const auto& digest = md5.digest(); // obtain result
+    return Poco::DigestEngine::digestToHex(digest);
+}
+
+
+std::string TileCoordinateUtils::sha256(const ofBuffer& image)
+{
+    Poco::Crypto::RSAKey key(Poco::Crypto::RSAKey::KL_2048,
+                             Poco::Crypto::RSAKey::EXP_LARGE);
+    Poco::Crypto::RSADigestEngine eng(key, "SHA256");
+    eng.update(image.getData(), image.size());
+    const auto& sig = eng.digest(); // We just want the digest, unsigned.
+    return Poco::DigestEngine::digestToHex(sig);
+}
+
+std::string TileCoordinateUtils::sha1(const ofBuffer& image)
+{
+    Poco::SHA1Engine sha1;
+    sha1.update(image.getData(), image.size());
+    const auto& digest = sha1.digest(); // obtain result
+    return Poco::DigestEngine::digestToHex(digest);
+}
+
+
+std::string TileCoordinateUtils::md5(const ofBuffer& image)
+{
+    Poco::MD5Engine md5;
+    md5.update(image.getData(), image.size());
     const auto& digest = md5.digest(); // obtain result
     return Poco::DigestEngine::digestToHex(digest);
 }

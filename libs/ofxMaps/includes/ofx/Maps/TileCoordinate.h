@@ -30,6 +30,7 @@
 #include <math.h>
 #include <string>
 #include "ofConstants.h"
+#include "ofFileUtils.h"
 
 
 namespace ofx {
@@ -212,6 +213,11 @@ public:
 
 
     static std::string hash(const TileCoordinateKey& key);
+
+    static std::string sha256(const ofBuffer& image);
+    static std::string sha1(const ofBuffer& image);
+    static std::string md5(const ofBuffer& image);
+
 };
 
 
