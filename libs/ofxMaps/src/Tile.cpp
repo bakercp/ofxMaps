@@ -30,6 +30,12 @@ namespace ofx {
 namespace Maps {
 
 
+Tile::Tile():
+    _type(Type::EMPTY)
+{
+}
+
+
 Tile::Tile(const ofPixels& pixels):
     _type(Type::RASTER),
     _pixels(pixels)
@@ -57,6 +63,12 @@ float Tile::getWidth() const
 float Tile::getHeight() const
 {
     return _pixels.getHeight();
+}
+
+
+bool Tile::empty() const
+{
+    return _type == Type::EMPTY;
 }
 
 

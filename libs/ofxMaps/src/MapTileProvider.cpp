@@ -23,12 +23,12 @@
 // =============================================================================
 
 
-#include "ofx/Maps/TileProvider.h"
+#include "ofx/Maps/MapTileProvider.h"
 #include "Poco/NumberFormatter.h"
 #include "Poco/String.h"
-#include "Poco/DigestStream.h"
-#include "Poco/MD5Engine.h"
+#include "ofx/IO/Hash.h"
 #include "ofLog.h"
+#include "ofx/Maps/TileKey.h"
 #include "ofx/Maps/TileTemplate.h"
 
 
@@ -36,13 +36,13 @@ namespace ofx {
 namespace Maps {
 
 
-const Geo::CoordinateBounds TileProvider::DEFAULT_BOUNDS = { Geo::Coordinate(-180, -90), Geo::Coordinate(180, 90) };
-const TileCoordinate TileProvider::DEFAULT_CENTER = { 0, 0, 0 };
-const SperhicalMercatorProjection TileProvider::DEFAULT_PROJECTION = SperhicalMercatorProjection();
+const Geo::CoordinateBounds MapTileProvider::DEFAULT_BOUNDS = { Geo::Coordinate(-180, -90), Geo::Coordinate(180, 90) };
+const TileCoordinate MapTileProvider::DEFAULT_CENTER = { 0, 0, 0 };
+const SperhicalMercatorProjection MapTileProvider::DEFAULT_PROJECTION = SperhicalMercatorProjection();
 
 
-TileProvider::TileProvider():
-    TileProvider(std::vector<std::string>(),
+MapTileProvider::MapTileProvider():
+    MapTileProvider(std::vector<std::string>(),
                  DEFAULT_MIN_ZOOM,
                  DEFAULT_MAX_ZOOM,
                  DEFAULT_TILE_WIDTH,
@@ -55,14 +55,14 @@ TileProvider::TileProvider():
 
 
 
-TileProvider::TileProvider(const std::vector<std::string>& URITemplates,
-                           int minZoom,
-                           int maxZoom,
-                           int tileWidth,
-                           int tileHeight,
-                           const Geo::CoordinateBounds& bounds,
-                           const TileCoordinate& center,
-                           const BaseProjection& projection):
+MapTileProvider::MapTileProvider(const std::vector<std::string>& URITemplates,
+                                 int minZoom,
+                                 int maxZoom,
+                                 int tileWidth,
+                                 int tileHeight,
+                                 const Geo::CoordinateBounds& bounds,
+                                 const TileCoordinate& center,
+                                 const BaseProjection& projection):
     _minZoom(minZoom),
     _maxZoom(maxZoom),
     _tileSize(tileWidth, tileHeight),
@@ -74,102 +74,102 @@ TileProvider::TileProvider(const std::vector<std::string>& URITemplates,
 }
 
 
-TileProvider::~TileProvider()
+MapTileProvider::~MapTileProvider()
 {
 }
 
 
-std::string TileProvider::id() const
+std::string MapTileProvider::id() const
 {
     return _id;
 }
 
 
-std::string TileProvider::name() const
+std::string MapTileProvider::name() const
 {
     return _name;
 }
 
 
-std::string TileProvider::description() const
+std::string MapTileProvider::description() const
 {
     return _description;
 }
 
 
-std::string TileProvider::attribution() const
+std::string MapTileProvider::attribution() const
 {
     return _attribution;
 }
 
 
-std::string TileProvider::version() const
+std::string MapTileProvider::version() const
 {
     return _version;
 }
 
 
-int TileProvider::minZoom() const
+int MapTileProvider::minZoom() const
 {
     return _minZoom;
 }
 
 
-int TileProvider::maxZoom() const
+int MapTileProvider::maxZoom() const
 {
     return _maxZoom;
 }
 
 
-float TileProvider::tileWidth() const
+float MapTileProvider::tileWidth() const
 {
     return _tileSize.x;
 }
 
 
-float TileProvider::tileHeight() const
+float MapTileProvider::tileHeight() const
 {
     return _tileSize.y;
 }
 
 
-glm::vec2 TileProvider::tileSize() const
+glm::vec2 MapTileProvider::tileSize() const
 {
     return _tileSize;
 }
 
 
-Geo::CoordinateBounds TileProvider::bounds() const
+Geo::CoordinateBounds MapTileProvider::bounds() const
 {
     return _bounds;
 }
 
 
-TileCoordinate TileProvider::center() const
+TileCoordinate MapTileProvider::center() const
 {
     return _center;
 }
 
 
-double TileProvider::zoomForScale(double scale) const
+double MapTileProvider::zoomForScale(double scale) const
 {
     return std::log(scale) / glm::ln_two<double>();
 }
 
 
-TileCoordinate TileProvider::geoToWorld(const Geo::Coordinate& location) const
+TileCoordinate MapTileProvider::geoToWorld(const Geo::Coordinate& location) const
 {
     return _projection.geoToWorld(location);
 }
 
 
-Geo::Coordinate TileProvider::tileToGeo(const TileCoordinate& coordinate) const
+Geo::Coordinate MapTileProvider::tileToGeo(const TileCoordinate& coordinate) const
 {
     return _projection.tileToGeo(coordinate);
 }
 
 
-std::string TileProvider::getTileURI(const TileCoordinateKey& key) const
+std::string MapTileProvider::getTileURI(const TileKey& key) const
 {
     std::size_t index = static_cast<std::size_t>(ofRandom(_URITemplates.size()));
 
@@ -186,7 +186,7 @@ std::string TileProvider::getTileURI(const TileCoordinateKey& key) const
         }
         else
         {
-            ofLogWarning("TileProvider::getTileURI") << "Ignoring unknown template parameter: " << templateParameter;
+            ofLogWarning("MapTileProvider::getTileURI") << "Ignoring unknown template parameter: " << templateParameter;
         }
     }
 
@@ -194,29 +194,41 @@ std::string TileProvider::getTileURI(const TileCoordinateKey& key) const
 }
 
 
-const std::vector<std::string> TileProvider::URITemplates() const
+bool MapTileProvider::isCacheable() const
+{
+    return true;
+}
+
+
+const std::vector<std::string> MapTileProvider::URITemplates() const
 {
     return _URITemplates;
 }
 
 
-bool TileProvider::getTileURITemplateValue(const TileCoordinateKey& key,
+std::map<std::string, std::string> MapTileProvider::dictionary() const
+{
+    return _dictionary;
+}
+
+
+bool MapTileProvider::getTileURITemplateValue(const TileKey& key,
                                            const std::string& templateParameter,
                                            std::string& templateValue) const
 {
-    if (templateParameter == TileTemplate::TEMPLATE_PARAM_ZOOM)
+    if (templateParameter == TileTemplate::TEMPLATE_PARAM_X)
     {
-        templateValue = Poco::NumberFormatter::format(key.zoom());
-        return true;
-    }
-    else if (templateParameter == TileTemplate::TEMPLATE_PARAM_X)
-    {
-        templateValue = Poco::NumberFormatter::format(key.column());
+        templateValue = Poco::NumberFormatter::format(static_cast<Poco::Int64>(key.column()));
         return true;
     }
     else if (templateParameter == TileTemplate::TEMPLATE_PARAM_Y)
     {
-        templateValue = Poco::NumberFormatter::format(key.row());
+        templateValue = Poco::NumberFormatter::format(static_cast<Poco::Int64>(key.row()));
+        return true;
+    }
+    if (templateParameter == TileTemplate::TEMPLATE_PARAM_ZOOM)
+    {
+        templateValue = Poco::NumberFormatter::format(static_cast<Poco::Int64>(key.zoom()));
         return true;
     }
     else if (templateParameter == TileTemplate::TEMPLATE_PARAM_TILE_ID)
@@ -249,30 +261,27 @@ bool TileProvider::getTileURITemplateValue(const TileCoordinateKey& key,
 }
 
 
-void TileProvider::_setURITemplates(const std::vector<std::string>& templates)
+void MapTileProvider::_setURITemplates(const std::vector<std::string>& templates)
 {
     // Update parameters and generate ID.
     _URITemplates = templates;
     _URITemplateParameters.clear();
 
-    Poco::MD5Engine md5;
-    Poco::DigestOutputStream ostr(md5);
+    std::size_t hash = 0;
 
     for (auto _URITemplate: _URITemplates)
     {
-        ostr << _URITemplate;
+        IO::Hash::combine(hash, _URITemplate);
         _URITemplateParameters.push_back(TileTemplate::extractTemplateParameters(_URITemplate));
     }
 
-    ostr.flush(); // Ensure everything gets passed to the digest engine
-    const Poco::DigestEngine::Digest& digest = md5.digest(); // obtain result
-    _id = Poco::DigestEngine::digestToHex(digest);
+    _id = std::to_string(hash);
 }
 
 
-TileProvider TileProvider::fromJSON(const ofJson& json)
+MapTileProvider MapTileProvider::fromJSON(const ofJson& json)
 {
-    TileProvider provider;
+    MapTileProvider provider;
 
     auto iter = json.cbegin();
     while (iter != json.cend())
@@ -285,9 +294,9 @@ TileProvider TileProvider::fromJSON(const ofJson& json)
         else if (key == "description") provider._description = value;
         else if (key == "version") provider._version = value;
         else if (key == "attribution") provider._attribution = value;
-        else if (key == "template") { ofLogWarning("TileProvider::fromJSON") << "Unsupported TileJSON field: " << key; }
-        else if (key == "legend") { ofLogWarning("TileProvider::fromJSON") << "Unsupported TileJSON field: " << key;  }
-        else if (key == "scheme") { ofLogWarning("TileProvider::fromJSON") << "Unsupported TileJSON field: " << key;  }
+        else if (key == "template") { ofLogWarning("MapTileProvider::fromJSON") << "Unsupported TileJSON field: " << key; }
+        else if (key == "legend") { ofLogWarning("MapTileProvider::fromJSON") << "Unsupported TileJSON field: " << key;  }
+        else if (key == "scheme") { ofLogWarning("MapTileProvider::fromJSON") << "Unsupported TileJSON field: " << key;  }
         else if (key == "tiles")
         {
             std::vector<std::string> uriTemplates;
@@ -297,8 +306,8 @@ TileProvider TileProvider::fromJSON(const ofJson& json)
             }
             provider._setURITemplates(uriTemplates);
         }
-        else if (key == "grids") { ofLogWarning("TileProvider::fromJSON") << "Unsupported TileJSON field: " << key; }
-        else if (key == "data") { ofLogWarning("TileProvider::fromJSON") << "Unsupported TileJSON field: " << key; }
+        else if (key == "grids") { ofLogWarning("MapTileProvider::fromJSON") << "Unsupported TileJSON field: " << key; }
+        else if (key == "data") { ofLogWarning("MapTileProvider::fromJSON") << "Unsupported TileJSON field: " << key; }
         else if (key == "minzoom") provider._minZoom = value;
         else if (key == "maxzoom") provider._maxZoom = value;
         else if (key == "tilewidth") provider._tileSize.x = value.get<int>();
@@ -326,7 +335,7 @@ TileProvider TileProvider::fromJSON(const ofJson& json)
 }
 
 
-ofJson TileProvider::toJSON(const TileProvider& provider)
+ofJson MapTileProvider::toJSON(const MapTileProvider& provider)
 {
     ofJson json;
 

@@ -23,7 +23,8 @@
 // =============================================================================
 
 
-#include "ofx/Maps/MBTilesConnection.h"
+#include "ofx/Maps/MBTilesCache.h"
+#include "Poco/SHA1Engine.h"
 #include "ofImage.h"
 #include "ofUtils.h"
 
@@ -141,14 +142,25 @@ std::string MBTilesMetadata::format() const
 }
 
 
-const std::string MBTilesConnection::QUERY_SELECT_METADATA = "SELECT * FROM `metadata`;";
-const std::string MBTilesConnection::QUERY_INSERT_METADATA = "INSERT INTO `metadata` (`name`, `value`) VALUES (:name, :value);";
-const std::string MBTilesConnection::CREATE_TABLE_METADATA = "CREATE TABLE IF NOT EXISTS metadata (name TEXT, value TEXT);";
+const std::string MBTilesConnection::QUERY_SELECT_METADATA = "SELECT * FROM `metadata`";
+const std::string MBTilesConnection::QUERY_INSERT_METADATA = "INSERT INTO `metadata` (`name`, `value`) VALUES (:name, :value)";
+const std::string MBTilesConnection::CREATE_TABLE_METADATA = "CREATE TABLE IF NOT EXISTS metadata (name TEXT, value TEXT)";
 const std::string MBTilesConnection::DROP_TABLE_METADATA = "DROP TABLE IF EXISTS metadata";
 
-const std::string MBTilesConnection::QUERY_TILES = "SELECT tile_data FROM `tiles` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row;";
+const std::string MBTilesConnection::QUERY_TILES = "SELECT tile_data FROM `tiles` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row";
+const std::string MBTilesConnection::COUNT_TILES = "SELECT COUNT(tile_data) FROM `tiles` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row";
+
+//const std::string MBTilesConnection::INSERT_IMAGE = "INSERT OR IGNORE INTO `images` (`tile_id`, `tile_data`) VALUES (:tile_id, :tile_data)";
 const std::string MBTilesConnection::INSERT_IMAGE = "INSERT INTO `images` (`tile_id`, `tile_data`) VALUES (:tile_id, :tile_data)";
+
+const std::string MBTilesConnection::COUNT_IMAGE = "SELECT COUNT(tile_id) FROM `images` WHERE tile_id = :tile_id";
+
 const std::string MBTilesConnection::INSERT_MAP = "INSERT INTO `map` (`zoom_level`, `tile_column`, `tile_row`, `tile_id`) VALUES (:zoom_level,  :tile_column,  :tile_row,  :tile_id)";
+const std::string MBTilesConnection::COUNT_MAP = "SELECT COUNT(tile_id) FROM `map` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row";
+
+const std::string MBTilesConnection::COUNT_ALL = "SELECT COUNT(*) FROM `tiles`";
+
+
 
 //"-- via https://github.com/mapbox/node-mbtiles/blob/master/lib/schema.sql"
 // Several additions to assist with caching.
@@ -326,25 +338,16 @@ const std::string MBTilesConnection::MBTILES_SCHEMA =
 //"";
 
 
-MBTilesConnection::MBTilesConnection(const std::string& filename, Mode mode):
-    _filename(ofToDataPath(filename, true)),
-    _mode(mode),
-    _database(_filename, _toAccessFlag(_mode))
-{
-    if (_mode != Mode::READ_ONLY)
-    {
-        try
-        {
-            SQLite::Transaction transaction(_database);
-            _database.exec(MBTILES_SCHEMA);
-            transaction.commit();
-        }
-        catch (const std::exception& e)
-        {
-            ofLogError("MBTilesConnection::MBTilesConnection()") << "SQLite exception: " << e.what();
-        }
-    }
-}
+//MBTilesConnection::MBTilesConnection(const std::string& filename,
+//                                     Mode mode,
+//                                     uint64_t databaseTimeoutMilliseconds,
+//                                     Poco::RWLock* mutex):
+//    SQLite::SQLiteConnection(filename,
+//                             mode,
+//                             databaseTimeoutMilliseconds,
+//                             mutex)
+//{
+//}
 
 
 MBTilesConnection::~MBTilesConnection()
@@ -352,7 +355,7 @@ MBTilesConnection::~MBTilesConnection()
 }
 
 
-void MBTilesConnection::setMetaData(const MBTilesMetadata& metadata)
+bool MBTilesConnection::setMetaData(const MBTilesMetadata& metadata) noexcept
 {
     if (_mode != Mode::READ_ONLY)
     {
@@ -366,36 +369,42 @@ void MBTilesConnection::setMetaData(const MBTilesMetadata& metadata)
             // Recreate it.
             _database.exec(CREATE_TABLE_METADATA);
 
-            auto& query = _getStatement(QUERY_INSERT_METADATA);
+            auto& query = getStatement(QUERY_INSERT_METADATA);
 
             for (const auto& entry: metadata)
             {
                 query.bind(":name", entry.first);
                 query.bind(":value", entry.second);
                 query.exec();
+                query.reset();
             }
 
+            // Commit all values.
             transaction.commit();
+
+            return true;
         }
         catch (const std::exception& e)
         {
             ofLogError("MBTilesConnection::setMetaData()") << "SQLite exception: " << e.what();
+            return false;
         }
     }
     else
     {
         ofLogError("MBTilesConnection::setMetaData()") << "No setting data on a read-only database.";
+        return false;
     }
 }
 
 
-MBTilesMetadata MBTilesConnection::getMetaData() const
+MBTilesMetadata MBTilesConnection::getMetaData() const noexcept
 {
     MBTilesMetadata result;
 
     try
     {
-        auto& query = _getStatement(QUERY_SELECT_METADATA);
+        auto& query = getStatement(QUERY_SELECT_METADATA);
 
         while (query.executeStep())
         {
@@ -411,32 +420,62 @@ MBTilesMetadata MBTilesConnection::getMetaData() const
 }
 
 
-bool MBTilesConnection::setTile(const TileCoordinateKey& key,
-                                const ofBuffer& image,
-                                const std::string& cachedDate,
-                                const std::string& expiresDate)
+bool MBTilesConnection::setTile(const TileKey& key,
+                                const ofBuffer& image) noexcept
 {
     if (_mode != Mode::READ_ONLY)
     {
+        std::string tileId = key.tileId();
+
+        if (tileId.empty())
+        {
+            Poco::SHA1Engine sha1;
+            sha1.update(image.getData(), image.size());
+            const auto& digest = sha1.digest(); // obtain result
+            tileId = Poco::DigestEngine::digestToHex(digest);
+        }
+
         try
         {
-            std::string tileId = key.tileId();
+            SQLite::Statement& countImage = getStatement(COUNT_IMAGE);
+            countImage.bind(":tile_id", tileId);
+            int result = countImage.executeStep();
+            auto column = countImage.getColumn(0);
 
-            if (tileId.empty())
+            if (column.getInt64() == 0)
             {
-                tileId = TileCoordinateUtils::hash(key);
+                SQLite::Statement& insertImage = getStatement(INSERT_IMAGE);
+                insertImage.bind(":tile_id", tileId);
+                insertImage.bind(":tile_data", image.getData(), image.size());
+
+                if (insertImage.exec() != 1)
+                {
+                    ofLogError("MBTilesConnection::setTile()") << "Unable to insert image.";
+                    return false;
+                }
             }
+        }
+        catch (const std::exception& e)
+        {
+            ofLogError("MBTilesConnection::setTile()") << "INSERTING TILE SQLite exception: " << e.what() << " " << index() << " " << useCount();
+            return false;
+        }
 
-            SQLite::Statement& insertImage = _getStatement(INSERT_IMAGE);
-            insertImage.bind(":tile_id", tileId);
-            insertImage.bind(":tile_data", image.getData(), image.size());
+        try
+        {
+            SQLite::Statement& selectMap = getStatement(COUNT_MAP);
+            selectMap.bind(":tile_column", key.column());
+            selectMap.bind(":tile_row", key.row());
+            selectMap.bind(":zoom_level", key.zoom());
+            int result = selectMap.executeStep();
+            auto column = selectMap.getColumn(0);
 
-            if (insertImage.exec() == 1)
+            if (column.getInt64() == 0)
             {
-                SQLite::Statement& insertMap = _getStatement(INSERT_MAP);
-                insertMap.bind(":tile_column", static_cast<int>(key.column()));
-                insertMap.bind(":tile_row", static_cast<int>(key.row()));
-                insertMap.bind(":zoom_level", static_cast<int>(key.zoom()));
+                SQLite::Statement& insertMap = getStatement(INSERT_MAP);
+                insertMap.bind(":tile_column", key.column());
+                insertMap.bind(":tile_row", key.row());
+                insertMap.bind(":zoom_level", key.zoom());
                 insertMap.bind(":tile_id", tileId);
 
                 if (insertMap.exec() == 1)
@@ -451,98 +490,262 @@ bool MBTilesConnection::setTile(const TileCoordinateKey& key,
             }
             else
             {
-                ofLogError("MBTilesConnection::setTile()") << "Unable to insert image.";
-                return false;
+                return true;
             }
+
         }
         catch (const std::exception& e)
         {
-            ofLogError("MBTilesConnection::setTile()") << "SQLite exception: " << e.what();
+            ofLogError("MBTilesConnection::setTile()") << "INSERTING MAP SQLite exception: " << e.what() << " " << index() << " " << useCount();
             return false;
         }
+
     }
     else
     {
         ofLogError("MBTilesConnection::setTile()") << "No setting data on a read-only database.";
+        mutex().unlock();
         return false;
     }
 }
 
 
-std::shared_ptr<Tile> MBTilesConnection::getTile(const TileCoordinateKey& key) const
+bool MBTilesConnection::has(const TileKey& key) const noexcept
 {
     try
     {
-        SQLite::Statement& query = _getStatement(QUERY_TILES);
-
-        query.bind(":zoom_level", static_cast<int>(key.zoom()));
-        query.bind(":tile_column", static_cast<int>(key.column()));
-        query.bind(":tile_row", static_cast<int>(key.row()));
-
+        SQLite::Statement& query = getStatement(COUNT_TILES);
+        query.bind(":tile_row", key.row());
+        query.bind(":zoom_level", key.zoom());
+        query.bind(":tile_column", key.column());
         int result = query.executeStep();
-        auto column = query.getColumn("tile_data");
-
-        if (column.isBlob())
-        {
-            ofBuffer buffer(reinterpret_cast<const char*>(column.getBlob()), column.getBytes());
-
-            ofPixels pixels;
-
-            if (ofLoadImage(pixels, buffer))
-            {
-                return std::make_shared<Tile>(pixels);
-            }
-            else
-            {
-                ofLogError("MBTilesConnection::getTile()") << "Error loading pixels.";
-                return nullptr;
-            }
-        }
-        else
-        {
-            ofLogError("MBTilesConnection::getTile()") << "Tile data existed, but wasn't a blob: " << _filename << " " << key.coordinate().toString();
-            return nullptr;
-        }
+        auto column = query.getColumn(0);
+        return column.getInt64() > 0;
     }
     catch (const std::exception& e)
     {
-        ofLogError("MBTilesConnection::getTile()") << "SQLite exception: " << e.what();
+        ofLogError("MBTilesConnection::has()") << "SQLite exception: " << e.what();
         return nullptr;
     }
 }
 
 
-int MBTilesConnection::_toAccessFlag(Mode mode)
+std::shared_ptr<ofBuffer> MBTilesConnection::getBuffer(const TileKey& key) const noexcept
 {
-    switch (mode)
+    try
     {
-        case Mode::READ_ONLY:
-            return SQLITE_OPEN_READONLY;
-        case Mode::READ_WRITE:
-            return SQLITE_OPEN_READWRITE;
-        case Mode::READ_WRITE_CREATE:
-            return SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+        SQLite::Statement& query = getStatement(QUERY_TILES);
+
+        query.bind(":tile_row", key.row());
+        query.bind(":zoom_level", key.zoom());
+        query.bind(":tile_column", key.column());
+
+        int result = query.executeStep();
+
+        if (result)
+        {
+            auto column = query.getColumn("tile_data");
+
+            if (column.isBlob())
+            {
+                return std::make_shared<ofBuffer>(reinterpret_cast<const char*>(column.getBlob()), column.getBytes());
+            }
+            else
+            {
+                ofLogError("MBTilesConnection::getBuffer") << "Tile data existed, but wasn't a blob: " << this->database().getFilename() << " ";// << key.coordinate().toString();
+                return nullptr;
+            }
+        }
+        else
+        {
+            // We simply don't have it.
+            return nullptr;
+        }
+    }
+    catch (const std::exception& e)
+    {
+        ofLogError("MBTilesConnection::getBuffer") << "SQLite exception: " << e.what();
+        return nullptr;
     }
 }
 
 
-SQLite::Statement& MBTilesConnection::_getStatement(const std::string& query) const
+size_t MBTilesConnection::size() const noexcept
 {
-    auto iter = _statements.find(query);
-
-    if (iter != _statements.end())
+    try
     {
-        iter->second->reset();
-        iter->second->clearBindings();
-        return *iter->second.get();
+        SQLite::Statement& query = getStatement(COUNT_ALL);
+        int result = query.executeStep();
+        auto column = query.getColumn(0);
+        return static_cast<std::size_t>(column.getInt64());
+    }
+    catch (const std::exception& e)
+    {
+        ofLogError("MBTilesConnection::size") << "SQLite exception: " << e.what();
+        return 0;
+    }
+}
+
+
+
+std::shared_ptr<Tile> MBTilesConnection::getTile(const TileKey& key) const noexcept
+{
+    auto buffer = getBuffer(key);
+
+    if (buffer != nullptr)
+    {
+        ofPixels pixels;
+
+        if (ofLoadImage(pixels, *buffer))
+        {
+            return std::make_shared<Tile>(pixels);
+        }
+        else
+        {
+            ofLogError("MBTilesConnection::getTile") << "Error loading pixels.";
+            return nullptr;
+        }
     }
     else
     {
-        // Blah ...
-        auto result = _statements.insert(std::make_pair(query, std::make_unique<SQLite::Statement>(_database, query)));
-        // Get ready for it ...
-        return *result.first->second.get();
+        return nullptr;
     }
+}
+
+
+MBTilesCache::MBTilesCache(const MapTileProvider& tileProvider,
+                           const std::string& cachePath,
+                           uint64_t databaseTimeoutMilliseconds,
+                           std::size_t capacity,
+                           std::size_t peakCapacity):
+    _writeConnection(cachePath + "/" + tileProvider.id() + ".mbtiles",
+                     SQLite::SQLiteConnection::Mode::READ_WRITE_CREATE,
+                     databaseTimeoutMilliseconds),
+    _readConnectionPool(cachePath + "/" + tileProvider.id() + ".mbtiles",
+                        SQLite::SQLiteConnection::Mode::READ_ONLY,
+                        databaseTimeoutMilliseconds,
+                        capacity,
+                        peakCapacity)
+{
+    try
+    {
+        SQLite::Transaction transaction(_writeConnection.database());
+        _writeConnection.database().exec(MBTilesConnection::MBTILES_SCHEMA);
+        transaction.commit();
+
+        _writeConnection.database().exec("PRAGMA journal_mode=WAL");
+
+    }
+    catch (const std::exception& e)
+    {
+        ofLogError("MBTilesConnection::MBTilesConnection()") << "Error initializing database - SQLite exception: " << e.what();
+    }
+
+    try
+    {
+        MBTilesMetadata metadata;
+        metadata.set(MBTilesMetadata::KEY_MIN_ZOOM, std::to_string(tileProvider.minZoom()));
+        metadata.set(MBTilesMetadata::KEY_MAX_ZOOM, std::to_string(tileProvider.maxZoom()));
+        metadata.set(MBTilesMetadata::KEY_BOUNDS, tileProvider.bounds().toString());
+        metadata.set(MBTilesMetadata::KEY_CENTER, tileProvider.center().toString());
+        metadata.set(MBTilesMetadata::KEY_NAME, tileProvider.name());
+        metadata.set(MBTilesMetadata::KEY_ATTRIBUTION, tileProvider.attribution());
+
+        auto dictionary = tileProvider.dictionary();
+
+        auto dictAdd = [&](const std::string& key)
+        {
+            if (dictionary.find(key) != dictionary.end())
+                metadata.set(key, dictionary.find(key)->second);
+        };
+
+        dictAdd(MBTilesMetadata::KEY_TYPE);
+        dictAdd(MBTilesMetadata::KEY_VERSION);
+        dictAdd(MBTilesMetadata::KEY_FORMAT);
+
+        _writeConnection.setMetaData(metadata);
+    }
+    catch (const std::exception& e)
+    {
+        ofLogError("MBTilesConnection::MBTilesConnection()") << "Error setting metadata - SQLite exception: " << e.what();
+    }
+
+    _writeThread = std::thread([&]() {
+
+        std::pair<TileKey, std::shared_ptr<ofBuffer>> value;
+        while (_writeChannel.receive(value))
+        {
+            try
+            {
+                if (!_writeConnection.has(value.first))
+                {
+                    _writeConnection.setTile(value.first, *value.second);
+                }
+            }
+            catch (const std::exception& e)
+            {
+                ofLogError("MBTilesConnection::MBTilesConnection()") << "Error setting tile - SQLite exception: " << e.what();
+            }
+        }
+    });
+}
+
+
+MBTilesCache::~MBTilesCache()
+{
+    _writeChannel.close();
+    _writeThread.join();
+}
+
+
+const MBTilesCache::MBTilesConnectionPool& MBTilesCache::readConnectionPool() const
+{
+    return _readConnectionPool;
+}
+
+
+bool MBTilesCache::doHas(const TileKey& key) const
+{
+    auto connection = _readConnectionPool.borrowObject();
+    auto result = connection->has(key);
+    _readConnectionPool.returnObject(connection);
+    return result;
+}
+
+
+std::shared_ptr<ofBuffer> MBTilesCache::doGet(const TileKey& key)
+{
+    auto connection = _readConnectionPool.borrowObject();
+    auto result = connection->getBuffer(key);
+    _readConnectionPool.returnObject(connection);
+    return result;
+}
+
+
+void MBTilesCache::doAdd(const TileKey& key, std::shared_ptr<ofBuffer> entry)
+{
+    _writeChannel.send(std::make_pair(key, entry));
+}
+
+
+void MBTilesCache::doRemove(const TileKey& key)
+{
+    ofLogError("MBTilesCache::doRemove") << "Not yet implemented.";
+}
+
+
+std::size_t MBTilesCache::doSize()
+{
+    auto connection = _readConnectionPool.borrowObject();
+    auto result = connection->size();
+    _readConnectionPool.returnObject(connection);
+    return result;
+}
+
+
+void MBTilesCache::doClear()
+{
+    ofLogError("MBTilesCache::doClear") << "Not yet implemented.";
 }
 
 

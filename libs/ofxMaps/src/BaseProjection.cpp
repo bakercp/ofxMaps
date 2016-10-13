@@ -25,6 +25,7 @@
 
 
 #include "ofx/Maps/BaseProjection.h"
+#include "ofx/Maps/TileCoordinate.h"
 
 
 namespace ofx {

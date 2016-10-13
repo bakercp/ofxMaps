@@ -30,27 +30,69 @@
 #include "ofBaseTypes.h"
 #include "ofFbo.h"
 #include "ofTypes.h"
-#include "ofx/Maps/TileProvider.h"
 #include "ofx/Maps/TileCoordinate.h"
-#include "ofx/Maps/TileLoader.h"
+#include "ofx/Maps/TileKey.h"
+#include "ofx/Maps/MapTileSet.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
+
+class QueueSorter
+{
+public:
+    QueueSorter(const TileCoordinate& center): _center(center)
+    {
+    }
+
+    // TODO: simplify these calculations by using internal vec calculations
+    bool operator () (const TileCoordinate& c0, const TileCoordinate& c1) const
+    {
+        if (ofIsFloatEqual(c0.getZoom(), _center.getZoom()))
+        {
+            if (ofIsFloatEqual(c1.getZoom(), _center.getZoom()))
+            {
+                glm::dvec2 offset(0.5, 0.5);
+                glm::dvec2 center2d(_center.getColumn(), _center.getRow());
+                glm::dvec2 c02d(c0.getColumn(), c0.getRow());
+                glm::dvec2 c12d(c1.getColumn(), c1.getRow());
+                double d0 = glm::distance2(center2d, c02d + offset);
+                double d1 = glm::distance2(center2d, c12d + offset);
+                return d0 < d1;
+            }
+        }
+        else if (ofIsFloatEqual(c1.getZoom(), _center.getZoom()))
+        {
+            return false;
+        }
+        else
+        {
+            double d0 = std::fabs(c0.getZoom() - _center.getZoom());
+            double d1 = std::fabs(c1.getZoom() - _center.getZoom());
+            return d0 < d1;
+        }
+        
+        return false;
+    }
+    
+protected:
+    TileCoordinate _center;
+    
+};
+
+
+
 /// \brief A tile layer is a surface on which tiles are rendered.
 ///
 /// A tile layer has a tile provider, a width and a height.
-class TileLayer: public ofBaseDraws
+class MapTileLayer: public ofBaseDraws
 {
 public:
-    TileLayer(std::shared_ptr<TileProvider> provider,
-              int width = 256,
-              int height = 256,
-              std::shared_ptr<TileLoader> loader = std::make_shared<TileLoader>());
+    MapTileLayer(std::shared_ptr<MapTileSet> store, int width, int height);
 
-    virtual ~TileLayer();
+    virtual ~MapTileLayer();
 
     void update();
 
@@ -89,7 +131,9 @@ public:
 //    Geo::CoordinateBounds visibleBounds() const;
 
 protected:
-    TileCoordinateKey keyForCoordinate(const TileCoordinate& coordinate) const;
+//    virtual void drawMissing(const TileCoordinate& coordinate) const;
+
+    TileKey keyForCoordinate(const TileCoordinate& coordinate) const;
 
     void cancelQueuedRequests() const;
 
@@ -101,8 +145,8 @@ protected:
 
     virtual std::set<TileCoordinate> calculateVisibleCoordinates() const;
 
-    /// \brief The Map tile Provider.
-    std::shared_ptr<TileProvider> _provider = nullptr;
+    /// \brief The tile store to render.
+    std::shared_ptr<MapTileSet> _tiles;
 
     /// \brief The current set id being viewed.
     std::string _setId;
@@ -116,16 +160,16 @@ protected:
     /// \brief Pan and anchor coordinate.
     TileCoordinate _center;
 
-    /// \brief The tile loader.
-    mutable std::shared_ptr<TileLoader> _loader;
-
-    void onTileCached(const TileCoordinateKey& args);
-    void onTileUncached(const TileCoordinateKey& args);
-    void onTileRequestCancelled(const std::string& args);
+    void onTileCached(const std::pair<TileKey, std::shared_ptr<Tile>>& args);
+    void onTileUncached(const TileKey& args);
+    void onTileRequestCancelled(const TileKey& key);
+    void onTileRequestFailed(const Cache::RequestFailedArgs<TileKey>& args);
 
     /// \brief The current visible coordinates.
     mutable std::set<TileCoordinate> _visisbleCoords;
-    mutable std::set<std::string> _outstandingRequests;
+    mutable std::set<TileKey> _outstandingRequests;
+
+    std::unordered_map<TileCoordinate, std::shared_ptr<Tile>> _tilesToDraw;
 
     mutable bool _coordsDirty = true;
     mutable bool _fboNeedsResize = true;
@@ -135,6 +179,7 @@ protected:
     ofEventListener _onTileCachedListener;
     ofEventListener _onTileUncachedListener;
     ofEventListener _onTileRequestCancelledListener;
+    ofEventListener _onTileRequestFailedListener;
 
 };
 

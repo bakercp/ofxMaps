@@ -29,11 +29,13 @@
 
 #include "ofConstants.h"
 #include "ofx/Geo/Coordinate.h"
-#include "ofx/Maps/TileCoordinate.h"
 
 
 namespace ofx {
 namespace Maps {
+
+
+class TileCoordinate;
 
 
 /// \brief A 2D linear transformation.

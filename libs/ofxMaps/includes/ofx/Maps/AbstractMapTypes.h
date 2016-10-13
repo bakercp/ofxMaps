@@ -30,11 +30,14 @@
 #include "ofx/Geo/Coordinate.h"
 #include "ofx/Geo/CoordinateBounds.h"
 #include "ofx/Maps/Tile.h"
-#include "ofx/Maps/TileCoordinate.h"
 
 
 namespace ofx {
 namespace Maps {
+
+
+class TileCoordinate;
+class TileKey;
 
 
 /// \brief An abstract class representing a Map Tile Provider.
@@ -89,16 +92,40 @@ public:
     /// \returns the tile size.
     virtual glm::vec2 tileSize() const = 0;
 
+    /// \brief Get the zoom level for a given map scale.
+    /// \param scale The scale to calculate.
+    /// \returns the zoom level for the given scale.
+    virtual double zoomForScale(double scale) const = 0;
+
+    /// \brief Determine if this provider is cacheable.
+    ///
+    /// Some providers, such as local databases are write only and should not
+    /// be cached.
+    ///
+    /// \returns true if this provider is cachable.
+    virtual bool isCacheable() const = 0;
+
+    /// \brief Get a URI for the given tile coordinate.
+    /// \param coordinate The TileCoordinate to get a URI for.
+    /// \returns the URI for the given TileCoordinate.
+    virtual std::string getTileURI(const TileKey& key) const = 0;
+
+};
+
+
+class AbstractMapTileProvider: public AbstractTileProvider
+{
+public:
+    /// \brief Destroy the AbstractMapTileProvider.
+    virtual ~AbstractMapTileProvider()
+    {
+    }
+
     /// \returns the bounds for this provider.
     virtual Geo::CoordinateBounds bounds() const = 0;
 
     /// \returns the initial center for this provider.
     virtual TileCoordinate center() const = 0;
-
-    /// \brief Get the zoom level for a given map scale.
-    /// \param scale The scale to calculate.
-    /// \returns the zoom level for the given scale.
-    virtual double zoomForScale(double scale) const = 0;
 
     /// \brief Get the TileCoordinate from the given Geo::Coordinate at the default zoom.
     /// \param location The the Geo::Coordinate at the default zoom level.
@@ -109,21 +136,6 @@ public:
     /// \param coordinate The TileCoordinate to transform to a Geo::Coordinate.
     /// \returns the GeoCoordinate corresponding to the TileCoordinate.
     virtual Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const = 0;
-
-};
-
-
-class AbstractURITileProvider: public AbstractTileProvider
-{
-public:
-    virtual ~AbstractURITileProvider()
-    {
-    }
-
-    /// \brief Get a URI for the given tile coordinate.
-    /// \param coordinate The TileCoordinate to get a URI for.
-    /// \returns the URI for the given TileCoordinate.
-    virtual std::string getTileURI(const TileCoordinateKey& key) const = 0;
 
 };
 

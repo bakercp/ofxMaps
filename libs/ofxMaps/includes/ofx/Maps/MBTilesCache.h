@@ -28,10 +28,17 @@
 
 #include "Poco/Net/NameValueCollection.h"
 #include "SQLiteCpp.h"
+#include "SQLiteConnection.h"
+#include "SQLiteConnectionPool.h"
+#include "ofThreadChannel.h"
+#include "ofx/IO/ThreadChannel.h"
+#include "ofx/Cache/BaseCache.h"
 #include "ofx/Geo/CoordinateBounds.h"
 #include "ofx/Geo/Coordinate.h"
 #include "ofx/Maps/Tile.h"
+#include "ofx/Maps/TileKey.h"
 #include "ofx/Maps/TileCoordinate.h"
+#include "ofx/Maps/MapTileProvider.h"
 
 
 namespace ofx {
@@ -89,32 +96,33 @@ public:
 };
 
 
-class MBTilesConnection
+class MBTilesConnection: public SQLite::SQLiteConnection
 {
 public:
-    enum class Mode
-    {
-        READ_ONLY,
-        READ_WRITE,
-        READ_WRITE_CREATE
-    };
+    using SQLite::SQLiteConnection::SQLiteConnection;
 
-    /// \param filename The filename of the sqlite database.
-    /// \param mode The access mode used during this connection.
-    MBTilesConnection(const std::string& filename, Mode mode = Mode::READ_ONLY);
+//    MBTilesConnection(const std::string& filename,
+//                      Mode mode = Mode::READ_ONLY,
+//                      uint64_t databaseTimeoutMilliseconds = 0,
+//                      Poco::RWLock* mutex = nullptr);
 
     /// \brief Destroy the MBTiles.
     virtual ~MBTilesConnection();
 
-    MBTilesMetadata getMetaData() const;
-    void setMetaData(const MBTilesMetadata& metadata);
+    MBTilesMetadata getMetaData() const noexcept;
 
-    std::shared_ptr<Tile> getTile(const TileCoordinateKey& key) const;
-    
-    bool setTile(const TileCoordinateKey& key,
-                 const ofBuffer& image,
-                 const std::string& cachedDate,
-                 const std::string& expiresDate);
+    bool setMetaData(const MBTilesMetadata& metadata) noexcept;
+
+    bool has(const TileKey& key) const noexcept;
+
+    std::shared_ptr<ofBuffer> getBuffer(const TileKey& key) const noexcept;
+
+    std::shared_ptr<Tile> getTile(const TileKey& key) const noexcept;
+
+    bool setTile(const TileKey& key,
+                 const ofBuffer& image) noexcept;
+
+    std::size_t size() const noexcept;
 
     static const std::string QUERY_SELECT_METADATA;
     static const std::string QUERY_INSERT_METADATA;
@@ -123,26 +131,63 @@ public:
 
     static const std::string QUERY_TILES;
     static const std::string QUERY_TILES_WITH_SET_ID;
+    static const std::string COUNT_TILES;
 
     static const std::string INSERT_IMAGE;
+    static const std::string COUNT_IMAGE;
+
     static const std::string INSERT_MAP;
+    static const std::string COUNT_MAP;
+
+    static const std::string COUNT_ALL;
 
     static const std::string MBTILES_SCHEMA;
 
-protected:
-    static int _toAccessFlag(Mode mode);
+};
 
-    SQLite::Statement& _getStatement(const std::string& query) const;
 
-    std::string _filename;
-    Mode _mode = Mode::READ_ONLY;
-    mutable SQLite::Database _database;
+class MBTilesCache: public Cache::BaseCache<TileKey, ofBuffer>
+{
+public:
+    typedef SQLite::SQLiteConnectionPool_<MBTilesConnection> MBTilesConnectionPool;
 
-    /// \brief A collection of prepared statements for this connection.
-    ///
-    /// These will be destroyed when the connection is destroyed.
-    mutable std::map<std::string, std::unique_ptr<SQLite::Statement>> _statements;
+    MBTilesCache(const MapTileProvider& tileProvider,
+                 const std::string& cachePath,
+                 uint64_t databaseTimeoutMilliseconds = 5000,
+                 std::size_t capacity = MBTilesConnectionPool::DEFAULT_CAPACITY,
+                 std::size_t peakCapacity = MBTilesConnectionPool::DEFAULT_PEAK_CAPACITY);
+
+    virtual ~MBTilesCache();
     
+    const MBTilesConnectionPool& readConnectionPool() const;
+
+    std::string toString() const
+    {
+        return _readConnectionPool.toString() + " Writer: ";// + std::to_string(_writeChannel.size());
+    }
+
+protected:
+    bool doHas(const TileKey& key) const override;
+
+    std::shared_ptr<ofBuffer> doGet(const TileKey& key) override;
+
+    void doAdd(const TileKey& key, std::shared_ptr<ofBuffer> entry) override;
+
+    void doRemove(const TileKey& key) override;
+
+    std::size_t doSize() override;
+
+    void doClear() override;
+
+private:
+    std::thread _writeThread;
+
+    ofThreadChannel<std::pair<TileKey, std::shared_ptr<ofBuffer>>> _writeChannel;
+
+    MBTilesConnection _writeConnection;
+
+    mutable MBTilesConnectionPool _readConnectionPool;
+
 };
 
 

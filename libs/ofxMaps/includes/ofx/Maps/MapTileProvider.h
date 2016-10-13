@@ -31,20 +31,24 @@
 #include "ofx/Maps/AbstractMapTypes.h"
 #include "ofx/Maps/BaseProjection.h"
 #include "ofx/Maps/SphericalMercatorProjection.h"
+#include "ofx/Maps/TileCoordinate.h"
 
 
 namespace ofx {
 namespace Maps {
 
 
-/// \brief A TileProvider with default settings.
-class TileProvider: public AbstractURITileProvider
+class TileKey;
+
+
+/// \brief A MapTileProvider with default settings.
+class MapTileProvider: public AbstractMapTileProvider
 {
 public:
-    /// \brief Create a default TileProvider with no endpoint.
-    TileProvider();
+    /// \brief Create a default MapTileProvider with no endpoint.
+    MapTileProvider();
 
-    /// \brief Create a TileProvider.
+    /// \brief Create a MapTileProvider.
     /// \param URITemplates The collection of template URLs.
     /// \param minZoom The minimum zoom level supported by the provider.
     /// \param maxZoom The maximum zoom level supported by the provider.
@@ -53,17 +57,17 @@ public:
     /// \param bounds The bounds of the provider.
     /// \param center The initial center for this provider.
     /// \param projection The projection used by the provider.
-    TileProvider(const std::vector<std::string>& URITemplates,
-                 int minZoom,
-                 int maxZoom,
-                 int tileWidth,
-                 int tileHeight,
-                 const Geo::CoordinateBounds& bounds,
-                 const TileCoordinate& center,
-                 const BaseProjection& projection);
+    MapTileProvider(const std::vector<std::string>& URITemplates,
+                    int minZoom,
+                    int maxZoom,
+                    int tileWidth,
+                    int tileHeight,
+                    const Geo::CoordinateBounds& bounds,
+                    const TileCoordinate& center,
+                    const BaseProjection& projection);
 
-    /// \brief Destroy the TileProvider.
-    virtual ~TileProvider();
+    /// \brief Destroy the MapTileProvider.
+    virtual ~MapTileProvider();
 
     virtual std::string id() const override;
     std::string name() const override;
@@ -80,10 +84,14 @@ public:
     double zoomForScale(double scale) const override;
     TileCoordinate geoToWorld(const Geo::Coordinate& location) const override;
     Geo::Coordinate tileToGeo(const TileCoordinate& coordinate) const override;
-    std::string getTileURI(const TileCoordinateKey& coordinate) const override;
+    std::string getTileURI(const TileKey& coordinate) const override;
+    bool isCacheable() const override;
 
     /// \returns the URI templates.
     const std::vector<std::string> URITemplates() const;
+
+    /// \returns a collection of name value-pairs used used by this provider.
+    std::map<std::string, std::string> dictionary() const;
 
     enum
     {
@@ -106,17 +114,17 @@ public:
     /// \brief The default projection used by most map tile providers.
     static const SperhicalMercatorProjection DEFAULT_PROJECTION;
 
-    /// \brief Create a TileProvider from JSON.
+    /// \brief Create a MapTileProvider from JSON.
     ///
     /// This parses the JSON in the TileJSON 2.1.0 format. Not all features
     /// are supported.
     ///
     /// \param json The json to parse.
-    /// \returns a configured TileProvider.
+    /// \returns a configured MapTileProvider.
     /// \sa https://github.com/mapbox/tilejson-spec/tree/master/2.1.0
-    static TileProvider fromJSON(const ofJson& json);
+    static MapTileProvider fromJSON(const ofJson& json);
 
-    /// \brief Export the TileProvider as JSON.
+    /// \brief Export the MapTileProvider as JSON.
     ///
     /// This exports the provider in a TileJSON 2.1.0 format. Not all features
     /// are supported.
@@ -124,7 +132,7 @@ public:
     /// \param provider The provider to save.
     /// \returns the json..
     /// \sa https://github.com/mapbox/tilejson-spec/tree/master/2.1.0
-    static ofJson toJSON(const TileProvider& provider);
+    static ofJson toJSON(const MapTileProvider& provider);
 
 protected:
     /// \brief Extracts a template parameter value if it is available.
@@ -136,7 +144,7 @@ protected:
     /// \param templateParameter The template parameter requested.
     /// \param templateValue The extracted value to be filled.
     /// \returns true iff the extraction was successful.
-    virtual bool getTileURITemplateValue(const TileCoordinateKey& key,
+    virtual bool getTileURITemplateValue(const TileKey& key,
                                          const std::string& templateParameter,
                                          std::string& templateValue) const;
 
