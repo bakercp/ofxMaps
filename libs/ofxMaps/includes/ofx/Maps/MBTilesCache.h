@@ -132,12 +132,15 @@ public:
     static const std::string QUERY_TILES;
     static const std::string QUERY_TILES_WITH_SET_ID;
     static const std::string COUNT_TILES;
+    static const std::string COUNT_TILES_WITH_SET_ID;
 
     static const std::string INSERT_IMAGE;
     static const std::string COUNT_IMAGE;
 
     static const std::string INSERT_MAP;
+    static const std::string INSERT_MAP_WITH_SET_ID;
     static const std::string COUNT_MAP;
+    static const std::string COUNT_MAP_WITH_SET_ID;
 
     static const std::string COUNT_ALL;
 
@@ -160,6 +163,11 @@ public:
     virtual ~MBTilesCache();
     
     const MBTilesConnectionPool& readConnectionPool() const;
+
+    std::string path() const
+    {
+        return _writeConnection.database().getFilename();
+    }
 
     std::string toString() const
     {

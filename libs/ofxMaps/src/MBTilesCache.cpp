@@ -148,15 +148,21 @@ const std::string MBTilesConnection::CREATE_TABLE_METADATA = "CREATE TABLE IF NO
 const std::string MBTilesConnection::DROP_TABLE_METADATA = "DROP TABLE IF EXISTS metadata";
 
 const std::string MBTilesConnection::QUERY_TILES = "SELECT tile_data FROM `tiles` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row";
+const std::string MBTilesConnection::QUERY_TILES_WITH_SET_ID = QUERY_TILES + " AND set_id = :set_id";
+
 const std::string MBTilesConnection::COUNT_TILES = "SELECT COUNT(tile_data) FROM `tiles` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row";
+const std::string MBTilesConnection::COUNT_TILES_WITH_SET_ID = COUNT_TILES + " AND set_id = :set_id";
 
 //const std::string MBTilesConnection::INSERT_IMAGE = "INSERT OR IGNORE INTO `images` (`tile_id`, `tile_data`) VALUES (:tile_id, :tile_data)";
 const std::string MBTilesConnection::INSERT_IMAGE = "INSERT INTO `images` (`tile_id`, `tile_data`) VALUES (:tile_id, :tile_data)";
 
 const std::string MBTilesConnection::COUNT_IMAGE = "SELECT COUNT(tile_id) FROM `images` WHERE tile_id = :tile_id";
 
-const std::string MBTilesConnection::INSERT_MAP = "INSERT INTO `map` (`zoom_level`, `tile_column`, `tile_row`, `tile_id`) VALUES (:zoom_level,  :tile_column,  :tile_row,  :tile_id)";
+const std::string MBTilesConnection::INSERT_MAP = "INSERT INTO `map` (`zoom_level`, `tile_column`, `tile_row`, `tile_id`) VALUES (:zoom_level, :tile_column, :tile_row, :tile_id)";
+const std::string MBTilesConnection::INSERT_MAP_WITH_SET_ID = "INSERT INTO `map` (`zoom_level`, `tile_column`, `tile_row`, `tile_id`, `set_id`) VALUES (:zoom_level, :tile_column, :tile_row, :tile_id, :set_id)";
+
 const std::string MBTilesConnection::COUNT_MAP = "SELECT COUNT(tile_id) FROM `map` WHERE zoom_level = :zoom_level AND tile_column = :tile_column AND tile_row = :tile_row";
+const std::string MBTilesConnection::COUNT_MAP_WITH_SET_ID = COUNT_MAP +  " AND set_id = :set_id";
 
 const std::string MBTilesConnection::COUNT_ALL = "SELECT COUNT(*) FROM `tiles`";
 
@@ -176,6 +182,7 @@ const std::string MBTilesConnection::MBTILES_SCHEMA =
 "   tile_column INTEGER,"
 "   tile_row INTEGER,"
 "   tile_id TEXT,"
+"   set_id TEXT,"
 "   grid_id TEXT"
 ");"
 ""
@@ -210,7 +217,7 @@ const std::string MBTilesConnection::MBTILES_SCHEMA =
 "    data BLOB"
 ");"
 ""
-"CREATE UNIQUE INDEX IF NOT EXISTS map_index ON map (zoom_level, tile_column, tile_row);"
+"CREATE UNIQUE INDEX IF NOT EXISTS map_index ON map (zoom_level, tile_column, tile_row, set_id);"
 "CREATE UNIQUE INDEX IF NOT EXISTS grid_key_lookup ON grid_key (grid_id, key_name);"
 "CREATE UNIQUE INDEX IF NOT EXISTS keymap_lookup ON keymap (key_name);"
 "CREATE UNIQUE INDEX IF NOT EXISTS grid_utfgrid_lookup ON grid_utfgrid (grid_id);"
@@ -225,6 +232,7 @@ const std::string MBTilesConnection::MBTILES_SCHEMA =
 "        map.zoom_level AS zoom_level,"
 "        map.tile_column AS tile_column,"
 "        map.tile_row AS tile_row,"
+"        map.set_id AS set_id,"
 "        images.tile_data AS tile_data"
 "    FROM map"
 "    JOIN images ON images.tile_id = map.tile_id;"
@@ -234,6 +242,7 @@ const std::string MBTilesConnection::MBTILES_SCHEMA =
 "        map.zoom_level AS zoom_level,"
 "        map.tile_column AS tile_column,"
 "        map.tile_row AS tile_row,"
+"        map.set_id AS set_id,"
 "        grid_utfgrid.grid_utfgrid AS grid"
 "    FROM map"
 "    JOIN grid_utfgrid ON grid_utfgrid.grid_id = map.grid_id;"
@@ -243,6 +252,7 @@ const std::string MBTilesConnection::MBTILES_SCHEMA =
 "        map.zoom_level AS zoom_level,"
 "        map.tile_column AS tile_column,"
 "        map.tile_row AS tile_row,"
+"        map.set_id AS set_id,"
 "        keymap.key_name AS key_name,"
 "        keymap.key_json AS key_json"
 "    FROM map"
@@ -463,20 +473,31 @@ bool MBTilesConnection::setTile(const TileKey& key,
 
         try
         {
-            SQLite::Statement& selectMap = getStatement(COUNT_MAP);
+            SQLite::Statement& selectMap = getStatement(key.setId().empty() ? COUNT_MAP : COUNT_MAP_WITH_SET_ID);
             selectMap.bind(":tile_column", key.column());
             selectMap.bind(":tile_row", key.row());
             selectMap.bind(":zoom_level", key.zoom());
+
+            if (!key.setId().empty())
+            {
+                selectMap.bind(":set_id", key.setId());
+            }
+
             int result = selectMap.executeStep();
             auto column = selectMap.getColumn(0);
 
             if (column.getInt64() == 0)
             {
-                SQLite::Statement& insertMap = getStatement(INSERT_MAP);
+                SQLite::Statement& insertMap = getStatement(key.setId().empty() ? INSERT_MAP : INSERT_MAP_WITH_SET_ID);
                 insertMap.bind(":tile_column", key.column());
                 insertMap.bind(":tile_row", key.row());
                 insertMap.bind(":zoom_level", key.zoom());
                 insertMap.bind(":tile_id", tileId);
+
+                if (!key.setId().empty())
+                {
+                    insertMap.bind(":set_id", key.setId());
+                }
 
                 if (insertMap.exec() == 1)
                 {
@@ -514,10 +535,16 @@ bool MBTilesConnection::has(const TileKey& key) const noexcept
 {
     try
     {
-        SQLite::Statement& query = getStatement(COUNT_TILES);
+        SQLite::Statement& query = getStatement(key.setId().empty() ? COUNT_TILES : COUNT_TILES_WITH_SET_ID);
         query.bind(":tile_row", key.row());
         query.bind(":zoom_level", key.zoom());
         query.bind(":tile_column", key.column());
+
+        if (!key.setId().empty())
+        {
+            query.bind(":set_id", key.setId());
+        }
+
         int result = query.executeStep();
         auto column = query.getColumn(0);
         return column.getInt64() > 0;
@@ -534,11 +561,16 @@ std::shared_ptr<ofBuffer> MBTilesConnection::getBuffer(const TileKey& key) const
 {
     try
     {
-        SQLite::Statement& query = getStatement(QUERY_TILES);
+        SQLite::Statement& query = getStatement(key.setId().empty() ? QUERY_TILES : QUERY_TILES_WITH_SET_ID);
 
         query.bind(":tile_row", key.row());
         query.bind(":zoom_level", key.zoom());
         query.bind(":tile_column", key.column());
+
+        if (!key.setId().empty())
+        {
+            query.bind(":set_id", key.setId());
+        }
 
         int result = query.executeStep();
 
