@@ -100,8 +100,8 @@ void MapTileLayer::draw(float x, float y) const
 
             //ofDrawBitmapStringHighlight(coord.toString(0), position.x + 20, position.y + 20);
         }
-        else
-        {
+//        else
+//        {
             ofPushStyle();
             ofNoFill();
             ofSetColor(255, 127);
@@ -109,7 +109,7 @@ void MapTileLayer::draw(float x, float y) const
             ofDrawLine(0, 0, tileSize.x, tileSize.y);
             ofDrawLine(tileSize.x, 0, 0, tileSize.y);
             ofPopStyle();
-        }
+//        }
         ofPopMatrix();
         ++iter;
     }
@@ -119,6 +119,12 @@ void MapTileLayer::draw(float x, float y) const
 //    _fbo.end();
 //    
 //    _fbo.draw(x, y);
+
+
+
+    ofSetColor(255);
+    ofNoFill();
+    ofDrawRectangle(0, 0, _size.x, _size.y);
 }
 
 
@@ -350,7 +356,7 @@ void MapTileLayer::cancelQueuedRequests() const
             _tiles->cancelQueuedRequest(requestId);
         } catch (const std::exception& exc)
         {
-            std::cout << "<<>>" << exc.what() << std::endl;
+            //std::cout << "<<>>" << exc.what() << std::endl;
         }
     }
 }

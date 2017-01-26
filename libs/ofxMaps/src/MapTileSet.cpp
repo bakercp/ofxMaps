@@ -124,7 +124,11 @@ std::shared_ptr<ofBuffer> MapTileSet::_tryLoadFromURI(Cache::CacheRequestTask<Ti
         }
         else
         {
-            ofLogError("TileStore::_tryLoadFromURI") << "Invalid response: " << response->getReason() << ": " << uri.toString();
+            ofLogError("TileStore::_tryLoadFromURI") << "Invalid response: " << response->getStatus() << ": " << response->getReason() << ": " << uri.toString();
+
+            buffer = std::make_shared<ofBuffer>(response->stream());
+            std::cout << buffer->getText() << std::endl;
+
         }
     }
     else
