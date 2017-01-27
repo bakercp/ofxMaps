@@ -21,7 +21,7 @@ API documentation can be found here.
 
 Linux, macOS [![Build Status](https://travis-ci.org/bakercp/ofxMaps.svg?branch=master)](https://travis-ci.org/bakercp/ofxMaps)
 
-Visual Studio, MSYS [![Build status](https://ci.appveyor.com/api/projects/status/krr0ck8ffida8nsj/branch/master?svg=true)](https://ci.appveyor.com/project/bakercp/ofxio/branch/master)
+Visual Studio, MSYS [![Build status](https://ci.appveyor.com/api/projects/status/4w3ix4fm9le5lwqd/branch/master?svg=true)](https://ci.appveyor.com/project/bakercp/ofxmaps/branch/master)
 
 ## Compatibility
 
