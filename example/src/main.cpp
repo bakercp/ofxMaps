@@ -18,5 +18,5 @@ int main()
     settings.windowMode = OF_WINDOW;
     auto window = ofCreateWindow(settings);
     auto app = std::make_shared<ofApp>();
-    ofRunApp(app);
+    return ofRunApp(app);
 }

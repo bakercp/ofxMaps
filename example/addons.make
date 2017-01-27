@@ -1,9 +1,12 @@
+ofxCache
 ofxGeo
 ofxHTTP
 ofxIO
 ofxMaps
 ofxMediaType
 ofxNetworkUtils
+ofxPoco
+ofxSQLiteCpp
 ofxSSLManager
 ofxSpatialHash
 ofxTaskQueue

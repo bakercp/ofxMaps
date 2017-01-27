@@ -10,93 +10,81 @@
 
 void ofApp::setup()
 {
-    Geo::Coordinate dresden(51.0530, 13.7337);
-    Geo::Coordinate saic(41.880645, -87.624415);
-    Geo::Coordinate bean(41.882672, -87.62336);
-    Geo::Coordinate ts(40.758895, -73.985131);
-
-    cout << Gd(18, 41.89155578613281, -87.63175964355469) << endl;
-
-
-//    ofExit();
-
-    ofSetFrameRate(60);
-	ofSetVerticalSync(true);
-
-    ofEnableAlphaBlending();
-
-    Poco::ThreadPool::defaultPool().addCapacity(32);
-
-    layers.push_back(std::make_shared<Maps::TileLayer>());
-//    layers.push_back(std::make_shared<Maps::TileLayer>());
-//    layers.push_back(std::make_shared<Maps::TileLayer>());
-
-//    layers[0]->setup(std::make_shared<Maps::MicrosoftAerialStyleProvider>(),
-//                     ofGetWidth(),
-//                     ofGetHeight());
-
-//    layers[1]->setup(std::make_shared<Maps::EsriSatelliteTileProvider>(),
-//                     ofGetWidth(),
-//                     ofGetHeight());
-//
-    layers[0]->setup(std::make_shared<Maps::GoogleAerialTileProvider>(),
-                     ofGetWidth(),
-                     ofGetHeight());
-//
-
-    for (std::size_t i = 0; i < layers.size(); ++i)
+    coordinates =
     {
-        layers[i]->setCenter(saic, 19);
-    }
+        { 42.2610492, -91.4501953 },
+        { 43.0046471, -90.4833984 },
+        { 43.0367759, -89.3847656 },
+        { 41.9676592, -88.4619141 },
+        { 41.2117215, -89.0332031 },
+        { 40.5805847, -90.1318359 },
+        { 40.6806380, -91.1865234 },
+        { 41.1124688, -92.4169922 },
+        { 42.1959688, -93.2958984 },
+        { 43.2932003, -92.1972656 },
+        { 44.0560117, -90.7470703 } 
+    };
 
+    ofJson json = ofLoadJson("provider.json")["providers"][3];
 
-   // layers[0]->
+    tileProvider = std::make_shared<ofxMaps::MapTileProvider>(ofxMaps::MapTileProvider::fromJSON(json));
+
+    Poco::ThreadPool::defaultPool().addCapacity(64);
+
+    bufferCache = std::make_shared<ofxMaps::MBTilesCache>(*tileProvider, "/Volumes/Data/tiles");
+
+    tileSet = std::make_shared<ofxMaps::MapTileSet>(1024,
+                                                    tileProvider,
+                                                    bufferCache);
+
+    tileLayer = std::make_shared<ofxMaps::MapTileLayer>(tileSet, 1280, 768);
+
+    ofxGeo::Coordinate chicago(41.8827, -87.6233);
+    ofxGeo::Coordinate bethel(45.0579, -93.1605);
+
+    tileLayer->setCenter(coordinates[3], 21);
+
 }
 
 
 void ofApp::update()
 {
-    
+    tileLayer->update();
+
+    if (!ofIsFloatEqual(animation, 0.f))
+        tileLayer->setCenter(tileLayer->getCenter().getNeighbor(animation, 0));
 }
 
 
 void ofApp::draw()
 {
     ofBackgroundGradient(ofColor(255), ofColor(0));
-
-    ofDrawBitmapString(ofToString(layers[0]->getCenter()), ofVec2f(15, 15));
-
     ofFill();
     ofSetColor(255);
 
+//    cam.begin();
     ofPushMatrix();
-
-
-    if (ofGetKeyPressed('0'))
-    {
-        layers[0]->draw(0, 0);
-    }
-    else if (ofGetKeyPressed('1'))
-    {
-        layers[1]->draw(0, 0);
-    }
-    else
-    {
-//        ofFill();
-//        ofSetColor(255, 150);
-
-//        for (std::size_t i = 0; i < layers.size(); ++i)
-//        {
-            layers[ofGetFrameNum() % layers.size()]->draw(0, 0);
-//        }
-    }
-
-
-
-//    layers[0]->getProvider()->til
-
-
+    //ofTranslate(-tileLayer->getWidth() / 2, -tileLayer->getHeight() / 2);
+    tileLayer->draw(0, 0);
     ofPopMatrix();
+
+    ofPushStyle();
+    ofNoFill();
+    ofSetColor(0, 255, 0);
+
+    for (auto coordinate: coordinates)
+    {
+        auto tc = tileLayer->geoToPixels(coordinate);
+        ofDrawCircle(tc.x, tc.y, 20);
+    }
+    ofPopStyle();
+
+//    cam.end();
+
+    ofDrawBitmapStringHighlight(tileLayer->getCenter().toString(0), 14, ofGetHeight() - 32);
+    ofDrawBitmapStringHighlight("Task Queue:" + ofx::TaskQueue::instance().toString(), 14, ofGetHeight() - 16);
+    ofDrawBitmapStringHighlight("Connection Pool: " + bufferCache->toString(), 14, ofGetHeight() - 2);
+
 }
 
 
@@ -108,45 +96,45 @@ void ofApp::keyPressed(int key)
 	}
     else if (key == '-')
     {
-        for (std::size_t i = 0; i < layers.size(); ++i)
-        {
-            layers[i]->setCenter(layers[i]->getCenter().zoomBy(-0.5));
-        }
+        tileLayer->setCenter(tileLayer->getCenter().getZoomedBy(-1));
     }
     else if (key == '=')
     {
-        for (std::size_t i = 0; i < layers.size(); ++i)
-        {
-            layers[i]->setCenter(layers[i]->getCenter().zoomBy(0.5));
-        }
+        tileLayer->setCenter(tileLayer->getCenter().getZoomedBy(1));
     }
     else if (key == 'w')
     {
-        for (std::size_t i = 0; i < layers.size(); ++i)
-        {
-            layers[i]->setCenter(layers[i]->getCenter().up(0.5));
-        }
+        tileLayer->setCenter(tileLayer->getCenter().getNeighborUp());
     }
     else if (key == 'a')
     {
-        for (std::size_t i = 0; i < layers.size(); ++i)
-        {
-            layers[i]->setCenter(layers[i]->getCenter().left(0.5));
-        }
+        tileLayer->setCenter(tileLayer->getCenter().getNeighborLeft());
     }
     else if (key == 's')
     {
-        for (std::size_t i = 0; i < layers.size(); ++i)
-        {
-            layers[i]->setCenter(layers[i]->getCenter().down(0.5));
-        }
+        tileLayer->setCenter(tileLayer->getCenter().getNeighborDown());
     }
     else if (key == 'd')
     {
-        for (std::size_t i = 0; i < layers.size(); ++i)
-        {
-            layers[i]->setCenter(layers[i]->getCenter().right(0.5));
-        }
+        tileLayer->setCenter(tileLayer->getCenter().getNeighborRight());
     }
+    else if (key == '1')
+    {
+        animation -= 0.01;;
+    }
+    else if (key == '2')
+    {
+        animation += 0.01;;
+    }
+    else if (key == '3')
+    {
+        animation = 0;
+    }
+//    else if (key == ' ')
+//    {
+//        setsIndex = (setsIndex + 1) % sets.size();
+//        tileLayer->setSetId(sets[setsIndex]);
+//    }
+
 }
 
