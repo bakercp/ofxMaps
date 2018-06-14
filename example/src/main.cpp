@@ -12,8 +12,7 @@
 int main()
 {
     ofGLWindowSettings settings;
-    settings.width = 1280;
-    settings.height = 768;
+    settings.setSize(1280,768);
     settings.setGLVersion(3, 2);
     settings.windowMode = OF_WINDOW;
     auto window = ofCreateWindow(settings);

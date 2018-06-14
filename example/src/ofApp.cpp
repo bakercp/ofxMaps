@@ -25,13 +25,11 @@ void ofApp::setup()
         { 44.0560117, -90.7470703 } 
     };
 
-    ofJson json = ofLoadJson("provider.json")["providers"][3];
+	ofJson json = ofLoadJson("provider.json");//["providers"][3];
 
-    tileProvider = std::make_shared<ofxMaps::MapTileProvider>(ofxMaps::MapTileProvider::fromJSON(json));
-
+	tileProvider = std::make_shared<ofxMaps::MapTileProvider>(ofxMaps::MapTileProvider::fromJSON(json));
     Poco::ThreadPool::defaultPool().addCapacity(64);
-
-    bufferCache = std::make_shared<ofxMaps::MBTilesCache>(*tileProvider, "/Volumes/Data/tiles");
+    bufferCache = std::make_shared<ofxMaps::MBTilesCache>(*tileProvider, ofToDataPath("tiles", true));
 
     tileSet = std::make_shared<ofxMaps::MapTileSet>(1024,
                                                     tileProvider,
