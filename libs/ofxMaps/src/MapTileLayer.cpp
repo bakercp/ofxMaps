@@ -13,7 +13,7 @@ namespace ofx {
 namespace Maps {
 
 
-MapTileLayer::MapTileLayer(std::shared_ptr<MapTileSet> tiles, int width, int height):
+MapTileLayer::MapTileLayer(std::shared_ptr<MapTileSet> tiles, float width, float height):
     _tiles(tiles),
     _size(width, height),
     _coordsDirty(true),
@@ -117,7 +117,7 @@ void MapTileLayer::draw(float x, float y) const
 //    if (center.)
 
 //    _fbo.end();
-//    
+//
 //    _fbo.draw(x, y);
 
 
@@ -156,7 +156,7 @@ float MapTileLayer::getWidth() const
 }
 
 
-void MapTileLayer::setWidth(double width)
+void MapTileLayer::setWidth(float width)
 {
     _size.x = width;
     _coordsDirty = true;
@@ -170,7 +170,7 @@ float MapTileLayer::getHeight() const
 }
 
 
-void MapTileLayer::setHeight(double height)
+void MapTileLayer::setHeight(float height)
 {
     _size.y = height;
     _coordsDirty = true;
@@ -216,30 +216,30 @@ std::set<TileCoordinate> MapTileLayer::calculateVisibleCoordinates() const
     auto bottomLeft = pixelsToTile(bottomLeftPoint).getZoomedTo(baseZoom);
     auto bottomRight = pixelsToTile(bottomRightPoint).getZoomedTo(baseZoom);
 
-	int minCol = std::floor(std::min(std::min(topLeft.getColumn(),
+    int minCol = std::floor(std::min(std::min(topLeft.getColumn(),
                                               topRight.getColumn()),
                                      std::min(bottomLeft.getColumn(),
                                               bottomRight.getColumn())));
 
-	int maxCol = std::ceil(std::max(std::max(topLeft.getColumn(),
+    int maxCol = std::ceil(std::max(std::max(topLeft.getColumn(),
                                              topRight.getColumn()),
                                     std::max(bottomLeft.getColumn(),
                                              bottomRight.getColumn())));
 
-	int minRow = std::floor(std::min(std::min(topLeft.getRow(),
+    int minRow = std::floor(std::min(std::min(topLeft.getRow(),
                                               topRight.getRow()),
                                      std::min(bottomLeft.getRow(),
                                               bottomRight.getRow())));
 
-	int maxRow = std::ceil(std::max(std::max(topLeft.getRow(),
+    int maxRow = std::ceil(std::max(std::max(topLeft.getRow(),
                                              topRight.getRow()),
                                     std::max(bottomLeft.getRow(),
                                              bottomRight.getRow())));
 
-	minCol -= _padding.x;
-	minRow -= _padding.y;
-	maxCol += _padding.x;
-	maxRow += _padding.y;
+    minCol -= _padding.x;
+    minRow -= _padding.y;
+    maxCol += _padding.x;
+    maxRow += _padding.y;
 
     int gridSize = TileCoordinate::getScaleForZoom(baseZoom);
 
@@ -253,11 +253,11 @@ std::set<TileCoordinate> MapTileLayer::calculateVisibleCoordinates() const
 
     // Collect visible tile coordinates.
 
-	for (int col = minCol; col < maxCol; ++col)
+    for (int col = minCol; col < maxCol; ++col)
     {
-		for (int row = minRow; row < maxRow; ++row)
+        for (int row = minRow; row < maxRow; ++row)
         {
-			TileCoordinate coord(col, row, baseZoom);
+            TileCoordinate coord(col, row, baseZoom);
 
             // Do we have this tile?
             if (!hasTile(coord))
@@ -352,9 +352,11 @@ void MapTileLayer::cancelQueuedRequests() const
 {
     for (const auto& requestId: _outstandingRequests)
     {
-        try {
+        try
+        {
             _tiles->cancelQueuedRequest(requestId);
-        } catch (const std::exception& exc)
+        }
+        catch (const std::exception& exc)
         {
             //std::cout << "<<>>" << exc.what() << std::endl;
         }
@@ -404,7 +406,7 @@ void MapTileLayer::onTileUncached(const TileKey& args)
 //    _coordsDirty = true;
 }
 
-    
+
 void MapTileLayer::onTileRequestCancelled(const TileKey& key)
 {
     _outstandingRequests.erase(key);

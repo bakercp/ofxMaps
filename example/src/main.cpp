@@ -12,9 +12,9 @@
 int main()
 {
     ofGLWindowSettings settings;
-    settings.setSize(1280,768);
+    settings.setSize(1280, 768);
     settings.setGLVersion(3, 2);
-    settings.windowMode = OF_WINDOW;
+    settings.windowMode = OF_FULLSCREEN;
     auto window = ofCreateWindow(settings);
     auto app = std::make_shared<ofApp>();
     return ofRunApp(app);

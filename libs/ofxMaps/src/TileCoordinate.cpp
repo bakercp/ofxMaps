@@ -1,40 +1,21 @@
-// =============================================================================
 //
-// Copyright (c) 2014-2016 Christopher Baker <http://christopherbaker.net>
+// Copyright (c) 2014 Christopher Baker <https://christopherbaker.net>
 // Copyright (c) -2014 Tom Carden <https://github.com/RandomEtc>
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+// SPDX-License-Identifier:	MIT
 //
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-// =============================================================================
 
 
 #include "ofx/Maps/TileCoordinate.h"
 #include "Poco/Exception.h"
 #include "ofMath.h"
+#include "ofVectorMath.h"
 #include "ofx/IO/Hash.h"
 #include "glm/common.hpp"
 #include <iomanip>
 
 namespace ofx {
 namespace Maps {
-
-
 
 
 TileCoordinate::TileCoordinate(): TileCoordinate(0, 0, 0)
@@ -94,7 +75,7 @@ void TileCoordinate::setRow(double row)
 {
     _row = row;
 }
-    
+
 
 double TileCoordinate::getRow() const
 {
@@ -110,7 +91,7 @@ double TileCoordinate::getNormalizedRow() const
     {
         return _row - scale * std::floor(_row / scale);
     }
-    
+
     return _row;
 }
 
@@ -125,7 +106,7 @@ void TileCoordinate::setZoom(double zoom)
 {
     _zoom = zoom;
 }
-    
+
 
 double TileCoordinate::getZoom() const
 {
@@ -182,23 +163,27 @@ TileCoordinate TileCoordinate::getZoomedBy(double zoom) const
 TileCoordinate TileCoordinate::moveRightBy(double distance)
 {
     _column += distance;
+    return *this;
 }
 
 
 TileCoordinate TileCoordinate::moveLeftBy(double distance)
 {
     _column -= distance;
+    return *this;
 }
 
 
 TileCoordinate TileCoordinate::moveUpBy(double distance)
 {
     _row -= distance;
+    return *this;
 }
 
 TileCoordinate TileCoordinate::moveDownBy(double distance)
 {
     _row += distance;
+    return *this;
 }
 
 

@@ -9,8 +9,10 @@
 
 
 #include <set>
+#include <unordered_map>
 #include "ofBaseTypes.h"
 #include "ofFbo.h"
+#include "ofMath.h"
 #include "ofTypes.h"
 #include "ofx/Maps/TileCoordinate.h"
 #include "ofx/Maps/TileKey.h"
@@ -55,13 +57,13 @@ public:
             double d1 = std::fabs(c1.getZoom() - _center.getZoom());
             return d0 < d1;
         }
-        
+
         return false;
     }
-    
+
 protected:
     TileCoordinate _center;
-    
+
 };
 
 
@@ -72,7 +74,7 @@ protected:
 class MapTileLayer: public ofBaseDraws
 {
 public:
-    MapTileLayer(std::shared_ptr<MapTileSet> store, int width, int height);
+    MapTileLayer(std::shared_ptr<MapTileSet> store, float width, float height);
 
     virtual ~MapTileLayer();
 
@@ -80,7 +82,7 @@ public:
 
     void draw(float x, float y) const override;
 
-	void draw(float x, float y, float w, float h) const override;
+    void draw(float x, float y, float w, float h) const override;
 
     glm::vec2 getSize() const;
 
@@ -88,11 +90,11 @@ public:
 
     float getWidth() const override;
 
-    void setWidth(double width);
+    void setWidth(float width);
 
     float getHeight() const override;
 
-    void setHeight(double height);
+    void setHeight(float height);
 
     const TileCoordinate& getCenter() const;
 

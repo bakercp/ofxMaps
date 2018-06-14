@@ -507,7 +507,6 @@ bool MBTilesConnection::setTile(const TileKey& key,
     else
     {
         ofLogError("MBTilesConnection::setTile()") << "No setting data on a read-only database.";
-//        mutex().unlock();
         return false;
     }
 }
@@ -534,7 +533,7 @@ bool MBTilesConnection::has(const TileKey& key) const noexcept
     catch (const std::exception& e)
     {
         ofLogError("MBTilesConnection::has()") << "SQLite exception: " << e.what();
-        return nullptr;
+        return false;
     }
 }
 

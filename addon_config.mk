@@ -6,4 +6,4 @@ meta:
 	ADDON_URL = http://github.com/bakercp/ofxMaps
 
 common:
-	ADDON_DEPENDENCIES = ofxHTTP ofxGeo
+	ADDON_DEPENDENCIES = ofxHTTP ofxGeo ofxCache ofxSQLiteCpp ofxSpatialHash ofxTaskQueue

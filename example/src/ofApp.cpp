@@ -22,20 +22,19 @@ void ofApp::setup()
         { 41.1124688, -92.4169922 },
         { 42.1959688, -93.2958984 },
         { 43.2932003, -92.1972656 },
-        { 44.0560117, -90.7470703 } 
+        { 44.0560117, -90.7470703 }
     };
 
-	ofJson json = ofLoadJson("provider.json");//["providers"][3];
+    ofJson json = ofLoadJson("provider.json");
 
 	tileProvider = std::make_shared<ofxMaps::MapTileProvider>(ofxMaps::MapTileProvider::fromJSON(json));
     Poco::ThreadPool::defaultPool().addCapacity(64);
-    bufferCache = std::make_shared<ofxMaps::MBTilesCache>(*tileProvider, ofToDataPath("tiles", true));
-
+    bufferCache = std::make_shared<ofxMaps::MBTilesCache>(*tileProvider, "cache/");
     tileSet = std::make_shared<ofxMaps::MapTileSet>(1024,
                                                     tileProvider,
                                                     bufferCache);
 
-    tileLayer = std::make_shared<ofxMaps::MapTileLayer>(tileSet, 1280, 768);
+    tileLayer = std::make_shared<ofxMaps::MapTileLayer>(tileSet, 1 * 1920, 1 * 1080);
 
     ofxGeo::Coordinate chicago(41.8827, -87.6233);
     ofxGeo::Coordinate bethel(45.0579, -93.1605);
@@ -56,9 +55,10 @@ void ofApp::update()
 
 void ofApp::draw()
 {
-    ofBackgroundGradient(ofColor(255), ofColor(0));
-    ofFill();
-    ofSetColor(255);
+//    ofScale(0.25, 0.25, 1);
+//    ofBackgroundGradient(ofColor(255), ofColor(0));
+//    ofFill();
+//    ofSetColor(255);
 
 //    cam.begin();
     ofPushMatrix();
@@ -90,8 +90,8 @@ void ofApp::keyPressed(int key)
 {
     if (key == 'f' || key == 'F')
     {
-		ofToggleFullscreen();
-	}
+        ofToggleFullscreen();
+    }
     else if (key == '-')
     {
         tileLayer->setCenter(tileLayer->getCenter().getZoomedBy(-1));

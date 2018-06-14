@@ -10,6 +10,7 @@
 #include "Poco/String.h"
 #include "ofx/IO/Hash.h"
 #include "ofLog.h"
+#include "ofMath.h"
 #include "ofx/Maps/TileKey.h"
 #include "ofx/Maps/TileTemplate.h"
 #include "ofMath.h"
