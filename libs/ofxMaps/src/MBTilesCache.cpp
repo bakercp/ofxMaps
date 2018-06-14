@@ -507,7 +507,7 @@ bool MBTilesConnection::setTile(const TileKey& key,
     else
     {
         ofLogError("MBTilesConnection::setTile()") << "No setting data on a read-only database.";
-        mutex().unlock();
+//        mutex().unlock();
         return false;
     }
 }

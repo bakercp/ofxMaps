@@ -12,6 +12,7 @@
 #include "ofLog.h"
 #include "ofx/Maps/TileKey.h"
 #include "ofx/Maps/TileTemplate.h"
+#include "ofMath.h"
 
 
 namespace ofx {
@@ -342,10 +343,10 @@ ofJson MapTileProvider::toJSON(const MapTileProvider& provider)
 
     if (!provider.maxZoom()) json["maxzoom"] = provider.maxZoom();
 
-    json["bounds"] = {  provider.bounds().getNorthwest().getLatitude(),
-                        provider.bounds().getNorthwest().getLongitude(),
-                        provider.bounds().getSoutheast().getLatitude(),
-                        provider.bounds().getSoutheast().getLongitude()
+    json["bounds"] = {  provider.bounds().northwest().getLatitude(),
+                        provider.bounds().northwest().getLongitude(),
+                        provider.bounds().southeast().getLatitude(),
+                        provider.bounds().southeast().getLongitude()
     };
 
     auto centerGeo = provider.tileToGeo(provider.center());

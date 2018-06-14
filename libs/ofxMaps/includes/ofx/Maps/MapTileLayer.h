@@ -15,8 +15,8 @@
 #include "ofx/Maps/TileCoordinate.h"
 #include "ofx/Maps/TileKey.h"
 #include "ofx/Maps/MapTileSet.h"
-
-
+#include "ofMath.h"
+#include <unordered_map>
 namespace ofx {
 namespace Maps {
 

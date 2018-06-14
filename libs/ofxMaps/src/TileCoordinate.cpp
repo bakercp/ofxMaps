@@ -28,7 +28,8 @@
 #include "Poco/Exception.h"
 #include "ofMath.h"
 #include "ofx/IO/Hash.h"
-
+#include "glm/common.hpp"
+#include <iomanip>
 
 namespace ofx {
 namespace Maps {
