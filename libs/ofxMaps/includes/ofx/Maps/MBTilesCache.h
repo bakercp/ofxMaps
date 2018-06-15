@@ -148,12 +148,17 @@ public:
 
     std::string path() const
     {
-        return _writeConnection.database().getFilename();
+        return _writeConnection->database().getFilename();
+    }
+
+    std::string to_string() const
+    {
+        return _readConnectionPool->toString() + " Writer: ";// std::to_string(_writeChannel.size());
     }
 
     std::string toString() const
     {
-        return _readConnectionPool.toString() + " Writer: ";// + std::to_string(_writeChannel.size());
+        return to_string();
     }
 
 protected:
@@ -174,9 +179,9 @@ private:
 
     ofThreadChannel<std::pair<TileKey, std::shared_ptr<ofBuffer>>> _writeChannel;
 
-    MBTilesConnection _writeConnection;
+    std::unique_ptr<MBTilesConnection> _writeConnection = nullptr;
 
-    mutable MBTilesConnectionPool _readConnectionPool;
+    mutable std::unique_ptr<MBTilesConnectionPool> _readConnectionPool = nullptr;
 
 };
 

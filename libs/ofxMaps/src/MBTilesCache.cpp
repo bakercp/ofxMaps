@@ -630,23 +630,29 @@ MBTilesCache::MBTilesCache(const MapTileProvider& tileProvider,
                            const std::string& cachePath,
                            uint64_t databaseTimeoutMilliseconds,
                            std::size_t capacity,
-                           std::size_t peakCapacity):
-    _writeConnection(cachePath + "/" + tileProvider.id() + ".mbtiles",
-                     SQLite::SQLiteConnection::Mode::READ_WRITE_CREATE,
-                     databaseTimeoutMilliseconds),
-    _readConnectionPool(cachePath + "/" + tileProvider.id() + ".mbtiles",
-                        SQLite::SQLiteConnection::Mode::READ_ONLY,
-                        databaseTimeoutMilliseconds,
-                        capacity,
-                        peakCapacity)
+                           std::size_t peakCapacity)
 {
+    std::filesystem::create_directories(ofToDataPath(cachePath, true));
+    std::filesystem::path tilePath = cachePath;
+    tilePath /= (tileProvider.id() + ".mbtiles");
+    
     try
     {
-        SQLite::Transaction transaction(_writeConnection.database());
-        _writeConnection.database().exec(MBTilesConnection::MBTILES_SCHEMA);
+        _writeConnection = std::make_unique<MBTilesConnection>(tilePath.string(),
+                                                               SQLite::SQLiteConnection::Mode::READ_WRITE_CREATE,
+                                                               databaseTimeoutMilliseconds),
+        
+        _readConnectionPool = std::make_unique<MBTilesConnectionPool>(tilePath.string(),
+                                                                      SQLite::SQLiteConnection::Mode::READ_ONLY,
+                                                                      databaseTimeoutMilliseconds,
+                                                                      capacity,
+                                                                      peakCapacity);
+        
+        SQLite::Transaction transaction(_writeConnection->database());
+        _writeConnection->database().exec(MBTilesConnection::MBTILES_SCHEMA);
         transaction.commit();
 
-        _writeConnection.database().exec("PRAGMA journal_mode=WAL");
+        _writeConnection->database().exec("PRAGMA journal_mode=WAL");
 
     }
     catch (const std::exception& e)
@@ -676,7 +682,7 @@ MBTilesCache::MBTilesCache(const MapTileProvider& tileProvider,
         dictAdd(MBTilesMetadata::KEY_VERSION);
         dictAdd(MBTilesMetadata::KEY_FORMAT);
 
-        _writeConnection.setMetaData(metadata);
+        _writeConnection->setMetaData(metadata);
     }
     catch (const std::exception& e)
     {
@@ -690,9 +696,9 @@ MBTilesCache::MBTilesCache(const MapTileProvider& tileProvider,
         {
             try
             {
-                if (!_writeConnection.has(value.first))
+                if (!_writeConnection->has(value.first))
                 {
-                    _writeConnection.setTile(value.first, *value.second);
+                    _writeConnection->setTile(value.first, *value.second);
                 }
             }
             catch (const std::exception& e)
@@ -713,24 +719,24 @@ MBTilesCache::~MBTilesCache()
 
 const MBTilesCache::MBTilesConnectionPool& MBTilesCache::readConnectionPool() const
 {
-    return _readConnectionPool;
+    return *_readConnectionPool;
 }
 
 
 bool MBTilesCache::doHas(const TileKey& key) const
 {
-    auto connection = _readConnectionPool.borrowObject();
+    auto connection = _readConnectionPool->borrowObject();
     auto result = connection->has(key);
-    _readConnectionPool.returnObject(connection);
+    _readConnectionPool->returnObject(connection);
     return result;
 }
 
 
 std::shared_ptr<ofBuffer> MBTilesCache::doGet(const TileKey& key)
 {
-    auto connection = _readConnectionPool.borrowObject();
+    auto connection = _readConnectionPool->borrowObject();
     auto result = connection->getBuffer(key);
-    _readConnectionPool.returnObject(connection);
+    _readConnectionPool->returnObject(connection);
     return result;
 }
 
@@ -749,9 +755,9 @@ void MBTilesCache::doRemove(const TileKey& key)
 
 std::size_t MBTilesCache::doSize()
 {
-    auto connection = _readConnectionPool.borrowObject();
+    auto connection = _readConnectionPool->borrowObject();
     auto result = connection->size();
-    _readConnectionPool.returnObject(connection);
+    _readConnectionPool->returnObject(connection);
     return result;
 }
 
